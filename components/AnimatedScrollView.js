@@ -2,7 +2,6 @@ import React, {useContext, useRef, useEffect} from 'react';
 import {
     View,
     StatusBar,
-    SafeAreaView,
     StyleSheet,
     ScrollView,
     Dimensions,
@@ -14,29 +13,32 @@ import {useTabBar} from '../context/TabBarProvider';
 import {MaterialIcons, FontAwesome} from '@expo/vector-icons';
 import {ThemeContext} from "../util/ThemeManager";
 import MyText from "./helpers/MyText";
+import {Colors, DarkColors} from "../constants/Colors";
+import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
 
 const {width, height} = Dimensions.get('screen');
 
 let offsetY = 0;
 
 
-const AnimatedScrollView = ({children, routeName, routeMessage, style, ...restProps}) => {
-    const {setShowTabBar} = useTabBar();
+const AnimatedScrollView = ({children, routeName, routeMessage, style, navigation, ...restProps}) => {
+
     const {theme, transitionValue} = useContext(ThemeContext);
+
+    const Anim = useRef(new Animated.Value(0)).current
+
+
 
 
     /*   styles[`container${theme}`]*/
     return (
-        <Animated.View style={[styles.container, theme === 'Dark' ?
-            {
-                backgroundColor: '#131313', opacity: transitionValue
-
-            } : {
-                backgroundColor: "#fafafa",
-
-
-            }, style]}>
+        <View style={[styles.container, theme === 'Dark' ? {
+                backgroundColor: DarkColors.primaryDarkThree }: {
+                backgroundColor: "#f5f5f5"},
+        ]
+        }>
             <ScrollView
+                        keyboardShouldPersistTaps='handled'
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 scrollEnabled
@@ -47,12 +49,13 @@ const AnimatedScrollView = ({children, routeName, routeMessage, style, ...restPr
                     <View style={styles.titleWrap}>
                         <MyText myStyles={styles.routeName}>
                             {routeName}
-                        </MyText><Text style={styles.message}>
+                        </MyText>
+                        <MyText myStyles={styles.message}>
                         {routeMessage}
-                    </Text>
+                    </MyText>
                     </View>
                     <View style={styles.notificationIconWrap}>
-                        <TouchableOpacity activeOpacity={0.8} style={styles.notificationIcon}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Notification')} activeOpacity={0.8} style={styles.notificationIcon}>
                             <FontAwesome name={'bell'} size={20} color='#131313'/>
                         </TouchableOpacity>
                     </View>
@@ -61,7 +64,7 @@ const AnimatedScrollView = ({children, routeName, routeMessage, style, ...restPr
                     {children}
                 </View>
             </ScrollView>
-        </Animated.View>
+        </View>
     );
 };
 
@@ -69,21 +72,21 @@ const styles = StyleSheet.create({
     container: {
         paddingTop: StatusBar.currentHeight,
         flex: 1,
+
     },
     containerLight: {
         backgroundColor: "#fafafa",
-
     },
     containerDark: {
         backgroundColor: "#00040F"
     },
     scrollView: {
-        marginHorizontal: 20,
+        marginHorizontal:wp('5%'),
+        paddingBottom:100
     },
     top: {
         flex: 0.4,
         height: 100,
-
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'space-between'
@@ -103,11 +106,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 18,
     },
+
     message: {
         padding: 3,
-        fontSize: 13,
+        fontSize: 10,
         fontFamily: 'Gordita',
-        color: "#454545"
     },
 
     notificationIconWrap: {

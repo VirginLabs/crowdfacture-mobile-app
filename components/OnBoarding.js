@@ -28,8 +28,8 @@ import MyButton from "./MyButton";
 
 
              try {
-                 await AsyncStorage.setItem('A_first_time_user', 'false');
-           AsyncStorage.getItem('A_first_time_user').then((value) =>{
+                 await AsyncStorage.setItem('A_first_time_launch', 'false');
+           AsyncStorage.getItem('A_first_time_launch').then((value) =>{
                   // console.log(value)
 
                navigation.navigate('MyNavigation', { screen: 'Auth' });

@@ -16,13 +16,13 @@ const styles = StyleSheet.create({
     textLight: {
         fontFamily: 'Gordita',
         alignItems: 'center',
-        lineHeight: 20,
+
         color: "#212121"
     },
     textDark: {
         fontFamily: 'Gordita',
         alignItems: 'center',
-        lineHeight: 20,
+
         color: "#FFF"
     },
 })

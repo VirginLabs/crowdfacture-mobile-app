@@ -1,7 +1,7 @@
 import React, {createContext, useRef, useState} from "react";
 import {Animated, Easing, StatusBar} from "react-native";
 
-export const ThemeContext = createContext();
+export const ThemeContext = createContext('');
 
 export const ThemeProvider = ({ children }) => {
     const [theme, setTheme] = useState("Light");
@@ -15,16 +15,10 @@ export const ThemeProvider = ({ children }) => {
             setTheme("Light");
             StatusBar.setBarStyle("dark-content");
         }
-        Animated.timing(animationValue, {
-            toValue: 1,
-            easing: Easing.ease,
-            duration: 500,
-            useNativeDriver: true,
-        }).start();
     };
 
     return (
-        <ThemeContext.Provider value={{ theme, toggleTheme, transitionValue: animationValue }}>
+        <ThemeContext.Provider value={{theme,toggleTheme}}>
             {children}
         </ThemeContext.Provider>
     );

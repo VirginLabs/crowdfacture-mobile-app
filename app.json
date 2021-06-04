@@ -4,9 +4,15 @@
     "slug": "crowdfacture",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo/CrowdfactureIcon.png",
+    "privacy": "public",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "sdkVersion": "41.0.0",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/logo/Crowdfacture-ORANGE-PNG.png",
       "resizeMode": "contain",
       "backgroundColor": "#00040F"
     },
@@ -27,6 +33,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": ""
   }
 }

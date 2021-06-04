@@ -1,4 +1,4 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
 import React, { createContext, useContext, useState } from 'react';
 
 const TabBarContext = createContext();

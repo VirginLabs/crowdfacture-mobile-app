@@ -1,18 +1,20 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, StatusBar, View, Image, ImageBackground} from 'react-native';
+import React, {useState, useEffect, useContext} from 'react';
 import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import {enableScreens} from 'react-native-screens';
-import {Colors} from "./constants/Colors";
-import {AppearanceProvider, useColorScheme} from "react-native-appearance";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {NavigationContainer, DarkTheme, DefaultTheme} from "@react-navigation/native";
 import {MyNavigation, MyStartNavigation} from "./Naviagtions/MyNavigation";
 import TabBarProvider from "./context/TabBarProvider";
-import {ThemeProvider} from "./util/ThemeManager";
+import { ThemeProvider} from "./util/ThemeManager";
+import { NavigationContainer} from '@react-navigation/native';
+// In theory you don't have to install `react-native-root-siblings` because it's a dep of root-toast
+// But you can install it explicitly if your editor complains about it.
+import { RootSiblingParent } from 'react-native-root-siblings';
+import { Provider } from 'react-redux';
+// Add
+import { PersistGate } from 'redux-persist/integration/react';
 
-
-
+import {persistor, store} from "./redux/store";
 enableScreens()
 
 const fetchFonts = () => {
@@ -32,16 +34,17 @@ const fetchFonts = () => {
 
 
 export default function App(props) {
-<StatusBar hidden/>
-    const scheme = useColorScheme()
+
 
     const [fontLoaded, setFontLoaded] = useState(false);
     const [showRealApp, setShowRealApp] = useState(false);
     const [firstLaunch, setFirstLaunch] = useState(null);
 
 
+
     useEffect(() => {
-        AsyncStorage.getItem('A_first_time_launch').then((value) => {
+
+        AsyncStorage.getItem('A_first_time_open').then((value) => {
 
             if (value === null) {
                 setFirstLaunch(true);
@@ -51,9 +54,10 @@ export default function App(props) {
                 setFirstLaunch(false);
             }
         }).catch((err) => {
-            console.log('Error @A_first_time_launch: ', err);
+            console.log('Error @A_first_time_open: ', err);
         })
     }, []);
+
 
 
     if (!fontLoaded) {
@@ -69,36 +73,36 @@ export default function App(props) {
     }
 
 
+
+
+
     return (
 
+<Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
+        <NavigationContainer >
+            {
+                firstLaunch ?
 
-firstLaunch ?
+                    <MyStartNavigation/>
 
-                <NavigationContainer>
-                <MyStartNavigation/>
-            </NavigationContainer>
-:
-    <ThemeProvider>
+                    :
+                    <ThemeProvider>
+                            <TabBarProvider>
+                                <RootSiblingParent>
+                                    <MyNavigation/>
+                                </RootSiblingParent>
 
 
-               <TabBarProvider>
-                <NavigationContainer>
-                    <MyNavigation/>
+                            </TabBarProvider>
 
-                </NavigationContainer>
 
-            </TabBarProvider>
-    </ThemeProvider>
 
+                    </ThemeProvider>
+            }
+        </NavigationContainer>
+    </PersistGate>
+</Provider>
     );
 }
 
-const Styles = StyleSheet.create({
-    containerView: {
-        flex: 1,
-        backgroundColor: "#efefef",
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-
-});

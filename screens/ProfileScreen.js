@@ -1,70 +1,303 @@
-import React, {useContext} from 'react';
-import {FontAwesome} from '@expo/vector-icons';
-import {StyleSheet, Button, Text, View, Animated, TouchableOpacity, Dimensions} from 'react-native';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
+import {FontAwesome, Ionicons} from '@expo/vector-icons';
+import {StyleSheet, Button, Text, View, Animated, TouchableOpacity, Platform, Image} from 'react-native';
 import AnimatedScrollView from "../components/AnimatedScrollView";
 import {ThemeContext} from "../util/ThemeManager";
-import MyText from "../components/helpers/MyText";
-import {Colors} from "../constants/Colors";
+import * as ImagePicker from "expo-image-picker";
+import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 
-const UserProfile = ({navigation}) => {
+const createFormData = (photo, body = {}) => {
+    const data = new FormData();
+    data.append('photo', {
+        name: photo.fileName,
+        type: photo.type,
+        uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '')
+            : photo.uri
+    });
+    Object.keys(body).forEach((key) => {
+        data.append(key, body[key])
+    })
 
+    return data;
+}
+
+
+let textStyle, boxStyle, smTextStyle;
+
+const UserProfile = ({navigation, route}) => {
 
     const {toggleTheme, theme} = useContext(ThemeContext);
-    return (
-        <AnimatedScrollView routeMessage='Your profile' routeName='Profile'>
-            <Animated.View style={styles.container}>
-                <View>
+    const [permission, setPermission] = useState(false);
 
-                </View>
+    const [photo, setPhoto] = useState(null);
+
+    useEffect(() => {
+        (async () => {
+            if (Platform.OS !== 'web') {
+                const {status} = await ImagePicker.requestCameraPermissionsAsync();
+                if (status !== 'granted') {
+                    alert('Sorry, we need camera roll permission to make this work')
+                }
+
+            }
+        })();
+    }, [])
+
+
+    const handleChoosePhoto = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        })
+        console.log(result)
+        if (!result.cancelled) {
+            setPhoto(result.uri)
+        }
+    }
+
+    const uploadPhoto = useCallback(() => {
+        const body = createFormData(photo)
+        console.log(body)
+    }, [])
+
+
+    textStyle = theme === 'Dark' ? '#fff' : Colors.PrimaryDarkColor
+    smTextStyle = theme === 'Dark' ? '#eee' : Colors.PrimaryDarkColor
+    boxStyle = theme === 'Dark' ? DarkColors.primaryDarkTwo : Colors.White
+
+    return (
+        <AnimatedScrollView routeMessage='Your profile' navigation={navigation} routeName='Profile'>
+            <Animated.View style={styles.container}>
 
 
                 <View style={styles.profileImageWrap}>
-                    <View style={styles.profileImageContainer}>
+                    <TouchableOpacity activeOpacity={0.8} onPress={handleChoosePhoto}
+                                      style={styles.profileImageContainer}>
+                        <Text>
+                            AB
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+
+
+                <Text style={[{
+                    color: smTextStyle
+                }, styles.nameWrap]}>
+                    ORJI JOSEPH
+                </Text>
+
+
+                <TouchableOpacity
+                    style={[styles.emailWrap, styles[`themeBtn${theme}`]]}
+                    activeOpacity={0.8}
+                    onPress={toggleTheme}
+                    title="Toggle">
+                    {
+                        theme === "Dark" ?
+                            <Ionicons name='md-sunny' size={25} color={Colors.Primary}/>
+
+                            :
+                            <FontAwesome name='moon-o' size={25} color='white'/>
+                    }
+                </TouchableOpacity>
+
+
+                <TouchableOpacity onPress={() => navigation.navigate('Referral')} activeOpacity={0.7}
+                                  style={[theme === 'Dark' ? {
+
+                                      borderColor: DarkColors.primaryDarkTwo,
+                                      borderWidth: 1
+                                  } : {
+                                      backgroundColor: '#fff'
+                                  }, styles.boxOne]}>
+                    <View style={styles.actionIcon}>
+                        <FontAwesome name={'user-plus'} size={20} color={theme === 'Dark'
+                            ? DayColors.cream : Colors.PrimaryDarkColor}/>
+                    </View>
+                    <View style={styles.actionName}>
+                        <Text style={[{color: textStyle}, styles.actionTitle]}>
+                            Referral Earnings
+                        </Text>
+                        <Text style={[{
+                            color: smTextStyle
+                        }, styles.subName]}>
+                            N0
+                        </Text>
 
                     </View>
-                </View>
+                    <View style={styles.actionBtn}>
+                        <FontAwesome name='chevron-right' size={16} color={theme === 'Dark'
+                            ? DayColors.cream : Colors.PrimaryDarkColor}/>
+                    </View>
+                </TouchableOpacity>
 
-
-                <View style={styles.nameWrap}>
-
-                </View>
-                <View style={styles.emailWrap}>
-
-                </View>
 
                 <View style={styles.buttonWrap}>
-                    <View style={styles.boxOne}>
 
+                    <View style={[
+                        theme === 'Dark' ? {
+
+                            borderColor: DarkColors.primaryDarkTwo,
+                            borderWidth: 1
+                        } : {
+                            backgroundColor: '#fff'
+                        }, styles.boxOne]}>
+                        <View style={styles.actionIcon}>
+                            <FontAwesome name='envelope' size={16} color={theme === 'Dark'
+                                ? DayColors.cream : Colors.PrimaryDarkColor}/>
+                        </View>
+                        <View style={styles.actionName}>
+                            <Text style={[{color: textStyle}, styles.actionTitle]}>
+                                Email
+                            </Text>
+                            <Text style={[{
+                                color: smTextStyle
+                            },
+                                styles.subName]}>
+                                09087362752
+                            </Text>
+
+                        </View>
+                        <View style={styles.actionBtn}>
+
+                        </View>
                     </View>
-                    <View style={styles.boxOne}>
+                    <View style={[theme === 'Dark' ? {
 
+                        borderColor: DarkColors.primaryDarkTwo,
+                        borderWidth: 1
+                    } : {
+                        backgroundColor: '#fff'
+                    }, styles.boxOne]}>
+                        <View style={styles.actionIcon}>
+                            <FontAwesome name='phone' size={18} color={theme === 'Dark'
+                                ? DayColors.cream : Colors.PrimaryDarkColor}/>
+                        </View>
+                        <View style={styles.actionName}>
+                            <Text style={[{color: textStyle}, styles.actionTitle]}>
+                                Phone Number
+                            </Text>
+                            <Text style={[{
+                                color: smTextStyle
+                            }, styles.subName]}>
+                                09087362752
+                            </Text>
+
+                        </View>
+                        <View style={styles.actionBtn}>
+
+                        </View>
                     </View>
-                    <View style={styles.boxOne}>
+                    <TouchableOpacity onPress={() => navigation.navigate('AddBank')} activeOpacity={0.7} style={[theme === 'Dark' ? {
 
-                    </View>
-                    <View style={styles.boxOne}>
+                        borderColor: DarkColors.primaryDarkTwo,
+                        borderWidth: 1
+                    } : {
+                        backgroundColor: '#fff'
+                    }, styles.boxOne]}>
+                        <View style={styles.actionIcon}>
+                            <FontAwesome name='phone' size={18} color={theme === 'Dark'
+                                ? DayColors.cream : Colors.PrimaryDarkColor}/>
+                        </View>
+                        <View style={styles.actionName}>
+                            <Text style={[{color: textStyle}, styles.actionTitle]}>
+                                Add Bank
+                            </Text>
+                            <Text style={[{
+                                color: smTextStyle
+                            }, styles.subName]}>
+                                Add your bank details to instant withdrawals
+                            </Text>
 
-                </View>
-                    <View style={styles.boxOne}>
+                        </View>
+                        <View style={styles.actionBtn}>
+                            <FontAwesome name='chevron-right' size={16} color={theme === 'Dark'
+                                ? DayColors.cream : Colors.PrimaryDarkColor}/>
+                        </View>
+                    </TouchableOpacity>
 
-                </View>
-                    <View style={styles.boxOne}>
+                    <TouchableOpacity activeOpacity={0.7} style={[theme === 'Dark' ? {
+
+                        borderColor: DarkColors.primaryDarkTwo,
+                        borderWidth: 1
+                    } : {
+                        backgroundColor: '#fff'
+                    }, styles.boxOne]}>
+
+                        <View style={styles.actionIcon}>
+                            <FontAwesome name='users' size={18} color={theme === 'Dark'
+                                ? DayColors.cream : Colors.PrimaryDarkColor}/>
+                        </View>
+                        <View style={styles.actionName}>
+                            <Text style={[{color: textStyle}, styles.actionTitle]}>
+                                Join our community
+                            </Text>
+                            <Text style={[{
+                                color: smTextStyle
+                            }, styles.subName]}>
+                                Join other crowdfacture investors and stay informed
+                            </Text>
+
+                        </View>
+                        <View style={styles.actionBtn}>
+                            <FontAwesome name='external-link' size={16} color={theme === 'Dark'
+                                ? DayColors.cream : Colors.PrimaryDarkColor}/>
+                        </View>
+
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.7} style={[theme === 'Dark' ? {
+
+                        borderColor: DarkColors.primaryDarkTwo,
+                        borderWidth: 1
+                    } : {
+                        backgroundColor: '#fff'
+                    }, styles.boxOne]}>
+
+
+                        <View style={styles.actionIcon}>
+                            <FontAwesome name='star' size={18} color={theme === 'Dark'
+                                ? DayColors.cream : Colors.PrimaryDarkColor}/>
+                        </View>
+                        <View style={styles.actionName}>
+                            <Text style={[{color: textStyle}, styles.actionTitle]}>
+                                Rate Crowdfacture
+                            </Text>
+                            <Text style={[{
+                                color: smTextStyle
+                            }, styles.subName]}>
+                                Tell us how we make you feel
+                            </Text>
+
+                        </View>
+                        <View style={styles.actionBtn}>
+                            <FontAwesome name='external-link' size={16} color={theme === 'Dark'
+                                ? DayColors.cream : Colors.PrimaryDarkColor}/>
+                        </View>
+
+                    </TouchableOpacity>
+
+                    <View style={styles.logoutBtnWrap}>
+
                         <TouchableOpacity
-                            style={[styles.themeBtn, styles[`themeBtn${theme}`]]}
-                            activeOpacity={0.8}
-                            onPress={toggleTheme}
-                            title="Toggle">
-                            {
-                                theme === "Dark" ?
-                                    <FontAwesome name='sun-o' size={16} color='white'/>
-
-                                    :
-                                    <FontAwesome name='moon-o' size={16} color='white'/>
+                            style={[theme === 'Dark' ? styles.logoutBtnD : styles.logoutBtnW, styles.logoutBtn]}>
+                            <Text style={{
+                                color: theme === 'Dark'
+                                    ? DayColors.cream : Colors.PrimaryDarkColor,
+                                fontFamily: 'Gordita-medium'
                             }
+                            }>
+                                Logout
+                            </Text>
+                            <FontAwesome name='power-off' size={20} color={theme === 'Dark'
+                                ? DayColors.cream : Colors.PrimaryDarkColor}/>
                         </TouchableOpacity>
-                </View>
+                    </View>
+
+
                 </View>
 
 
@@ -82,46 +315,93 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     profileImageWrap: {
-        width: Dimensions.get('screen').width - 70,
         justifyContent: 'center',
         alignItems: 'center',
         height: 150,
+        width: 150,
     },
     profileImageContainer: {
         width: 120,
         height: 120,
         borderRadius: 120,
-        backgroundColor: '#2e8f2e',
+        backgroundColor: Colors.Primary,
+        alignItems: 'center',
+        textAlign: 'center',
+        justifyContent: 'center',
 
     },
     nameWrap: {
-        padding: 10,
-        height:45,
-        backgroundColor: '#eee',
-        marginVertical: 4,
+        padding: 5,
+        height: 45,
+
+        alignItems: 'center',
+        textAlign: 'center',
+        justifyContent: 'center',
+        fontSize: 20,
+        fontFamily: 'Gordita-Black',
         width: wp('80%'),
     },
     emailWrap: {
-        height:45,
-        padding: 10,
-        backgroundColor: '#eee',
+        width: 45,
+        height: 45,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 40,
         marginVertical: 4,
-        width: wp('80%'),
+        textAlign: 'center',
+
     },
     buttonWrap: {
-        marginVertical: 10,
+        width: wp('100%'),
+        marginVertical: 5,
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
 
     },
     boxOne: {
-        marginVertical:5,
-        width: wp('80%'),
-        height: 65,
-        padding:10,
-        backgroundColor: "#ddd",
-        borderRadius: 15
+        marginVertical: 8,
+        width: wp('90%'),
+        height: 75,
+        padding: 10,
+        borderRadius: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    actionIcon: {
+        width: '15%',
+
+        height: '90%',
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    actionName: {
+        width: '70%',
+        height: '100%',
+        alignItems: 'flex-start',
+        flexDirection: 'column',
+        justifyContent: 'space-evenly',
+
+    },
+    actionTitle: {
+        fontFamily: 'Gordita-bold',
+        fontSize: 14,
+
+    },
+    subName: {
+        fontSize: 10,
+        fontFamily: 'Gordita-medium',
+        lineHeight: 13
+    },
+    actionBtn: {
+        width: '10%',
+        height: '90%',
+        flexDirection: 'row',
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     themeBtn: {
         width: 35,
@@ -131,13 +411,40 @@ const styles = StyleSheet.create({
         borderRadius: 40
     },
     themeBtnDark: {
-        backgroundColor: Colors.Primary,
+        backgroundColor: '#eee',
     },
     themeBtnLight: {
         backgroundColor: Colors.PrimaryDarkColor,
+    },
+    logoutBtnD: {
+        borderColor: DayColors.cream,
+        borderWidth: 2,
+
+    },
+    logoutBtnW: {
+        backgroundColor: '#ccc',
+
+    },
+    logoutBtn: {
+        marginVertical: 4,
+        width: 120,
+        height: 50,
+        borderRadius: 10,
+        flexDirection: 'row',
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+    },
+    logoutBtnWrap: {
+        width: wp('80%'),
+        flexDirection: 'row',
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
     }
 
 
 })
 
 export default UserProfile;
+
