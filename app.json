@@ -10,7 +10,6 @@
       "ios",
       "android"
     ],
-    "sdkVersion": "41.0.0",
     "splash": {
       "image": "./assets/logo/Crowdfacture-ORANGE-PNG.png",
       "resizeMode": "contain",
@@ -29,7 +28,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#00040F"
-      }
+      },
+      "permissions": ["CAMERA","WRITE_EXTERNAL_STORAGE"]
     },
     "web": {
       "favicon": "./assets/favicon.png"

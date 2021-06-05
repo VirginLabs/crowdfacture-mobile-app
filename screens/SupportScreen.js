@@ -1,11 +1,11 @@
 import React, {useContext} from 'react';
 
-import {Animated, StatusBar, StyleSheet, Text, View} from 'react-native';
+import {Animated, StatusBar, TouchableOpacity, StyleSheet, Text, View, FlatList} from 'react-native';
 import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
-import {FontAwesome5} from "@expo/vector-icons";
+import {FontAwesome5, Ionicons} from "@expo/vector-icons";
 
 
 const SupportScreen = ({navigation}) => {
@@ -31,7 +31,30 @@ const SupportScreen = ({navigation}) => {
                     <FontAwesome5 name='headset' size={60}/>
                 </View>
 
-                <View style={styles.contactButtons}>
+
+                <View>
+                    {
+                        SupportButtons.map((({key, icon, title}) => (
+                            <TouchableOpacity key={key} style={styles.contactButton} activeOpacity={.9}
+                                              onPress={() => console.log('copied')}>
+                                <Ionicons name={icon} size={20} color={DayColors.green}/>
+
+                                <View style={{
+                                    width: '60%',
+                                    justifyContent: 'center',
+                                    alignItems: 'center'
+                                }}>
+                                    <Text style={{
+                                        fontSize: 16,
+                                        fontFamily: 'Gordita-bold'
+                                    }}>
+                                        {title}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        )))
+                    }
+
 
                 </View>
 
@@ -41,6 +64,27 @@ const SupportScreen = ({navigation}) => {
         </Animated.View>
     );
 };
+
+
+const SupportButtons = [
+    {
+        key: '1',
+        icon: 'chatbubble-sharp',
+        title: 'Connect to live chat'
+    },
+    {
+        key: '2',
+        icon: 'ios-mail',
+        title: '  Send us a mail'
+    },
+    {
+        key: '3',
+        icon: 'ios-call',
+        title: '  Call us'
+    }
+]
+
+
 const styles = StyleSheet.create({
     container: {
         paddingTop: StatusBar.currentHeight,
@@ -67,9 +111,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'center'
     },
-    contactButtons:{
 
-    },
     iconWrap: {
         marginVertical: 16,
         width: 130,
@@ -80,6 +122,16 @@ const styles = StyleSheet.create({
         alignItems: 'center'
 
     },
+    contactButton: {
+        marginVertical: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        backgroundColor: '#eee',
+        width: wp('80%'),
+        height: 60,
+        borderRadius: 20
+    }
 
 });
 

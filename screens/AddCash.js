@@ -83,9 +83,7 @@ const AddCashScreen = ({navigation}) => {
     if (contentId === '3') {
         content = <FlutterWave theme={theme}/>
     }
-    if (contentId === '4') {
-        content = <BankAccount/>
-    }
+
 
 
     const handleOpen = (id) => {
@@ -166,14 +164,14 @@ const PaymentChannels = [
         sheetName: 'CARD'
 
     },
-    {
+   /* {
         id: '4',
         name: 'PAYPAL',
         iconName: 'paypal',
         moreInfo: 'Payment made easy with secured PayPal integration',
         sheetName: 'PAYPAL'
 
-    },
+    },*/
 
 
 ]
