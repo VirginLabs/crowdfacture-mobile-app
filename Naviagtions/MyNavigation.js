@@ -1,6 +1,6 @@
 import React from "react";
 
-import {createStackNavigator, TransitionSpecs, CardStyleInterpolators} from '@react-navigation/stack';
+import {createStackNavigator} from '@react-navigation/stack';
 // You can import Ionicons from @expo/vector-icons/Ionicons if you use Expo or
 // react-native-vector-icons/Ionicons otherwise.
 
@@ -20,7 +20,7 @@ import NotificationScreen from "../screens/NotificationScreen";
 // Javascript
 
 import Login from "../screens/Login";
-import {Easing} from "react-native";
+
 import ReferralScreen from "../screens/ReferalScreen";
 import AddCashScreen from "../screens/AddCash";
 import FavouriteScreen from "../screens/Favourites";
@@ -30,6 +30,9 @@ import SupportScreen from "../screens/SupportScreen";
 import CalculatorScreen from "../screens/Calculator";
 import SecurityScreen from "../screens/Security";
 import ReportsScreen from "../screens/Reports";
+import ProjectScreen from "../screens/ProjectScreen";
+import HistoryScreen from "../screens/HistoryScreen";
+
 
 
 
@@ -43,23 +46,7 @@ const PopupStack = createStackNavigator();
 
 
 
-const config = {
-    animation: 'spring',
-    config: {
-        stiffness: 1000,
-        mass: 3,
-        overshootClamping: false,
-        restDisplacementThreshold: 0.01,
-        restSpeedThreshold: 0.01,
-    },
-};
-const closeConfig = {
-    animation: 'timing',
-    config: {
-       duration: 500,
-    easing: Easing.linear
-    },
-};
+
 
 
 const TabNavigator = () => {
@@ -84,14 +71,14 @@ const TabNavigator = () => {
             <Tab.Screen
                 name='Projects'
                 component={Projects}
-                initialParams={{icon: 'briefcase'}}
+                initialParams={{icon: 'people-carry'}}
 
             />
 
             <Tab.Screen
-                name='Dividend'
-                component={DividendScreen}
-                initialParams={{icon: 'tags'}}
+                name='History'
+                component={HistoryScreen}
+                initialParams={{icon: 'history'}}
 
             />
             <Tab.Screen
@@ -152,6 +139,7 @@ animationEnabled: false,
             <StartStackNavigator.Screen name='Dividends' component={DividendScreen}/>
             <StartStackNavigator.Screen name='Security' component={SecurityScreen}/>
             <StartStackNavigator.Screen name='Reports' component={ReportsScreen}/>
+            <StartStackNavigator.Screen name='Project' component={ProjectScreen}/>
 
         </CFStackNavigator.Navigator>
     )

@@ -5,7 +5,7 @@ import {Colors, DayColors} from "../constants/Colors";
 
 const DeckButton = ({btnStyle, btnTitle, btnAction, icon, theme}) => {
     return (
-        <TouchableOpacity style={btnStyle} onPress={btnAction} activeOpacity={0.7}>
+        <TouchableOpacity style={btnStyle} onPress={btnAction} activeOpacity={0.9}>
             <View>
                 <FontAwesome5 name={icon} size={20} color={theme === 'Dark'
                     ? DayColors.cream : Colors.PrimaryDarkColor}/>

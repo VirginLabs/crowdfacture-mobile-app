@@ -1,24 +1,30 @@
 import React from 'react';
 
 import {StyleSheet, Text, View} from 'react-native';
-import * as Yup from "yup";
-import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {Colors, DayColors} from "../../constants/Colors";
+import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 import TextInput from "../TextInput";
 import MyButton from "../MyButton";
+import * as Yup from "yup";
 import {useFormik} from "formik";
+
 
 const phoneRegExp = /^[+]?\d*$/
 const schema = Yup.object().shape({
-    pin: Yup.string()
-        .min(2, "Amount is Too short")
-        .max(50, "Amount is Too long")
+    oldPassword: Yup.string()
+        .min(2, "Old Password is Too short")
+        .max(50, "Old Password is Too long")
         .matches(phoneRegExp, 'Wrong input')
-        .required("Amount is Required"),
+        .required("old Password is Required"),
+    newPassword: Yup.string()
+        .min(2, "Password is Too short")
+        .max(50, "Password is Too long")
+        .matches(phoneRegExp, 'Wrong input')
+        .required("Password is Required"),
 });
 
+const UpdatePassword = ({theme}) => {
 
-const SetPin = ({theme, id}) => {
 
     const {
         handleChange, handleSubmit, handleBlur,
@@ -27,16 +33,19 @@ const SetPin = ({theme, id}) => {
         touched
     } = useFormik({
         validationSchema: schema,
-        initialValues: {pin: '',
+        initialValues: {oldPassword: '',
+            newPassword: ''
+
         },
         onSubmit: (values) => {
-            const {pin} = values;
-            alert(`pin: ${values.pin}`)
+            const {oldPassword,newPassword} = values;
+            alert(`Old Password: ${newPassword}`)
         }
     });
 
+
     return (
-        <View style={styles.setPin}>
+        <View style={styles.updatePassword}>
             <View style={[
                 {
                     height:50
@@ -47,7 +56,7 @@ const SetPin = ({theme, id}) => {
                         color: theme === 'Dark' ?
                             Colors.White : "#131313"
                     }]}>
-                    SET NEW PIN
+                        SET NEW PASSWORD
                     </Text>
                 </View>
             </View>
@@ -55,20 +64,40 @@ const SetPin = ({theme, id}) => {
             <View style={{paddingHorizontal: 32, marginTop: 15, width: wp('100%'),}}>
                 <TextInput
                     color={theme === 'Dark' ? '#eee' : '#131313'}
-                    icon='money'
-                    placeholder='Enter new pin'
+                    icon='key'
+                    placeholder='Enter old password'
                     autoCapitalize='none'
                     keyboardAppearance='dark'
                     returnKeyType='go'
                     returnKeyLabel='go'
-                    onChangeText={handleChange('pin')}
-                    onBlur={handleBlur('pin')}
-                    error={errors.pin}
-                    touched={touched.pin}
+                    onChangeText={handleChange('oldPassword')}
+                    onBlur={handleBlur('oldPassword')}
+                    error={errors.oldPassword}
+                    touched={touched.oldPassword}
+                />
+            </View>
+
+            <Text style={styles.errorText} numberOfLines={1}>
+                {errors.oldPassword}
+            </Text>
+
+            <View style={{paddingHorizontal: 32, marginTop: 15, width: wp('100%'),}}>
+                <TextInput
+                    color={theme === 'Dark' ? '#eee' : '#131313'}
+                    icon='lock'
+                    placeholder='Enter new password'
+                    autoCapitalize='none'
+                    keyboardAppearance='dark'
+                    returnKeyType='go'
+                    returnKeyLabel='go'
+                    onChangeText={handleChange('newPassword')}
+                    onBlur={handleBlur('newPassword')}
+                    error={errors.newPassword}
+                    touched={touched.newPassword}
                 />
             </View>
             <Text style={styles.errorText} numberOfLines={1}>
-                {errors.pin}
+                {errors.newPassword}
             </Text>
 
             <MyButton action={() => handleSubmit()} title='SUBMIT'
@@ -77,8 +106,9 @@ const SetPin = ({theme, id}) => {
     );
 };
 
+
 const styles = StyleSheet.create({
-    setPin: {
+    updatePassword: {
         minHeight: 300,
         alignItems: 'center',
         justifyContent: 'flex-start',
@@ -119,8 +149,8 @@ const styles = StyleSheet.create({
     },
     errorText:{
         color:'#ff5d57',
-        fontFamily: 'Gordita-medium',
+        fontFamily:'Gordita-medium'
     }
 });
 
-export default SetPin;
+export default UpdatePassword;

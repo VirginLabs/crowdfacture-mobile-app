@@ -11,8 +11,8 @@ export default function TextInput({  icon, error,touched,color, ...otherProps  }
             style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                height: 60,
-                borderRadius: 15,
+                height: 65,
+                borderRadius: 20,
                 borderColor: validationColor,
                 borderWidth: 2,
               //  backgroundColor: DarkColors.primaryDark,

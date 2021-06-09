@@ -1,5 +1,16 @@
 import React, {useContext, useRef, useCallback, useState} from 'react';
-import {Animated, Button, View, StyleSheet, FlatList, Text, TouchableOpacity, StatusBar, Keyboard} from 'react-native';
+import {
+    Animated,
+    Button,
+    View,
+    StyleSheet,
+    FlatList,
+    Text,
+    TouchableOpacity,
+    StatusBar,
+    Keyboard,
+    ScrollView
+} from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import {ThemeContext} from "../util/ThemeManager";
 import {FontAwesome, FontAwesome5} from "@expo/vector-icons";
@@ -12,9 +23,10 @@ import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-nativ
 import BankAccount from "../components/payments/BankAccount";
 import Sumotrust from "../components/payments/Sumotrust";
 import FlutterWave from "../components/payments/CardPayment";
+import BottomSheet from "react-native-simple-bottom-sheet";
 
 
-const Item = ({name, iconName, moreInfo, id, theme, action}) => (
+const Item = ({name, iconName, moreInfo, theme, action}) => (
     <TouchableOpacity activeOpacity={0.7} style={[
         {
             backgroundColor: theme === 'Dark'
@@ -22,9 +34,19 @@ const Item = ({name, iconName, moreInfo, id, theme, action}) => (
         },
         styles.paymentList]} onPress={action}>
         <View style={[
-            {
+            name === 'ACCOUNT NUMBER' && {
+
                 backgroundColor: theme === 'Dark'
-                    ? DarkColors.primaryDarkThree : DayColors.cream,
+                    ? DarkColors.primaryDarkFour : DayColors.green,
+            },
+
+            name === 'USE SUMOTRUST' && {
+                backgroundColor: theme === 'Dark'
+                    ? DayColors.strongLemon : DayColors.cream,
+            },
+            name === 'USE DEBIT CARD' && {
+                backgroundColor: theme === 'Dark'
+                    ? DarkColors.primaryDarkThree : DayColors.lemon,
             },
             styles.icon]}>
             <FontAwesome5 name={iconName} size={20} color={theme === 'Dark'
@@ -58,18 +80,13 @@ const Item = ({name, iconName, moreInfo, id, theme, action}) => (
 )
 
 
-
-
-
-
-
 let content;
 
 const AddCashScreen = ({navigation}) => {
 
-    const {theme, transitionValue} = useContext(ThemeContext);
+    const {theme} = useContext(ThemeContext);
     const animation = useRef(new Animated.Value(0)).current
-
+    const [panelOpen, setPanelOpen] = useState(false);
     //which content is shown in the bottom sheet
     const [contentId, setContentId] = useState('');
 
@@ -83,16 +100,11 @@ const AddCashScreen = ({navigation}) => {
     if (contentId === '3') {
         content = <FlutterWave theme={theme}/>
     }
-
-
+    const sheetRef = useRef(null);
 
     const handleOpen = (id) => {
         setContentId(id)
-        Animated.timing(animation, {
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true
-        }).start();
+        sheetRef.current.togglePanel()
 
     }
 
@@ -115,10 +127,10 @@ const AddCashScreen = ({navigation}) => {
 
     return (
 
-        <Animated.View style={[styles.container, {
-                backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
-                    : "#f5f5f5"
-            }]}>
+        <View style={[styles.container, {
+            backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
+                : "#f5f5f5"
+        }]}>
             <View style={styles.top}>
                 <BackButton theme={theme} navigation={navigation}/>
             </View>
@@ -128,14 +140,27 @@ const AddCashScreen = ({navigation}) => {
                 contentContainerStyle={styles.wrap}
                 data={PaymentChannels} renderItem={PaymentList} keyExtractor={item => item.id}/>
 
+            <BottomSheet wrapperStyle={{
+                width: wp('100%'),
+                backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#fff',
+            }}
+                         sliderMinHeight={0}
 
-            <MyBottomSheet theme={theme} animation={animation} handleClose={handleClose}>
-
+                         ref={ref => sheetRef.current = ref}>
+<Text style={{
+    width:'100%',
+    textAlign:'center',
+    fontSize:11,
+    fontFamily:'Gordita-medium',
+    color: theme === 'Dark' ? '#eee' : '#333'
+}}>
+    Tap head to close
+</Text>
                 {content}
 
-            </MyBottomSheet>
+            </BottomSheet>
 
-        </Animated.View>
+        </View>
     );
 };
 
@@ -144,34 +169,27 @@ const PaymentChannels = [
         id: '1',
         name: 'ACCOUNT NUMBER',
         iconName: 'key',
-        moreInfo: 'Pay using your unique account number',
+        moreInfo: 'Deposit using your Crowdfacture virtual account number',
         sheetName: 'ACCOUNT'
 
     },
     {
         id: '2',
-        name: 'SUMOTRUST',
+        name: 'USE SUMOTRUST',
         iconName: 'piggy-bank',
-        moreInfo: 'Pay from your Sumotrust kick account',
+        moreInfo: 'Deposit from your Sumotrust kick account',
         sheetName: 'SUMOTRUST'
 
     },
     {
         id: '3',
-        name: 'DEBIT CARD',
+        name: 'USE DEBIT CARD',
         iconName: 'credit-card',
-        moreInfo: 'Secure payment using your debit card',
+        moreInfo: 'Secure deposit using your debit card',
         sheetName: 'CARD'
 
     },
-   /* {
-        id: '4',
-        name: 'PAYPAL',
-        iconName: 'paypal',
-        moreInfo: 'Payment made easy with secured PayPal integration',
-        sheetName: 'PAYPAL'
 
-    },*/
 
 
 ]
@@ -223,7 +241,6 @@ const styles = StyleSheet.create({
     body: {
         width: '60%'
     },
-
 
 
 })

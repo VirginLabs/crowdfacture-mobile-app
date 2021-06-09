@@ -5,8 +5,8 @@ import {enableScreens} from 'react-native-screens';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {MyNavigation, MyStartNavigation} from "./Naviagtions/MyNavigation";
 import TabBarProvider from "./context/TabBarProvider";
-import { ThemeProvider} from "./util/ThemeManager";
-import { NavigationContainer} from '@react-navigation/native';
+import {ThemeContext, ThemeProvider} from "./util/ThemeManager";
+import { NavigationContainer,DefaultTheme} from '@react-navigation/native';
 // In theory you don't have to install `react-native-root-siblings` because it's a dep of root-toast
 // But you can install it explicitly if your editor complains about it.
 import { RootSiblingParent } from 'react-native-root-siblings';
@@ -15,6 +15,7 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import {persistor, store} from "./redux/store";
+import {DarkColors} from "./constants/Colors";
 enableScreens()
 
 const fetchFonts = () => {
@@ -35,6 +36,7 @@ const fetchFonts = () => {
 
 export default function App(props) {
 
+    const {theme} = useContext(ThemeContext);
 
     const [fontLoaded, setFontLoaded] = useState(false);
     const [showRealApp, setShowRealApp] = useState(false);
@@ -74,13 +76,14 @@ export default function App(props) {
 
 
 
-
+const navTheme = DefaultTheme;
+    navTheme.colors.background = '#333'
 
     return (
 
 <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-        <NavigationContainer >
+        <NavigationContainer theme={navTheme}>
             {
                 firstLaunch ?
 

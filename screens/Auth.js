@@ -1,10 +1,13 @@
-import React, {useState} from 'react'
+import React, {useState,useEffect} from 'react'
+import * as LocalAuthentication from 'expo-local-authentication'
 import {View, StyleSheet, Image, Text, ImageBackground, StatusBar} from "react-native";
 import {RFPercentage, RFValue} from "react-native-responsive-fontsize";
 import {Asset} from 'expo-asset';
 import AppLoading from "expo-app-loading";
 import {Colors} from "../constants/Colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+
+
 
 import MyButton from "../components/MyButton";
 
@@ -21,6 +24,20 @@ function cacheImages(images) {
 
 const Auth = (props) => {
     const [loadAssets, setLoadAssets] = useState(false);
+    // wherever the useState is located
+    const [isBiometricSupported, setIsBiometricSupported] = useState(false);
+    // wherever the useState is located
+
+
+// Check if hardware supports biometrics
+    useEffect(() => {
+        (async () => {
+            const compatible = await LocalAuthentication.hasHardwareAsync();
+            setIsBiometricSupported(compatible);
+        })();
+    },[]);
+
+
 
     const _loadAssetsAsync = async () => {
         const imageAssets = cacheImages([
@@ -40,6 +57,21 @@ const Auth = (props) => {
             />
         );
     }
+
+
+    const handleBiometricAuth = async () => {
+        const savedBiometrics = await LocalAuthentication.isEnrolledAsync();
+        if (!savedBiometrics)
+            return Alert.alert(
+                'Biometric record not found',
+                'Please verify your identity with your password',
+                'OK',
+                () => fallBackToDefaultAuth()
+            );
+    }
+
+
+
 
     return (
 
@@ -88,13 +120,22 @@ const Auth = (props) => {
                              Have account? Signin
                         </Text>
                     </View>
+
+                    {/*In our JSX we conditionally render a text to see inform users if their device supports*/}
+                    <Text style={{
+                        color:'#fff'
+                    }}>
+                        {isBiometricSupported ? 'Your device is compatible with Biometrics'
+                        : 'Face or Fingerprint scanner is available on this device'}
+                    </Text>
                 </View>
+
 
                 <View style={styles.bottomText}>
                     <Text style={styles.clickText} onPress={() => {
                         console.log('WHERE UNA DEY SEE THIS MONEY')
                     }}>
-                        Use sumotrust
+                      Sign up with sumotrust
                     </Text>
                 </View>
             </ImageBackground>

@@ -4,15 +4,25 @@ import {StatusBar, StyleSheet, Text, View} from 'react-native';
 import TextInput from "./TextInput";
 import MyButton from "./MyButton";
 import {Colors} from "../constants/Colors";
+import {heightPercentageToDP as hp} from "react-native-responsive-screen";
 
 const SignIn = ({handleSubmit,errors,handleChange,handleBlur,touched,toggleForm}) => {
     return (
 
-        <>
+        <View style={{
+            flex:1,
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            flexDirection:'column',
+            backgroundColor: Colors.PrimaryDarkColor,
+            width:'100%',
+            height:hp('100%'),
+        }}>
 
 
 
-            <View style={{paddingHorizontal: 32, marginBottom: 1, width: '100%',}}>
+
+        <View style={{paddingHorizontal: 32, marginBottom: 1, width: '100%',}}>
                 <TextInput
                     icon='mail'
                     placeholder='Enter your email'
@@ -67,7 +77,8 @@ const SignIn = ({handleSubmit,errors,handleChange,handleBlur,touched,toggleForm}
                               Create new account
                           </Text>
                       </View>
-        </>
+
+        </View>
     );
 };
 

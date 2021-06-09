@@ -1,5 +1,5 @@
 import React, {useState, useRef} from 'react';
-import {StatusBar, Animated, Text, Image, FlatList, ImageBackground, View, StyleSheet, Dimensions} from 'react-native';
+import {StatusBar, Animated, Text, Image, View, StyleSheet, Dimensions} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import BackDrop from "./BackDrop";
 import AsyncStorage from "@react-native-async-storage/async-storage";

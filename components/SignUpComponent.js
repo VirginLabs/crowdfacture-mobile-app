@@ -4,11 +4,23 @@ import {StatusBar, StyleSheet, Text, View} from 'react-native';
 import TextInput from "./TextInput";
 import MyButton from "./MyButton";
 import {Colors} from "../constants/Colors";
+import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
+
 
 const SignUp = ({handleSubmit,errors,handleChange,handleBlur,touched,toggleForm}) => {
     return (
 
-        <>
+        <View style={{
+            flex:1,
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            flexDirection:'column',
+            backgroundColor: Colors.PrimaryDarkColor,
+            width:'100%',
+            height:hp('100%'),
+        }}>
+
+
             <View style={{paddingHorizontal: 32, marginBottom: 1, width: '100%',}}>
                 <TextInput
                     keyboardType='default'
@@ -128,7 +140,8 @@ const SignUp = ({handleSubmit,errors,handleChange,handleBlur,touched,toggleForm}
                    Login to your account
                 </Text>
             </View>
-        </>
+
+        </View>
     );
 };
 

@@ -7,21 +7,10 @@ import BackButton from "../components/BackBtn";
 import {Ionicons} from "@expo/vector-icons";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 import MyBottomSheet from "../components/BottomSheet";
+import SetPin from "../components/Forms/SetPin";
+import UpdatePassword from "../components/payments/PasswordUpdate";
 
 
-
-
-
-const SetPin = () => {
-    return (
-        <View>
-<Text>
-    PIN
-</Text>
-        </View>
-
-    )
-}
 
 let content;
 
@@ -30,15 +19,20 @@ const SecurityScreen = ({navigation}) => {
     const animation = useRef(new Animated.Value(0)).current
 
     //which content is shown in the bottom sheet
-    const [contentId, setContentId] = useState('');
-    if (contentId === '1') {
+    const [contentKey, setContentKey] = useState('');
+
+    if (contentKey === '1') {
         content = <SetPin theme={theme}/>
 
+    }
+    if (contentKey === '2') {
+        content = <UpdatePassword theme={theme}/>
     }
 
 
     const handleOpen = (id) => {
-        setContentId(id)
+        setContentKey(id)
+        console.log(contentKey)
         Animated.timing(animation, {
             toValue: 1,
             duration: 300,
@@ -49,6 +43,8 @@ const SecurityScreen = ({navigation}) => {
 
 
     const handleClose = () => {
+        setContentKey('')
+        console.log(contentKey)
         Keyboard.dismiss()
         Animated.timing(animation, {
             toValue: 0,
@@ -79,15 +75,14 @@ const SecurityScreen = ({navigation}) => {
                     <Ionicons name='shield' size={60} color={DayColors.primaryColor}/>
                 </View>
 
-
                 {
-                    SecButtons.map((({key, title, message, icon}) => (
-                        <TouchableOpacity key={key} style={[
+                    SecButtons.map((({id, title, message, icon}) => (
+                        <TouchableOpacity key={id} style={[
                             {
                                 backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee'
                             },
                             styles.securityButton]} activeOpacity={.9}
-                                          onPress={() => handleOpen(key)}>
+                                          onPress={() => handleOpen(id)}>
                             <Ionicons name={icon} size={22} color={theme === 'Dark' ?
                                 DayColors.cream
                                 : DayColors.dimGreen
@@ -136,13 +131,13 @@ const SecurityScreen = ({navigation}) => {
 
 const SecButtons = [
     {
-        key: '1',
+        id: '1',
         title: 'Withdrawal pin',
         message: 'Secure your funds anytime',
         icon: 'key'
     },
     {
-        key: '2',
+        id: '2',
         title: 'Update password',
         message: 'Update your private password anytime',
         icon: 'ios-lock-closed'

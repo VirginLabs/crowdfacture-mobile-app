@@ -68,11 +68,11 @@ const Login = (props) => {
 
     return (
 
-        <ScrollView    keyboardShouldPersistTaps='handled'
+        <ScrollView
+            keyboardShouldPersistTaps='handled'
                        showsHorizontalScrollIndicator={false}
                        scrollEnabled
                        showsVerticalScrollIndicator={false} contentContainerStyle={{
-            flex:1,
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: Colors.PrimaryDarkColor,

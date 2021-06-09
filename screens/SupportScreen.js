@@ -28,16 +28,21 @@ const SupportScreen = ({navigation}) => {
 
             <View style={styles.dialsWrap}>
                 <View style={styles.iconWrap}>
-                    <FontAwesome5 name='headset' size={60}/>
+                    <FontAwesome5 name='headset' size={60} color={DayColors.cream}/>
                 </View>
 
 
                 <View>
                     {
                         SupportButtons.map((({key, icon, title}) => (
-                            <TouchableOpacity key={key} style={styles.contactButton} activeOpacity={.9}
+                            <TouchableOpacity key={key} style={[
+                                {
+                                    backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee'
+                                },
+                                styles.contactButton]} activeOpacity={.9}
                                               onPress={() => console.log('copied')}>
-                                <Ionicons name={icon} size={20} color={DayColors.green}/>
+                                <Ionicons name={icon} size={20} color={theme === 'Dark' ?
+                                    DayColors.lemon : DayColors.green}/>
 
                                 <View style={{
                                     width: '60%',
@@ -45,6 +50,7 @@ const SupportScreen = ({navigation}) => {
                                     alignItems: 'center'
                                 }}>
                                     <Text style={{
+                                        color: theme === 'Dark' ? '#eee' : '#131313',
                                         fontSize: 16,
                                         fontFamily: 'Gordita-bold'
                                     }}>
@@ -54,8 +60,6 @@ const SupportScreen = ({navigation}) => {
                             </TouchableOpacity>
                         )))
                     }
-
-
                 </View>
 
 
@@ -116,18 +120,16 @@ const styles = StyleSheet.create({
         marginVertical: 16,
         width: 130,
         height: 130,
-        backgroundColor: DayColors.cream,
+        backgroundColor: 'rgba(34,34,34,0.9)',
         borderRadius: 100,
         justifyContent: 'center',
         alignItems: 'center'
-
     },
     contactButton: {
         marginVertical: 10,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-evenly',
-        backgroundColor: '#eee',
         width: wp('80%'),
         height: 60,
         borderRadius: 20

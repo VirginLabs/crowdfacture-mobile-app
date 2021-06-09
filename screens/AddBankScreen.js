@@ -1,13 +1,20 @@
-import React, {useContext, useRef} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import {FontAwesome} from "@expo/vector-icons";
-import {Animated, FlatList, Keyboard, Pressable, StatusBar, StyleSheet, Text, View} from 'react-native';
+import {
+    Animated, Easing,
+    FlatList,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    View
+} from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import {ThemeContext} from "../util/ThemeManager";
-import MyButton from "../components/MyButton";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
-import MyBottomSheet from "../components/BottomSheet";
 import AddBankForm from "../components/AddBankForm";
+import BottomSheet from "react-native-simple-bottom-sheet";
 
 
 const AccountList = ({bankName, bankAccount, theme}) => (
@@ -50,27 +57,10 @@ const AddBank = ({navigation}) => {
 
 
     const {theme} = useContext(ThemeContext);
-
-    const animation = useRef(new Animated.Value(0)).current
-
-    const handleOpen = () => {
-        Animated.timing(animation, {
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true
-        }).start();
-
-    }
+    const [sheetOpen, setSheetOpen] = useState(false);
 
 
-    const handleClose = () => {
-        Keyboard.dismiss()
-        Animated.timing(animation, {
-            toValue: 0,
-            duration: 200,
-            useNativeDriver: true
-        }).start()
-    }
+
 
     const BankDetail = ({item}) => (
         <AccountList theme={theme} bankName={item.BankName} bankAccount={item.AccountNumber}/>
@@ -93,24 +83,53 @@ const AddBank = ({navigation}) => {
                 YOUR LOCAL BANK DETAIL
             </Text>
 
-            {
-                Object.keys(BankAccounts).length < 3 &&
-                <MyButton action={handleOpen}  title='Add' textStyle={styles.textStyle} buttonStyle={styles.btnStyle}>
+
+       {/*         <MyButton action={() => setSheetOpen(prevState => !prevState)}  title='Add' textStyle={styles.textStyle} buttonStyle={styles.btnStyle}>
                     <FontAwesome name='plus' size={20}
                                  color={DayColors.primaryColor}/>
-                </MyButton>
-            }
+                </MyButton>*/}
+
+
+
 
 
        <FlatList contentContainerStyle={styles.wrap}
                  data={BankAccounts} renderItem={BankDetail} keyExtractor={item => item.id}/>
 
+                 <View style={{
+                     width:'100%',
+                     height:100,
+                     alignItems:'center',
+                     justifyContent:'center',
+                     marginBottom:90
+                 }}>
 
-            <MyBottomSheet theme={theme} animation={animation} handleClose={handleClose}>
+                     {
+                         Object.keys(BankAccounts).length < 3 &&
+                         <Text style={{
+                             fontFamily:'Gordita-bold',
+                             color: theme === 'Dark' ? DayColors.cream : "#131313"
+                         }}>
+                             DRAG TO ADD BANK DETAILS
+                         </Text>
+                     }
+                 </View>
+
+
+            <BottomSheet wrapperStyle={{
+           flex:1,
+                backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
+            }} isOpen={sheetOpen} sliderMaxHeight={600} sliderMinHeight={50}
+            animation={Easing.ease}
+                onOpen={() => setSheetOpen(true)}
+            >
+                {(onScrollEndDrag) => (
+                <ScrollView onScrollEndDrag={onScrollEndDrag}>
 
          <AddBankForm theme={theme}/>
-
-            </MyBottomSheet>
+                </ScrollView>
+                    )}
+            </BottomSheet>
         </Animated.View>
     );
 };
@@ -143,6 +162,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column'
     },
     top: {
+        marginTop:10,
         width: '100%',
     },
     title:{

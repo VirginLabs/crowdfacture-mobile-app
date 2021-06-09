@@ -824,7 +824,7 @@ export const clearMessage = () => (dispatch) => {
 
 
 const setAuthorizationHeader = (token, lastName) => {
-    const testObject = {'Token': token, 'user': lastName, 'exp': Date.now()};
+    const testObject = {'Token': token, 'user': lastName, 'exp': Date.now(), 'Authorization': true};
     const IdToken = `${token}`;
     localStorage.setItem('CRWDFCTRBearer', JSON.stringify(testObject));
     axios.defaults.headers.common['Authorization'] = IdToken;

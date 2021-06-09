@@ -45,7 +45,7 @@ const AddBankForm = ({theme}) => {
 
 
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+
 
 
         <View style={styles.addBankForm}>
@@ -132,7 +132,7 @@ const AddBankForm = ({theme}) => {
             <MyButton action={() => handleSubmit()} title='SUBMIT'
                       buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
         </View>
-        </TouchableWithoutFeedback>
+
     );
 };
 
@@ -141,7 +141,7 @@ const AddBankForm = ({theme}) => {
 const styles = StyleSheet.create({
 
     addBankForm: {
-        height: 500,
+        height: 400,
         alignItems: 'center',
         justifyContent: 'flex-start',
         alignContent:'center',

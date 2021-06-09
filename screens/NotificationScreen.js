@@ -1,25 +1,47 @@
 import React, {useContext} from "react";
-import {View, Text, Animated, Button, StyleSheet} from "react-native";
+import {View, Text, Animated, StatusBar, StyleSheet, ScrollView} from "react-native";
 import {ThemeContext} from "../util/ThemeManager";
-import {DarkColors} from "../constants/Colors";
+import {Colors, DarkColors} from "../constants/Colors";
+import BackButton from "../components/BackBtn";
 
-const NotificationScreen = ({ navigation }) => {
+const NotificationScreen = ({navigation}) => {
     const {theme, transitionValue} = useContext(ThemeContext);
     return (
-        <Animated.View style={[styles.container,  { backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
+        <ScrollView
+            keyboardShouldPersistTaps='handled'
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled
+            contentContainerStyle={[styles.container, {
+            backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
                 : "#f5f5f5"
         }]}>
-            <Text style={{ fontSize: 30 }}>This is a modal!</Text>
-            <Button onPress={() => navigation.goBack()} title="Go back" />
-        </Animated.View>
+            <View style={styles.top}>
+                <BackButton theme={theme} navigation={navigation}/>
+            </View>
+            <Text style={[
+                {
+                    color: theme === 'Dark' ? Colors.White : '#333',
+                },
+                styles.title]}>
+                Your Notification
+            </Text>
+        </ScrollView>
     );
 }
 
 
 const styles = StyleSheet.create({
-    container:{
-        flex: 1, alignItems: 'center', justifyContent: 'center'
-    }
+    container: {
+        paddingTop: StatusBar.currentHeight,
+        paddingLeft: 10,
+        paddingRight: 10,
+        alignItems: 'center', justifyContent: 'flex-start',
+        flexDirection: 'column'
+    },
+    top: {
+        width: '100%',
+    },
 })
 
 

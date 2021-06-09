@@ -1,6 +1,6 @@
 import React, {useRef} from 'react';
 import {View, StyleSheet, TouchableOpacity, Animated, Text} from 'react-native';
-import {MaterialIcons, FontAwesome} from '@expo/vector-icons';
+import {MaterialIcons, FontAwesome, FontAwesome5} from '@expo/vector-icons';
 
 const Tab = ({color, tab, onPress, icon, size, textSize, textColor}) => {
 
@@ -9,7 +9,11 @@ const Tab = ({color, tab, onPress, icon, size, textSize, textColor}) => {
 
         <TouchableOpacity activeOpacity={0.5} onPress={onPress} style={styles.container}>
 
-            {icon && <FontAwesome name={icon} size={size} color={color}/>}
+            {
+tab.name === 'Dashboard' ?
+            <MaterialIcons name={icon} size={size} color={color}/>
+            : <FontAwesome5 name={icon} size={size} color={color}/>
+            }
             <Text
                 style={{color: textColor, fontFamily: 'Poppins-bold', fontSize: textSize}}
 

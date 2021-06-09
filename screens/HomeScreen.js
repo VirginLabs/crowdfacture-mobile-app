@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect, useRef} from 'react';
+import React, {useContext, useState} from 'react';
 import {ThemeContext} from "../util/ThemeManager";
 import {
     Pressable,
@@ -150,7 +150,7 @@ const HomeScreen = (props) => {
                     </Modal>
 
 
-                    <TouchableOpacity activeOpacity={0.7} style={styles.investBtn}>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('Projects')} activeOpacity={0.7} style={styles.investBtn}>
 
                         <Text style={{
                             fontSize: 14,
@@ -228,7 +228,11 @@ const HomeScreen = (props) => {
 
                         {
                             Projects.map((({id, projectName, Active, SoldOut, UpComing, target, valuePerUnit}) => (
-                                <ProjectCard key={id} theme={theme} projectTitle={projectName} Active={Active} SoldOut={SoldOut}
+                                <ProjectCard action={() =>  props.navigation.navigate('Project', {
+                                        projectId: id,
+                                    })
+
+                                } key={id} theme={theme} projectTitle={projectName} Active={Active} SoldOut={SoldOut}
                                              UpComing={UpComing} target={target}
                                              pricePerUnit={valuePerUnit}/>
                             )))

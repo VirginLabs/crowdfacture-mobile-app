@@ -1,6 +1,5 @@
 import React, {useCallback, useMemo, useRef} from 'react';
 import {View, Text, StyleSheet, Animated, TouchableOpacity, Dimensions, Pressable} from 'react-native';
-import BottomSheet, {useBottomSheet} from '@gorhom/bottom-sheet';
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import {FontAwesome} from "@expo/vector-icons";
@@ -77,8 +76,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
-
+        justifyContent: 'center',
     },
     cover: {
         backgroundColor: "rgba(0,0,0,.5)",
@@ -89,6 +87,7 @@ const styles = StyleSheet.create({
         top: Dimensions.get("window").height,
         left: 0,
         right: 0,
+        bottom:0,
         height: '100%',
         justifyContent: 'flex-end'
     },
@@ -108,6 +107,7 @@ const styles = StyleSheet.create({
         height: 40,
 
     },
+
 
 });
 

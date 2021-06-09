@@ -5,9 +5,9 @@ import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
 import MyButton from "./MyButton";
 
-const ProjectCard = ({image,theme, projectTitle, target, totalCap, pricePerUnit, projectId,UpComing, Active, SoldOut}) => {
+const ProjectCard = ({image,theme, projectTitle, action, target, totalCap, pricePerUnit, projectId,UpComing, Active, SoldOut}) => {
     return (
-        <TouchableOpacity activeOpacity={0.6} style={[
+        <TouchableOpacity onPress={action} activeOpacity={0.6} style={[
             {
                 backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkFour : '#fff',
             },

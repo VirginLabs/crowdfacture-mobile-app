@@ -32,9 +32,8 @@ const AnimatedScrollView = ({children, routeName, routeMessage, style, navigatio
 
     /*   styles[`container${theme}`]*/
     return (
-        <View style={[styles.container, theme === 'Dark' ? {
-                backgroundColor: DarkColors.primaryDarkThree }: {
-                backgroundColor: "#f5f5f5"},
+        <View style={[styles.container,  {backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
+            "#f5f5f5"},
         ]
         }>
             <ScrollView
@@ -60,9 +59,9 @@ const AnimatedScrollView = ({children, routeName, routeMessage, style, navigatio
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style={style}>
+
                     {children}
-                </View>
+
             </ScrollView>
         </View>
     );
@@ -71,7 +70,7 @@ const AnimatedScrollView = ({children, routeName, routeMessage, style, navigatio
 const styles = StyleSheet.create({
     container: {
         paddingTop: StatusBar.currentHeight,
-        flex: 1,
+flex:1
 
     },
     containerLight: {
