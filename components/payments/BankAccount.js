@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Text, View, StyleSheet, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import {Text, View, StyleSheet, TouchableWithoutFeedback, Keyboard, ActivityIndicator} from 'react-native';
 import {Colors, DayColors} from "../../constants/Colors";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 import TextInput from "../TextInput";
@@ -18,7 +18,7 @@ const schema = Yup.object().shape({
 });
 
 
-const BankAccount = ({theme}) => {
+const BankAccount = ({theme,getUniqueAccountNumb, ID,Phone, userDetails,loading}) => {
 
 
     const {
@@ -32,7 +32,11 @@ const BankAccount = ({theme}) => {
         },
         onSubmit: (values) => {
             const {BVN} = values;
-            alert(`BVN: ${values.BVN}`)
+            const bvnData = new FormData()
+            bvnData.append('BVN', BVN)
+            bvnData.append('userId', ID)
+
+            getUniqueAccountNumb(bvnData)
         }
     });
 
@@ -90,8 +94,14 @@ const BankAccount = ({theme}) => {
                 {errors.BVN}
             </Text>
 
+            {
+                loading && <ActivityIndicator size="large" color={Colors.Primary}/>
+            }
+
             <MyButton action={() => handleSubmit()} title='SUBMIT'
                       buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
+
+
 
         </View>
         </TouchableWithoutFeedback>

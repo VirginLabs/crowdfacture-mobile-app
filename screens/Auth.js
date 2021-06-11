@@ -1,6 +1,6 @@
 import React, {useState,useEffect} from 'react'
 import * as LocalAuthentication from 'expo-local-authentication'
-import {View, StyleSheet, Image, Text, ImageBackground, StatusBar} from "react-native";
+import {View, StyleSheet,ActivityIndicator, Image,Alert, Text, ImageBackground, StatusBar} from "react-native";
 import {RFPercentage, RFValue} from "react-native-responsive-fontsize";
 import {Asset} from 'expo-asset';
 import AppLoading from "expo-app-loading";
@@ -58,17 +58,59 @@ const Auth = (props) => {
         );
     }
 
+    const onFaceId = async () => {
+        try {
+            // Checking if device is compatible
+            const isCompatible = await LocalAuthentication.hasHardwareAsync();
 
-    const handleBiometricAuth = async () => {
+            if (!isCompatible) {
+                throw new Error('Your device isn\'t compatible.')
+            }
+
+            // Checking if device has biometrics records
+            const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+            if (!isEnrolled) {
+                throw new Error('No Faces / Fingers found.')
+            }
+
+            // Authenticate user
+
+
+    const auth =  await LocalAuthentication.authenticateAsync();
+            if(auth.success){
+                Alert.alert('Authenticated', 'Welcome back !')
+            }else{
+                 Alert.alert(
+                    'Biometric record not found',
+                    'Please verify your identity with your password')
+            }
+
+
+
+
+        } catch (error) {
+            Alert.alert('An error as occured', error?.message);
+        }
+    };
+
+
+
+    const handleBiometric = async () => {
         const savedBiometrics = await LocalAuthentication.isEnrolledAsync();
-        if (!savedBiometrics)
+        if (!savedBiometrics) {
+          //  Alert.alert('Authenticated', 'Welcome back !')
             return Alert.alert(
                 'Biometric record not found',
                 'Please verify your identity with your password',
                 'OK',
-                () => fallBackToDefaultAuth()
+                () => onFaceId()
             );
+        }
     }
+
+
+
 
 
 
@@ -106,7 +148,7 @@ const Auth = (props) => {
                     <View style={styles.buttonsWrap}>
                         <MyButton action={() => props.navigation.navigate('Login')} title='SIGN UP'
                                   buttonStyle={styles.buttonStyle} textStyle={styles.buttonText}/>
-                        <MyButton buttonStyle={styles.smBtn}>
+                        <MyButton buttonStyle={styles.smBtn} action={onFaceId}>
 
                             <Image source={require('../assets/fingerprint.png')} style={styles.btnImage}/>
                         </MyButton>
@@ -122,12 +164,7 @@ const Auth = (props) => {
                     </View>
 
                     {/*In our JSX we conditionally render a text to see inform users if their device supports*/}
-                    <Text style={{
-                        color:'#fff'
-                    }}>
-                        {isBiometricSupported ? 'Your device is compatible with Biometrics'
-                        : 'Face or Fingerprint scanner is available on this device'}
-                    </Text>
+
                 </View>
 
 

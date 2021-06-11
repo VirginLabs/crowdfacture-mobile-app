@@ -8,6 +8,10 @@ import {useFormik} from "formik";
 import TextInput from "../TextInput";
 import MyButton from "../MyButton";
 
+import PayWithFlutterwave from 'flutterwave-react-native';
+import PayWithFlutterwaveV2 from "flutterwave-react-native";
+
+
 
 const phoneRegExp = /^[+]?\d*$/
 const schema = Yup.object().shape({
@@ -19,7 +23,7 @@ const schema = Yup.object().shape({
 });
 
 
-const FlutterWave = ({theme}) => {
+const FlutterWave = ({theme, userEmail}) => {
 
     const {
         handleChange, handleSubmit, handleBlur,
@@ -35,6 +39,24 @@ const FlutterWave = ({theme}) => {
             alert(`Amount: ${values.Amount}`)
         }
     });
+
+    const handleOnRedirect = () =>{
+
+    }
+
+
+   const onSuccess = (data) => {
+        console.log('success', data)
+        // You can get the transaction reference from successful transaction charge response returned and handle your transaction verification here
+    }
+
+    const onCancel = () => {
+        console.log('error', 'Transaction was Cancelled!')
+    }
+
+    const onError = () => {
+        // an error occoured
+    }
 
     return (
         <View style={styles.flutterWave}>
@@ -57,6 +79,7 @@ const FlutterWave = ({theme}) => {
                 <TextInput
                     color={theme === 'Dark' ? '#eee' : '#131313'}
                     icon='money'
+                    keyboardType='numeric'
                     placeholder='Enter Amount'
                     autoCapitalize='none'
                     keyboardAppearance='dark'
@@ -72,8 +95,21 @@ const FlutterWave = ({theme}) => {
                 {errors.Amount}
             </Text>
 
-            <MyButton action={() => handleSubmit()} title='SUBMIT'
-                      buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
+          {/*  <MyButton action={() => handleSubmit()} title='SUBMIT'
+                      buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>*/}
+
+
+            <PayWithFlutterwaveV2
+
+            onRedirect={handleOnRedirect}
+            options={{
+                txref: 'txref',
+                PBFPubKey: 'FLWPUBK-9abc4f038a6908015c127b8b99cb4096-X',
+                customer_email: 'customer-email@example.com',
+                amount: values.Amount,
+                currency: 'NGN',
+            }}
+        />
         </View>
     );
 };

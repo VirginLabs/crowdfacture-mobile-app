@@ -1,4 +1,3 @@
-import axios from "axios";
 
 import {
     LOADING_DATA,
@@ -9,69 +8,13 @@ import {
     RESET_UI,
     BANK_DETAILS,
     CLEAR_MESSAGE, SET_MESSAGE,
-    SUMO_AUTH, SET_OTP, PIN_LOADING, SET_NOTIFICATION, LOADING_FUNDING, SET_USER_PROJECTS
+    SUMO_AUTH, SET_OTP, PIN_LOADING, SET_USER_PROJECTS
 } from "../types";
+import API_KEY from '../../constants/PRIVATE'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
-/*export const signUpUser = (userData) => (dispatch) => {
-    dispatch({
-        type: LOADING_DATA,
-    })
-    axios.post('/register.php',  userData)
-        .then((res) => {
-            dispatch({
-                type: SIGNUP_USER,
-                payload: res.data
-            })
-            console.log(res.data)
-        }).catch((err) => {
 
-        console.log(err)
-    })
-
-
-}*/
-
-
-async function fetchWithTimeout(resource, options) {
-    const {timeout = 8000} = options;
-
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
-
-    /*const response = await fetch(resource, {
-        ...options,
-        signal: controller.signal
-    });*/
-
-
-    const promise = await Promise.race([
-        fetch(resource, {
-            ...options,
-            signal: controller.signal
-        })
-            .then(response => response.json()),
-
-    ]);
-
-    clearTimeout(id);
-
-    return promise;
-}
-
-async function loadFunc() {
-    try {
-        const response = await fetchWithTimeout('https://crowdfacture.net/api/v0/php/allprojects.php', {
-            timeout: 6000
-        });
-        const games = await response.json();
-        return games;
-    } catch (error) {
-        // Timeouts if the request takes
-        // longer than 6 seconds
-        console.log(error.name === 'AbortError');
-    }
-}
 
 
 export const getUser = (phoneNumber) => (dispatch) => {
@@ -89,7 +32,7 @@ export const getUser = (phoneNumber) => (dispatch) => {
 
 
     const promise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/user.php', requestOptions)
+        fetch(`https://crowdfacture.net/api/v0/php/user.php?apiKey=${API_KEY}`, requestOptions)
             .then(response => response.json()),
 
     ]);
@@ -100,13 +43,11 @@ export const getUser = (phoneNumber) => (dispatch) => {
                 type: SET_USER,
                 payload: result
             })
-            return true;
         } else {
             dispatch({
                 type: SET_ERROR,
                 payload: result.message
             })
-            return false
             //console.log(result)
         }
     })
@@ -128,7 +69,7 @@ export const signUpUser = (userData,history) => (dispatch) => {
     };
 
     const promise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/register.php', requestOptions)
+        fetch(`https://crowdfacture.net/api/v0/php/register.php?apiKey=${API_KEY}`, requestOptions)
             .then(response => response.json()),
     ]);
 
@@ -178,7 +119,7 @@ export const signUpUser = (userData,history) => (dispatch) => {
 
 
 //Login user
-export const loginUser = (user,history) => (dispatch) => {
+export const loginUser = (user,navigation) => (dispatch) => {
     dispatch({
         type: LOADING_DATA,
     })
@@ -189,7 +130,7 @@ export const loginUser = (user,history) => (dispatch) => {
     };
 
     const loginPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/login.php', Options)
+        fetch(`https://crowdfacture.net/api/v0/php/login.php?apiKey=${API_KEY}`, Options)
             .then(response => response.json()),
     ]);
     loginPromise.then(result => {
@@ -201,17 +142,20 @@ export const loginUser = (user,history) => (dispatch) => {
                         payload: "Please verify your email"
                     })
                 } else {
-                    setAuthorizationHeader(result.member.Token, result.member.LastName);
+
+                    dispatch(getUser(result.member.Phone))
+
+
+
+                    setAuthorizationHeader(result.member.Token, result.member.LastName)
                     /* dispatch({
                            type: SET_USER,
                            payload: result.member
                        })*/
 
-                    dispatch(getUser(result.member.Phone))
 
-                    setTimeout(() => {
-                        history.push('/dashboard')
-                    }, 1500)
+
+
 
 
                 }
@@ -252,7 +196,7 @@ export const sumotrustLogin = (userDetails) => (dispatch) => {
     };
 
     const sumotrustPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/sumotrustlogin.php', requestOptions)
+        fetch(`https://crowdfacture.net/api/v0/php/sumotrustlogin.php?apiKey=${API_KEY}`, requestOptions)
             .then(response => response.json()),
     ]);
 
@@ -303,7 +247,7 @@ export const sumotrustAuth = (userDetails) => (dispatch) => {
 
 
     const sumoPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/sumotrustregister.php', requestOptions)
+        fetch(`https://crowdfacture.net/api/v0/php/sumotrustregister.php?apiKey=${API_KEY}`, requestOptions)
             .then(response => response.json()),
     ]);
 
@@ -347,7 +291,7 @@ export const addBank = (bankDetails, Phone) => (dispatch) => {
     };
 
     const addBankPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/addbank.php', Options)
+        fetch(`https://crowdfacture.net/api/v0/php/addbank.php?apiKey=${API_KEY}`, Options)
             .then(response => response.json()),
     ]);
 
@@ -394,7 +338,7 @@ export const fundUsingSumotrust = (details) => (dispatch) => {
 
     }
     const fundingPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/fundviasumotrust.php', fundingOptions)
+        fetch(`https://crowdfacture.net/api/v0/php/fundviasumotrust.php?apiKey=${API_KEY}`, fundingOptions)
             .then((response) => response.json())
     ]);
 
@@ -433,7 +377,7 @@ export const updatePassword = (passwordData) => (dispatch) => {
     };
 
     const updatePasswordPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/updatepassword.php', Options)
+        fetch(`https://crowdfacture.net/api/v0/php/updatepassword.php?apiKey=${API_KEY}`, Options)
             .then(response => response.json()),
     ]);
 
@@ -475,7 +419,7 @@ export const updateWithdrawalPin = (pinDetails) => (dispatch) => {
     }
 
     const withdrawalPinPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/withdrawalpin.php', options)
+        fetch(`https://crowdfacture.net/api/v0/php/withdrawalpin.php?apiKey=${API_KEY}`, options)
             .then(response => response.json()),
     ]);
 
@@ -502,7 +446,7 @@ export const updateWithdrawalPin = (pinDetails) => (dispatch) => {
 }
 
 
-//user comfirms OTP
+//user confirms OTP
 export const sendOtp = (otp) => (dispatch) => {
     dispatch({
         type: PIN_LOADING
@@ -514,7 +458,7 @@ export const sendOtp = (otp) => (dispatch) => {
     }
 
     const otpPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/pinotp.php', otpOptions)
+        fetch(`https://crowdfacture.net/api/v0/php/pinotp.php?apiKey=${API_KEY}`, otpOptions)
             .then(response => response.json()),
     ])
 
@@ -554,7 +498,7 @@ export const updateUserImage = (userImage) => (dispatch) => {
 
 
     const profileImagePromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/uploadprofileimage.php', Options)
+        fetch(`https://crowdfacture.net/api/v0/php/uploadprofileimage.php?apiKey=${API_KEY}`, Options)
             .then(response => response.json()),
     ])
 
@@ -595,7 +539,7 @@ export const saveProject = (data) => (dispatch) => {
     }
 
     const saveProjectPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/saveproject.php', saveProjectOptions)
+        fetch(`https://crowdfacture.net/api/v0/php/saveproject.php?apiKey=${API_KEY}`, saveProjectOptions)
             .then(res => res.json())
     ])
 
@@ -619,7 +563,7 @@ export const unSaveProject = (data) => (dispatch) => {
     }
 
     const unSaveProjectPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/removeproject.php', Options)
+        fetch(`https://crowdfacture.net/api/v0/php/removeproject.php?apiKey=${API_KEY}`, Options)
             .then(res => res.json())
     ])
 
@@ -648,7 +592,7 @@ export const getUserProjects = (userId) => (dispatch) => {
     ])*/
 
     const getUserProjectPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/transactions.php', Options).then(res => res.json())
+        fetch(`https://crowdfacture.net/api/v0/php/transactions.php?apiKey=${API_KEY}`, Options).then(res => res.json())
     ])
 
 
@@ -670,7 +614,7 @@ export const getUserProjects = (userId) => (dispatch) => {
 
 //user gets unique account number
 
-export const getUniqueAccountNumb = (details, phoneNumber) => (dispatch) => {
+export const getUniqueAccountNumb = (details) => (dispatch) => {
     dispatch({
         type: LOADING_DATA
     })
@@ -681,7 +625,7 @@ export const getUniqueAccountNumb = (details, phoneNumber) => (dispatch) => {
     }
 
     const accountNumberPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/getaccountnumber.php', Options)
+        fetch(`https://crowdfacture.net/api/v0/php/getaccountnumber.php?apiKey=${API_KEY}`, Options)
             .then((res) => res.json())
     ])
     accountNumberPromise.then((res) => {
@@ -720,14 +664,9 @@ export const buyUnitAction = (details, Phone) => (dispatch) => {
         body: details
     }
 
-    /*  userId
-      numberOfUnit
-      totalAmount
-      projectId
-      totalPercentageReturn*/
 
     const unitPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/buyunit.php', options)
+        fetch(`https://crowdfacture.net/api/v0/php/buyunit.php?apiKey=${API_KEY}`, options)
             .then((res) => res.json())
     ])
 
@@ -738,7 +677,8 @@ export const buyUnitAction = (details, Phone) => (dispatch) => {
                 payload: res.message
             })
 
-            dispatch(getUser(Phone))
+            console.log(res)
+           // dispatch(getUser(Phone))
 
         } else {
             dispatch({
@@ -769,7 +709,7 @@ export const forgotPassword = (userData) => (dispatch) => {
 
 
 
-    const resetPromise = Promise.race([fetch("https://crowdfacture.net/api/v0/php/reset-password.php",
+    const resetPromise = Promise.race([fetch(`https://crowdfacture.net/api/v0/php/reset-password.php?apiKey=${API_KEY}`,
         options)
         .then(response => response.json())
     ])
@@ -794,14 +734,21 @@ export const forgotPassword = (userData) => (dispatch) => {
 
 
 //user logs out
-export const logoutUser = (history) => (dispatch) => {
+export const logoutUser = (navigation) => async (dispatch) => {
+    dispatch({type: SET_UNAUTHENTICATED});
+    dispatch({type: RESET_UI})
+       // localStorage.removeItem('CRWDFCTRBearer');
+        //localStorage.removeItem('persist:crowdfacture');
+       // delete axios.defaults.headers.common['Authorization'];
 
-    history.push('/')
-        localStorage.removeItem('CRWDFCTRBearer');
-        localStorage.removeItem('persist:crowdfacture');
-        delete axios.defaults.headers.common['Authorization'];
-        dispatch({type: SET_UNAUTHENTICATED});
-        dispatch({type: RESET_UI})
+    try {
+        await AsyncStorage.removeItem('CRWDFCTRBearer');
+        return true;
+    }
+    catch(exception) {
+        return false;
+    }
+
 
 
     // window.location.href = '/'
@@ -823,9 +770,13 @@ export const clearMessage = () => (dispatch) => {
 };
 
 
-const setAuthorizationHeader = (token, lastName) => {
+const setAuthorizationHeader = async (token, lastName) => {
     const testObject = {'Token': token, 'user': lastName, 'exp': Date.now(), 'Authorization': true};
     const IdToken = `${token}`;
-    localStorage.setItem('CRWDFCTRBearer', JSON.stringify(testObject));
-    axios.defaults.headers.common['Authorization'] = IdToken;
+    try {
+        await AsyncStorage.setItem('CRWDFCTRBearer', JSON.stringify(testObject));
+     } catch (err) {
+    console.log('Error @A_first_time_launch: ', err);
+}
+
 };

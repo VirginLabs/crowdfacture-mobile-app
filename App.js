@@ -10,12 +10,15 @@ import { NavigationContainer,DefaultTheme} from '@react-navigation/native';
 // In theory you don't have to install `react-native-root-siblings` because it's a dep of root-toast
 // But you can install it explicitly if your editor complains about it.
 import { RootSiblingParent } from 'react-native-root-siblings';
-import { Provider } from 'react-redux';
+import {connect, Provider} from 'react-redux';
 // Add
 import { PersistGate } from 'redux-persist/integration/react';
 
 import {persistor, store} from "./redux/store";
 import {DarkColors} from "./constants/Colors";
+import PropTypes from "prop-types";
+import mapStateToProps from "react-redux/lib/connect/mapStateToProps";
+import NavManager from "./Naviagtions/NavManager";
 enableScreens()
 
 const fetchFonts = () => {
@@ -34,7 +37,7 @@ const fetchFonts = () => {
 
 
 
-export default function App(props) {
+const App = (props)  =>{
 
     const {theme} = useContext(ThemeContext);
 
@@ -93,7 +96,7 @@ const navTheme = DefaultTheme;
                     <ThemeProvider>
                             <TabBarProvider>
                                 <RootSiblingParent>
-                                    <MyNavigation/>
+                         <NavManager/>
                                 </RootSiblingParent>
 
 
@@ -108,4 +111,8 @@ const navTheme = DefaultTheme;
 </Provider>
     );
 }
+
+
+
+export default (App)
 

@@ -108,7 +108,9 @@ export const ProfileStackNav = () => {
     )
 }
 
-export const MyNavigation = () => {
+export const MyNavigation = ({authenticated}) => {
+
+    console.log(authenticated)
     return (
         <CFStackNavigator.Navigator
             keyboardHandlingEnabled={true}
@@ -124,23 +126,34 @@ animationEnabled: false,
                 gestureDirection:'horizontal',
             }}
         >
-            <CFStackNavigator.Screen name='Auth' component={Auth}/>
-            <CFStackNavigator.Screen name='Login' component={Login}/>
-            <CFStackNavigator.Screen name='Dashboard' component={TabNavigator}/>
-            <CFStackNavigator.Screen name='Notification' component={PopupNavigation}/>
-            <StartStackNavigator.Screen name='Referral' component={ReferralScreen}/>
-            <StartStackNavigator.Screen name='AddCash' component={AddCashScreen}/>
-            <StartStackNavigator.Screen name='AddBank' component={AddBankScreen}/>
-            <StartStackNavigator.Screen name='Favourites' component={FavouriteScreen}/>
-            <StartStackNavigator.Screen name='Liquidate' component={LiquidateScreen}/>
-            <StartStackNavigator.Screen name='Exchange' component={ExchangeScreen}/>
-            <StartStackNavigator.Screen name='Support' component={SupportScreen}/>
-            <StartStackNavigator.Screen name='Calculator' component={CalculatorScreen}/>
-            <StartStackNavigator.Screen name='Dividends' component={DividendScreen}/>
-            <StartStackNavigator.Screen name='Security' component={SecurityScreen}/>
-            <StartStackNavigator.Screen name='Reports' component={ReportsScreen}/>
-            <StartStackNavigator.Screen name='Project' component={ProjectScreen}/>
 
+
+            { authenticated ?
+                <>
+                    <CFStackNavigator.Screen name='Dashboard' component={TabNavigator}/>
+                    <CFStackNavigator.Screen name='Notification' component={PopupNavigation}/>
+                    <StartStackNavigator.Screen name='Referral' component={ReferralScreen}/>
+                    <StartStackNavigator.Screen name='AddCash' component={AddCashScreen}/>
+                    <StartStackNavigator.Screen name='AddBank' component={AddBankScreen}/>
+                    <StartStackNavigator.Screen name='Favourites' component={FavouriteScreen}/>
+                    <StartStackNavigator.Screen name='Liquidate' component={LiquidateScreen}/>
+                    <StartStackNavigator.Screen name='Exchange' component={ExchangeScreen}/>
+                    <StartStackNavigator.Screen name='Support' component={SupportScreen}/>
+                    <StartStackNavigator.Screen name='Calculator' component={CalculatorScreen}/>
+                    <StartStackNavigator.Screen name='Dividends' component={DividendScreen}/>
+                    <StartStackNavigator.Screen name='Security' component={SecurityScreen}/>
+                    <StartStackNavigator.Screen name='Reports' component={ReportsScreen}/>
+                    <StartStackNavigator.Screen name='Project' component={ProjectScreen}/>
+
+                </>
+                :
+                <>
+
+                    <CFStackNavigator.Screen name='Auth' component={Auth}/>
+                    <CFStackNavigator.Screen name='Login' component={Login}/>
+
+                </>
+            }
         </CFStackNavigator.Navigator>
     )
 
@@ -161,7 +174,7 @@ function PopupNavigation() {
 }
 
 
-export const MyStartNavigation = () => {
+export const MyStartNavigation = ({authentication}) => {
     return (
         <StartStackNavigator.Navigator
 

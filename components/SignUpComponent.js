@@ -1,18 +1,101 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 
-import {StatusBar, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, StatusBar, StyleSheet, Text, View} from 'react-native';
 import TextInput from "./TextInput";
 import MyButton from "./MyButton";
 import {Colors} from "../constants/Colors";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
+import {useFormik} from "formik";
+import * as Yup from "yup";
+import PropTypes from "prop-types";
+import {clearErrors, clearMessage, loginUser, signUpUser} from "../redux/actions/user-action";
+import {connect} from "react-redux";
+import ToastMessage from "./Toast";
+
+const phoneRegExp = /^[+]?\d*$/
+const LoginSchema = Yup.object().shape({
+    password: Yup.string()
+        .min(2, "Password is Too short")
+        .max(50, "Password is Too long")
+        .required("Password is Required"),
+    firstName: Yup.string()
+        .min(2, "First Name is Too short")
+        .max(50, "First Name Too long")
+        .required("First Name Required"),
+    lastName: Yup.string()
+        .min(2, "Last Name is Too short")
+        .max(50, "Last Name is Too long")
+        .required("Last Name is Required"),
+    phone: Yup.string()
+        .matches(phoneRegExp, 'Wrong input')
+        .min(2, "Phone number is Too short")
+        .required("Phone number is required"),
+    email: Yup.string()
+        .email("Invalid email")
+        .required("Email is required")
+});
 
 
-const SignUp = ({handleSubmit,errors,handleChange,handleBlur,touched,toggleForm}) => {
+const SignUp = (props) => {
+
+const {toggleForm,navigation} = props
+
+
+    const {toggleAuth, clearMessage, clearErrors, signUpUser} = props
+    const {error, message, loading} = props.user
+
+
+    const {
+        handleChange, handleSubmit, handleBlur,
+        values,
+        errors,
+        touched
+    } = useFormik({
+        validationSchema: LoginSchema,
+        initialValues: {
+            firstName: '', lastName: '', phone: '', referral: '', email: '', password: '',
+        },
+        onSubmit: (values) => {
+            const {firstName, lastName, phone, referral, email, password} = values;
+            const userData = new FormData();
+            userData.append("firstName", firstName);
+            userData.append("lastName", lastName);
+            userData.append("email", email);
+            userData.append("phoneNumber", phone);
+            userData.append("referralCode", referral);
+            userData.append("password", password);
+            signUpUser(userData,navigation)
+        }
+    });
+
+
+
+    useEffect(() => {
+
+        return () => {
+            setTimeout(() => {
+                clearErrors()
+            }, 3500)
+        }
+
+    }, [error])
+
+    useEffect(() => {
+
+        return () => {
+            setTimeout(() => {
+                clearMessage()
+            }, 3500)
+        }
+
+    }, [message])
+
+
     return (
 
         <View style={{
             flex:1,
-            justifyContent: 'flex-start',
+            justifyContent: 'center',
             alignItems: 'center',
             flexDirection:'column',
             backgroundColor: Colors.PrimaryDarkColor,
@@ -133,6 +216,11 @@ const SignUp = ({handleSubmit,errors,handleChange,handleBlur,touched,toggleForm}
             <MyButton action={() => handleSubmit()} title='SIGN UP'
                       buttonStyle={styles.loginButton} textStyle={styles.buttonText}/>
 
+
+            {
+                loading && <ActivityIndicator size="large" color={Colors.Primary}/>
+            }
+
             <View  style={{
                 padding:8, width:'75%', alignItems:'center'
             }}>
@@ -140,6 +228,13 @@ const SignUp = ({handleSubmit,errors,handleChange,handleBlur,touched,toggleForm}
                    Login to your account
                 </Text>
             </View>
+
+
+            {message &&
+            <ToastMessage message={message} type='message'/>
+            }
+
+            {error &&  <ToastMessage message={error} type='error'/>}
 
         </View>
     );
@@ -166,4 +261,25 @@ const styles = StyleSheet.create({
     errorText: {fontSize: 14, alignItems: "flex-start", width: '75%', color: '#FF5A5F', padding: 8}
 
 })
-export default SignUp;
+
+
+SignUp.propTypes = {
+    data: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+    signUpUser: PropTypes.func.isRequired,
+    clearErrors: PropTypes.func.isRequired,
+    clearMessage: PropTypes.func.isRequired,
+}
+const mapActionToPops = {
+    signUpUser,
+    clearErrors,
+    clearMessage
+}
+
+
+const mapStateToProps = (state) => ({
+    data: state.data,
+    user: state.user,
+})
+
+export default connect(mapStateToProps, mapActionToPops)(SignUp);

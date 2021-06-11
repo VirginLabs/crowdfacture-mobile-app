@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
 import BottomSheet from 'react-native-simple-bottom-sheet';
 import {
     Animated,
@@ -9,7 +9,7 @@ import {
     StyleSheet,
     Text,
     TouchableOpacity,
-    View, Button, StatusBar, Modal, Alert
+    View, Button, StatusBar, Modal, Alert, ActivityIndicator, TextInput as RNTextInput, Easing
 } from 'react-native';
 import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
@@ -20,6 +20,11 @@ import {useFormik} from "formik";
 import * as Yup from "yup";
 import TextInput from "../components/TextInput";
 import MyButton from "../components/MyButton";
+import {getProject} from "../redux/actions/data-action";
+import {buyUnitAction, clearErrors, clearMessage, saveProject, unSaveProject} from "../redux/actions/user-action";
+import {connect} from "react-redux";
+import PropTypes from "prop-types";
+import ToastMessage from "../components/Toast";
 
 
 const phoneRegExp = /^[+]?\d*$/
@@ -30,21 +35,41 @@ const schema = Yup.object().shape({
 });
 
 
-const ProjectScreen = ({route, navigation}) => {
+const ProjectScreen = (props) => {
 
 
+const {route, navigation} = props
+    const [total, setTotal] = useState(0)
     const {theme} = useContext(ThemeContext);
+    const [sheetOpen, setSheetOpen] = useState(false);
 
-    const animation = useRef(new Animated.Value(0)).current
+    const [buyUnitsState, setBuyUnitsState] = useState(false)
+    const {projectId} = route.params;
+
+    const {error, loading, message, userData: {member: {LastName, ID, Phone}}} = props.user
+    const {
+        getProject, buyUnitAction, saveProject,
+        unSaveProject,
+        clearMessage,
+        clearErrors
+    } = props
+    const {
+        project,
+        loadingProject
+    } = props.data
+
+     useEffect(() => {
+        const formData = new FormData()
+        formData.append('projectId', projectId.toString())
+        getProject(formData)
+
+    }, [projectId]);
+
+
     const panelRef = useRef(null);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const toggleModal = () => {
-        setIsModalVisible(prevState => !prevState);
-    }
-
     const textColor = theme === 'Dark' ? '#eee' : '#333'
 
-    const {projectId} = route.params;
+
 
     const {
         handleChange, handleSubmit, handleBlur,
@@ -58,9 +83,26 @@ const ProjectScreen = ({route, navigation}) => {
         },
         onSubmit: (values) => {
             const {number} = values;
-            alert(`number: ${values.number}`)
+
+            const buyData = new FormData()
+            buyData.append('userId', ID)
+            buyData.append('totalAmount', total)
+            buyData.append('numberOfUnit', number)
+            buyData.append('projectId', projectId)
+            buyData.append('totalPercentageReturn', '30')
+            buyUnitAction(buyData,Phone)
         }
     });
+
+    useEffect(() => {
+       const {number} = values;
+       const {PricePerUnit} = project;
+
+        const myTotal =  number * PricePerUnit;
+        setTotal(myTotal)
+    },[values.number])
+
+
     return (
         <ScrollView
             scrollEnabled={true}
@@ -72,13 +114,18 @@ const ProjectScreen = ({route, navigation}) => {
             }]}>
 
 
+
+
+
+
+
             <ImageBackground style={{
                 width: wp('100%'),
                 borderRadius: 15,
                 padding: 10,
                 height: 300,
                 alignItems: 'flex-start'
-            }} resizeMode='cover' source={require('../assets/images/bg.jpg')}>
+            }} resizeMode='cover' source={{uri: project.ProjectImage}}>
                 <View style={styles.top}>
                     <BackButton theme={theme} navigation={navigation}/>
                 </View>
@@ -86,277 +133,319 @@ const ProjectScreen = ({route, navigation}) => {
             </ImageBackground>
 
 
-            <View style={styles.projectTitle}>
-                <Text style={{
-                    color: theme === 'Dark' ? '#fff' : '#131313',
-                    fontSize: 20,
-                    fontFamily: 'Gordita-Black'
-                }}>
-                    RICE PROCESSING PLANT
-                </Text>
-                <Text style={{
-                    fontSize: 13,
-                    color: textColor,
-                    fontFamily: 'Gordita-medium',
-                    lineHeight: 20
-                }}>
-
-                    A 150 tons per day output ultra-modern rice plant in Abakaliki, Ebonyi state to
-                    harness the production of local rice with international standard for local
-                    consumption and export
-                    purposes.
-
-                </Text>
-
-                <Text style={{
-                    color: theme === 'Dark' ? DayColors.cream : '#131313',
-                    fontSize: 18,
-                    fontFamily: 'Gordita-bold'
-                }}>
-                    Target: N600,000,00
-                </Text>
-            </View>
-
-            <View style={{
-                alignItems: 'center',
-                justifyContent: 'space-evenly',
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                width: wp('100%')
-            }}>
-
-                <View style={[{
-                    borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
-                },
-                    styles.card]}>
-                    <Text style={[
-                        styles.cardTextOne,
-                        {
-                            color: theme === 'Dark' ? '#fff' : '#131313',
-
-                        }]}>
-                        Return
-                    </Text>
-                    <Text
-                        style={[{
-                            color: textColor,
-
-                        },
-                            styles.cardTextTwo]}>
-                        30% / Quarter
-                    </Text>
-                </View>
+            {
+                loadingProject ? <View style={{
+                        flex: 1,
+                    width:'100%',
+                    height:600,
+                        alignItems: 'center',
+                        justifyContent: 'flex-start',
+                        flexDirection: 'column',
+                        backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
+                            : "#f5f5f5"
+                    }}><ActivityIndicator size="large" color={Colors.Primary}/>
+                    </View>:
+                    <>
+                        <View style={styles.projectTitle}>
+                            <Text style={{
+                                color: theme === 'Dark' ? '#fff' : '#131313',
+                                fontSize: 20,
+                                fontFamily: 'Gordita-Black'
+                            }}>
+                                {
+                                    project.ProjectTitle
+                                }
+                            </Text>
+                            <Text style={{
+                                fontSize: 13,
+                                color: textColor,
+                                fontFamily: 'Gordita-medium',
+                                lineHeight: 20
+                            }}>
+                                {
+                                    project.ProjectDescription
+                                }
 
 
-                <View style={[{
-                    borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
-                },
-                    styles.card]}>
-                    <Text style={[
-                        styles.cardTextOne,
-                        {
-                            color: theme === 'Dark' ? '#fff' : '#131313',
+                            </Text>
 
-                        }]}>
-                        Investment Type
-                    </Text>
-                    <Text style={[{
-                        color: textColor,
+                            <Text style={{
+                                color: theme === 'Dark' ? DayColors.cream : '#131313',
+                                fontSize: 18,
+                                fontFamily: 'Gordita-bold'
+                            }}>
+                                Target: ₦{project.Target}
+                            </Text>
+                        </View>
 
-                    },
-                        styles.cardTextTwo]}>
-                        Equity
-                    </Text>
-                </View>
+                        <View style={{
+                            alignItems: 'center',
+                            justifyContent: 'space-evenly',
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            width: wp('100%')
+                        }}>
 
+                            <View style={[{
+                                borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
+                            },
+                                styles.card]}>
+                                <Text style={[
+                                    styles.cardTextOne,
+                                    {
+                                        color: theme === 'Dark' ? '#fff' : '#131313',
 
-                <View style={[{
-                    borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
-                },
-                    styles.card]}>
-                    <Text style={[
-                        styles.cardTextOne,
-                        {
-                            color: theme === 'Dark' ? '#fff' : '#131313',
+                                    }]}>
+                                    Return
+                                </Text>
+                                <Text
+                                    style={[{
+                                        color: textColor,
 
-                        }]}>
-                        Current value/unit
-                    </Text>
-                    <Text
-                        style={[{
-                            color: textColor,
-
-                        },
-                            styles.cardTextTwo]}>
-                        N50,000
-                    </Text>
-                </View>
-
-                <View style={[{
-                    borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
-                },
-                    styles.card]}>
-                    <Text style={[
-                        styles.cardTextOne,
-                        {
-                            color: theme === 'Dark' ? '#fff' : '#131313',
-
-                        }]}>
-                        Payout Type
-                    </Text>
-                    <Text
-                        style={[{
-                            color: textColor,
-
-                        },
-                            styles.cardTextTwo]}>
-                        based on profit and lose
-                    </Text>
-                </View>
+                                    },
+                                        styles.cardTextTwo]}>
+                                    30% / Quarter
+                                </Text>
+                            </View>
 
 
-                <View style={[{
-                    borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
-                },
-                    styles.card]}>
-                    <Text style={[
-                        styles.cardTextOne,
-                        {
-                            color: theme === 'Dark' ? '#fff' : '#131313',
+                            <View style={[{
+                                borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
+                            },
+                                styles.card]}>
+                                <Text style={[
+                                    styles.cardTextOne,
+                                    {
+                                        color: theme === 'Dark' ? '#fff' : '#131313',
 
-                        }]}>
-                        Unit type
-                    </Text>
-                    <Text
-                        style={[{
-                            color: textColor,
+                                    }]}>
+                                    Investment Type
+                                </Text>
+                                <Text style={[{
+                                    color: textColor,
 
-                        },
-                            styles.cardTextTwo]}>
-                        Units can be liquidated
-                    </Text>
-                </View>
-
-                <View style={[{
-                    borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
-                },
-                    styles.card]}>
-                    <Text style={[
-                        styles.cardTextOne,
-                        {
-                            color: theme === 'Dark' ? '#fff' : '#131313',
-
-                        }]}>
-                        limit
-                    </Text>
-                    <Text
-                        style={[{
-                            color: textColor,
-
-                        },
-                            styles.cardTextTwo]}>
-                        1000 unit/user
-                    </Text>
-                </View>
+                                },
+                                    styles.cardTextTwo]}>
+                                    Equity
+                                </Text>
+                            </View>
 
 
-                <View style={[{
-                    borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
-                },
-                    styles.card]}>
-                    <Text style={[
-                        styles.cardTextOne,
-                        {
-                            color: theme === 'Dark' ? '#fff' : '#131313',
+                            <View style={[{
+                                borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
+                            },
+                                styles.card]}>
+                                <Text style={[
+                                    styles.cardTextOne,
+                                    {
+                                        color: theme === 'Dark' ? '#fff' : '#131313',
 
-                        }]}>
-                        Available units
-                    </Text>
-                    <Text
-                        style={[{
-                            color: textColor,
+                                    }]}>
+                                    Current value/unit
+                                </Text>
+                                <Text
+                                    style={[{
+                                        color: textColor,
 
-                        },
-                            styles.cardTextTwo]}>
-                        10,000
-                    </Text>
-                </View>
+                                    },
+                                        styles.cardTextTwo]}>
+                                    ₦{project.PricePerUnit}
+                                </Text>
+                            </View>
 
+                            <View style={[{
+                                borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
+                            },
+                                styles.card]}>
+                                <Text style={[
+                                    styles.cardTextOne,
+                                    {
+                                        color: theme === 'Dark' ? '#fff' : '#131313',
 
-                <View style={[{
-                    borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
-                },
-                    styles.card]}>
-                    <Text style={[
-                        styles.cardTextOne,
-                        {
-                            color: theme === 'Dark' ? '#fff' : '#131313',
+                                    }]}>
+                                    Payout Type
+                                </Text>
+                                <Text
+                                    style={[{
+                                        color: textColor,
 
-                        }]}>
-                        Track projects
-                    </Text>
-                    <Text
-                        style={[{
-                            color: textColor,
-
-                        },
-                            styles.cardTextTwo]}>
-                        SEE PROGRESS
-                    </Text>
-                </View>
-
-
-            </View>
+                                    },
+                                        styles.cardTextTwo]}>
+                                    {project.PayoutType}
+                                </Text>
+                            </View>
 
 
+                            <View style={[{
+                                borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
+                            },
+                                styles.card]}>
+                                <Text style={[
+                                    styles.cardTextOne,
+                                    {
+                                        color: theme === 'Dark' ? '#fff' : '#131313',
+
+                                    }]}>
+                                    Unit type
+                                </Text>
+                                <Text
+                                    style={[{
+                                        color: textColor,
+
+                                    },
+                                        styles.cardTextTwo]}>
+                                    {project.UnitType}
+                                </Text>
+                            </View>
+
+                            <View style={[{
+                                borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
+                            },
+                                styles.card]}>
+                                <Text style={[
+                                    styles.cardTextOne,
+                                    {
+                                        color: theme === 'Dark' ? '#fff' : '#131313',
+
+                                    }]}>
+                                    limit
+                                </Text>
+                                <Text
+                                    style={[{
+                                        color: textColor,
+
+                                    },
+                                        styles.cardTextTwo]}>
+                                    {project.UnitLimit} unit/user
+                                </Text>
+                            </View>
+
+
+                            <View style={[{
+                                borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
+                            },
+                                styles.card]}>
+                                <Text style={[
+                                    styles.cardTextOne,
+                                    {
+                                        color: theme === 'Dark' ? '#fff' : '#131313',
+
+                                    }]}>
+                                    Available units
+                                </Text>
+                                <Text
+                                    style={[{
+                                        color: textColor,
+
+                                    },
+                                        styles.cardTextTwo]}>
+                                    {project.AvailableUnits}
+                                </Text>
+                            </View>
+
+
+                            <View style={[{
+                                borderColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
+                            },
+                                styles.card]}>
+                                <Text style={[
+                                    styles.cardTextOne,
+                                    {
+                                        color: theme === 'Dark' ? '#fff' : '#131313',
+
+                                    }]}>
+                                    Track projects
+                                </Text>
+                                <Text
+                                    style={[{
+                                        color: textColor,
+
+                                    },
+                                        styles.cardTextTwo]}>
+                                    SEE PROGRESS
+                                </Text>
+                            </View>
+
+
+                        </View>
+
+
+                        <View style={{
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            padding: 5,
+                            justifyContent: 'space-evenly',
+                        }}>
+
+
+                         {/*   <TouchableOpacity onPress={() => panelRef.current.togglePanel()} style={{
+                                width: '50%',
+                                height: 60,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-evenly',
+                                backgroundColor: Colors.Primary,
+                                borderRadius: 15
+                            }}>
+
+                                <Ionicons name='cart' size={24}/>
+                                <Text style={{
+                                    fontSize: 20,
+                                    fontFamily: 'Gordita-bold'
+                                }}>
+                                    Buy Units
+                                </Text>
+                            </TouchableOpacity>*/}
+
+
+
+                            <TouchableOpacity style={{
+                                height: 60,
+                                width: 70,
+                                borderWidth: 2,
+                                borderRadius: 20,
+                                borderColor: DayColors.primaryColor,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }} activeOpacity={0.8}>
+                                <Ionicons name='heart' color="#eee" size={24}/>
+                            </TouchableOpacity>
+
+
+                        </View>
+                    </>
+            }
+
+            {project.Active === '1' &&
             <View style={{
                 width: '100%',
                 flexDirection: 'row',
                 alignItems: 'center',
                 padding: 5,
-                justifyContent: 'space-evenly'
+                justifyContent: 'center',
+                marginBottom:45,
             }}>
-
-                <TouchableOpacity onPress={() => panelRef.current.togglePanel()} style={{
-                    width: '50%',
-                    height: 60,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-evenly',
-                    backgroundColor: Colors.Primary,
-                    borderRadius: 15
-                }}>
-
-                    <Ionicons name='cart' size={24}/>
-                    <Text style={{
-                        fontSize: 20,
-                        fontFamily: 'Gordita-bold'
-                    }}>
-                        Buy Units
-                    </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity  style={{
-                    height: 60,
-                    width: 70,
-                    borderWidth: 2,
-                    borderRadius: 20,
-                    borderColor: DayColors.primaryColor,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }} activeOpacity={0.8}>
-                    <Ionicons name='heart' color="#eee" size={24}/>
-                </TouchableOpacity>
-
-
+            <Text style={{
+                padding:5,
+                fontFamily: 'Gordita-bold',
+                color: theme === 'Dark' ? DayColors.cream : "#131313"
+            }}>
+                TAP BELOW TO BUY UNIT
+            </Text>
             </View>
-
-
+            }
             <BottomSheet wrapperStyle={{
                 width: wp('100%'),
                 backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
-            }} sliderMinHeight={1} isOpen={false} ref={ref => panelRef.current = ref}>
+            }}
+                         isOpen={sheetOpen} sliderMaxHeight={600} sliderMinHeight={50}
+                         animation={Easing.ease}
+                         onOpen={() => setSheetOpen(true)}
+            >
+
+
                 <View style={{
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -364,6 +453,13 @@ const ProjectScreen = ({route, navigation}) => {
                     padding: 10,
                     width: '100%'
                 }}>
+
+
+                    {message &&
+                    <ToastMessage onHide={() => clearMessage()} message={message} type='message'/>
+                    }
+
+                    {error &&  <ToastMessage onHide={() => clearErrors()} message={error} type='error'/>}
                     <Text style={{
                         paddingVertical: 20,
                         fontSize: 25,
@@ -402,10 +498,24 @@ const ProjectScreen = ({route, navigation}) => {
                         {errors.number}
                     </Text>
 
-                    <MyButton action={() => handleSubmit()} title='BUY'
-                              buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
+                    <Text style={{fontSize: 16,  color:theme === 'Dark' ? '#eee' : '#131313', padding:5}} numberOfLines={1}>
+                        {total}
+                </Text>
+
+                    {
+                        loading && <ActivityIndicator size="large" color={Colors.Primary}/>
+                    }
+
+                    {
+                     <MyButton action={() => handleSubmit()} title='BUY'
+                                                     buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
+                    }
+
+
                 </View>
             </BottomSheet>
+
+
 
 
         </ScrollView>
@@ -421,7 +531,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-start',
         flexDirection: 'column',
-        backgroundColor: 'red',
         paddingBottom:20
     },
     top: {
@@ -469,4 +578,33 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ProjectScreen;
+
+ProjectScreen.propTypes = {
+    data: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+    buyUnitAction: PropTypes.func.isRequired,
+    getProject: PropTypes.func.isRequired,
+    saveProject: PropTypes.func.isRequired,
+    clearErrors: PropTypes.func.isRequired,
+    clearMessage: PropTypes.func.isRequired,
+    unSaveProject: PropTypes.func.isRequired,
+};
+
+
+const mapActionToPops = {
+    getProject,
+    buyUnitAction,
+    saveProject,
+    unSaveProject,
+    clearErrors,
+    clearMessage,
+
+
+}
+const mapStateToProps = (state) => ({
+    data: state.data,
+    user: state.user,
+})
+
+
+export default connect(mapStateToProps,mapActionToPops)(ProjectScreen);

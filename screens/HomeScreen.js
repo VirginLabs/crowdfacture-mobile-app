@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import {ThemeContext} from "../util/ThemeManager";
 import {
     Pressable,
@@ -9,7 +9,7 @@ import {
     View,
     StyleSheet,
     TouchableOpacity,
-    ImageBackground
+    ImageBackground, ActivityIndicator
 } from 'react-native';
 import AnimatedScrollView from "../components/AnimatedScrollView";
 
@@ -21,10 +21,28 @@ import {FontAwesome} from "@expo/vector-icons";
 import DeckButton from "../components/DeckButton";
 import ProjectCard from "../components/ProjectCard";
 import Clipboard from 'expo-clipboard';
+import {connect} from "react-redux";
+import PropTypes from 'prop-types'
+import {getAllProject} from "../redux/actions/data-action";
+import {getUser} from "../redux/actions/user-action";
+import ToastMessage from "../components/Toast";
 
 
 let backPressed = 0;
+
+
+
+
+const wait = timeout => {
+    return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+    });
+};
+
+
 const HomeScreen = (props) => {
+
+    const [refreshing, setRefreshing] = React.useState(false);
 
     const [toastVisible, setToastVisible] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -34,26 +52,42 @@ const HomeScreen = (props) => {
     const {route: {name}} = props;
 
     const [copiedText, setCopiedText] = useState('');
+    const {
+        getUser,
+        getAllProject,
+    } = props
+
+
+
+    const {loading,userData: {member: {Amount,Phone, InvestedAmount, ReferralID, LastName}}} = props.user
+    const {
+        allProjects,
+        loadingProject
+    } = props.data
+    useEffect(() =>
+            getAllProject(),
+        []);
 
     const copyToClipboard = () => {
         setToastVisible(prevState => !prevState)
-        Clipboard.setString('hello world');
+        Clipboard.setString(ReferralID);
     };
     const {theme} = useContext(ThemeContext);
 
-// <Button
-//     onPress={toggleTheme}
-//     title="Toggle"
-//     color={theme === "dark" ? "#fff" : "#212121"}
-//     />
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        getUser(Phone)
+        wait(2000).then(() => setRefreshing(false));
+    }, []);
+
+
 
     return (
-        <AnimatedScrollView navigation={props.navigation}
-                            routeMessage='Welcome Home' routeName='Dashboard'>
+        <AnimatedScrollView onRefresh={onRefresh} refreshing={refreshing} navigation={props.navigation} routeMessage={`${LastName} Welcome Home`} routeName='Dashboard'>
             <View style={styles.container}>
 
 
-                <BalanceCard theme={theme}/>
+                <BalanceCard theme={theme} balance={Amount} investment={InvestedAmount}/>
                 <View style={styles.buttonWrap}>
                     <TouchableOpacity activeOpacity={0.7} style={styles.addBalanceBtn}
                                       onPress={() => props.navigation.navigate('AddCash')}>
@@ -88,7 +122,15 @@ const HomeScreen = (props) => {
                             setIsModalVisible(!isModalVisible);
                         }}
                     >
+
+
+
                         <View style={styles.centeredView}>
+                            {
+                                toastVisible &&
+
+                                <ToastMessage onHide={() => setToastVisible(false)} message='COPIED' type='message'/>
+                            }
                             <View style={[{
                                 backgroundColor: theme === 'Dark' ? DarkColors.primaryDark :
                                     "#eee",
@@ -176,6 +218,7 @@ const HomeScreen = (props) => {
                 </View>
 
 
+
                 <TouchableOpacity onPress={toggleModal}
                                   style={[theme === 'Dark' ? styles.referBoxB : styles.referBoxW]}>
                     <View style={styles.refTextWrap}>
@@ -227,14 +270,14 @@ const HomeScreen = (props) => {
 
 
                         {
-                            Projects.map((({id, projectName, Active, SoldOut, UpComing, target, valuePerUnit}) => (
-                                <ProjectCard action={() =>  props.navigation.navigate('Project', {
-                                        projectId: id,
-                                    })
 
-                                } key={id} theme={theme} projectTitle={projectName} Active={Active} SoldOut={SoldOut}
-                                             UpComing={UpComing} target={target}
-                                             pricePerUnit={valuePerUnit}/>
+                                loadingProject ? <ActivityIndicator size="large" color={Colors.Primary}/> :
+                                    Object.keys(allProjects).length > 0 && allProjects.map((({ProjectTitle, ProjectImage, PricePerUnit, Target, ID, SoldOut, UpComing, Active}) => (
+                                <ProjectCard action={() =>  props.navigation.navigate('Project', {
+                                        projectId: ID,
+                                    })} key={ID} theme={theme} image={ProjectImage} projectTitle={ProjectTitle} Active={Active} SoldOut={SoldOut}
+                                             UpComing={UpComing} target={Target}
+                                             pricePerUnit={PricePerUnit}/>
                             )))
                         }
                     </View>
@@ -246,64 +289,7 @@ const HomeScreen = (props) => {
 
     );
 };
-const Projects = [
-    {
-        projectName: "gas plant",
-        projectImage: "3855962/pexels-photo-3855962.jpeg",
-        availableUnit: "",
-        soldUnits: "",
-        target: "₦495,000,000",
-        investmentSummary: "",
-        id: "1",
-        projectReturn: "30% in equity",
-        investmentType: "Equity",
-        payoutType: "Based on profit/loss",
-        valuePerUnit: "10000",
-        unitType: "Units can be liquidated",
-        limit: "90k/user",
-        Active: '1',
-        UpComing: '0',
-        SoldOut: '0'
 
-    },
-    {
-        projectName: "power plant",
-        projectImage: "1058141/pexels-photo-1058141.jpeg",
-        availableUnit: "8000",
-        soldUnits: "",
-        target: "500,000,000",
-        investmentSummary: "",
-        id: "2",
-        projectReturn: "30% in equity",
-        investmentType: "Equity",
-        payoutType: "Based on profit/loss",
-        valuePerUnit: "10000",
-        unitType: "Units can be liquidated",
-        limit: "100k/user",
-        Active: '0',
-        UpComing: '1',
-        SoldOut: '0'
-    },
-    {
-        projectName: "fertilizer plant",
-        projectImage: "5458354/pexels-photo-5458354.jpeg",
-        availableUnit: "50,000",
-        soldUnits: "",
-        target: "89,000,000",
-        investmentSummary: "",
-        id: "3",
-        projectReturn: "30% in equity",
-        investmentType: "Equity",
-        payoutType: "Based on profit/loss",
-        valuePerUnit: "10000",
-        unitType: "Units can be liquidated",
-        limit: "60k/user",
-        Active: '0',
-        UpComing: '0',
-        SoldOut: '1'
-
-    },
-]
 
 const DeckBtnObj = [
     {
@@ -588,4 +574,28 @@ const styles = StyleSheet.create({
 
 })
 
-export default HomeScreen;
+
+
+HomeScreen.propTypes = {
+    data: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+    getAllProject: PropTypes.func.isRequired,
+    getUser: PropTypes.func.isRequired,
+};
+
+
+const mapActionToPops = {
+    getAllProject,
+    getUser
+
+}
+
+
+const mapStateToProps = (state) => ({
+    data: state.data,
+    user: state.user,
+})
+
+
+
+export default connect(mapStateToProps, mapActionToPops) (HomeScreen);

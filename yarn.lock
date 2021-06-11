@@ -3228,15 +3228,15 @@ escape-html@~1.0.3:
   resolved "https://registry.npmjs.org/escape-html/-/escape-html-1.0.3.tgz"
   integrity sha1-Aljq5NPQwJdN4cFpGI7wBR0dGYg=
 
+escape-string-regexp@2.0.0, escape-string-regexp@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-2.0.0.tgz"
+  integrity sha512-UpzcLCXolUWcNu5HtVMHYdXJjArjsF9C0aNnquZYY4uW/Vu0miy5YoWvbV345HauVvcAUnpRuhMMcqTcGOY2+w==
+
 escape-string-regexp@^1.0.5:
   version "1.0.5"
   resolved "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz"
   integrity sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ=
-
-escape-string-regexp@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-2.0.0.tgz"
-  integrity sha512-UpzcLCXolUWcNu5HtVMHYdXJjArjsF9C0aNnquZYY4uW/Vu0miy5YoWvbV345HauVvcAUnpRuhMMcqTcGOY2+w==
 
 escape-string-regexp@^4.0.0:
   version "4.0.0"
@@ -3649,6 +3649,14 @@ find-up@~5.0.0:
     locate-path "^6.0.0"
     path-exists "^4.0.0"
 
+flutterwave-react-native@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/flutterwave-react-native/-/flutterwave-react-native-1.0.2.tgz#aa93719c132a54fc499a21116321277da2f5e82d"
+  integrity sha512-1pWosNE5ozu6mw9KuevzsSj/Q25TXkoLOekSiuQEVObWWqFS1n/AqhVQhiyRQLWF6iteU10+kcDh7pIwHXHr5Q==
+  dependencies:
+    prop-types "^15.6.2"
+    react-native-webview ">=6.0.2"
+
 fontfaceobserver@^2.1.0:
   version "2.1.0"
   resolved "https://registry.npmjs.org/fontfaceobserver/-/fontfaceobserver-2.1.0.tgz"
@@ -3986,7 +3994,7 @@ inquirer@^3.0.6:
     strip-ansi "^4.0.0"
     through "^2.3.6"
 
-invariant@^2.2.2, invariant@^2.2.4:
+invariant@2.2.4, invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.npmjs.org/invariant/-/invariant-2.2.4.tgz"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -5723,6 +5731,11 @@ react-native-modalize@^2.0.8:
   resolved "https://registry.yarnpkg.com/react-native-modalize/-/react-native-modalize-2.0.8.tgz#5dcb2c56d82e3dbd271582f832e7e02ae4cbb503"
   integrity sha512-OKdpFVExEe4YM2uFHL/aStS9p0JaC6gBupjaW1QVHkGq22T2ASYwkhDvTnMS8BLOLWPx2fC3xEBzOcn2rh7EYw==
 
+react-native-rave-webview@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-rave-webview/-/react-native-rave-webview-1.0.0.tgz#0ee486de4213ce52d015be994c78d18b68c1e66a"
+  integrity sha512-yY/jLtHkQ85vCnujNZEem0WdQv9UUs3lms2zJSeVDyVj0Yd+A5YlavMkqg9LAaIa6jNrBBTGJUGMWpbC24ihzQ==
+
 react-native-reanimated@~2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-2.1.0.tgz#b9ad04aee490e1e030d0a6cdaa43a14895d9a54d"
@@ -5837,6 +5850,14 @@ react-native-web@~0.13.12:
     normalize-css-color "^1.0.2"
     prop-types "^15.6.0"
     react-timer-mixin "^0.13.4"
+
+react-native-webview@>=6.0.2:
+  version "11.6.2"
+  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-11.6.2.tgz#e19b3325d6777caee29d04eb2edf9b70f0b29915"
+  integrity sha512-7e5ltLBgqt1mX0gdTTS2nFPIjfS6y300wqJ4rLWqU71lDO+8ZeayfsF5qo83qxo2Go74CtLnSeWae4pdGwUqYw==
+  dependencies:
+    escape-string-regexp "2.0.0"
+    invariant "2.2.4"
 
 "react-native@https://github.com/expo/react-native/archive/sdk-41.0.0.tar.gz":
   version "0.63.2"

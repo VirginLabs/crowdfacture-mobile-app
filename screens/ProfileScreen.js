@@ -6,7 +6,9 @@ import {ThemeContext} from "../util/ThemeManager";
 import * as ImagePicker from "expo-image-picker";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-
+import {clearErrors, clearMessage, logoutUser, updateUserImage} from "../redux/actions/user-action";
+import {connect} from "react-redux";
+import PropTypes from "prop-types";
 
 const createFormData = (photo, body = {}) => {
     const data = new FormData();
@@ -26,12 +28,24 @@ const createFormData = (photo, body = {}) => {
 
 let textStyle, boxStyle, smTextStyle;
 
-const UserProfile = ({navigation, route}) => {
+const UserProfile = (props) => {
 
     const {toggleTheme, theme} = useContext(ThemeContext);
     const [permission, setPermission] = useState(false);
 
     const [photo, setPhoto] = useState(null);
+
+    const {
+        logoutUser, navigation,updateUserImage, clearErrors,
+        clearMessage
+    } = props
+    const {error, loading, message, userData} = props.user
+
+
+    const {member: {LastName,ReferralBalance, Active, FirstName, Token, Phone, EmailAddress, ID, ProfilePicture}} = userData
+    const logUserOut = useCallback(() => {
+        logoutUser()
+    }, [])
 
     useEffect(() => {
         (async () => {
@@ -61,6 +75,11 @@ const UserProfile = ({navigation, route}) => {
 
     const uploadPhoto = useCallback(() => {
         const body = createFormData(photo)
+
+        const formData = new FormData();
+        //formData.append('profileImage', image, image.name);
+        //formData.append('userId', ID)
+        //updateUserImage(formData);
         console.log(body)
     }, [])
 
@@ -77,9 +96,29 @@ const UserProfile = ({navigation, route}) => {
                 <View style={styles.profileImageWrap}>
                     <TouchableOpacity activeOpacity={0.8} onPress={handleChoosePhoto}
                                       style={styles.profileImageContainer}>
-                        <Text>
-                            AB
-                        </Text>
+
+
+                        {
+                            ProfilePicture === null ?
+                                <Text className={{
+                                    color: '#131313',
+                                    fontSize:20,
+                                    fontFamily:'Gordita-Black'
+                                }}>
+
+                                    {
+                                        LastName.split('').slice(0, 1)
+                                    }
+                                    {
+                                        FirstName.split('').slice(0, 1)
+                                    }
+                                </Text> :
+                                <Image style={{
+                                    width: 120,
+                                    height: 120,
+                                    borderRadius: 120,
+                                }} resizeMode='cover' source={{uri:ProfilePicture}} alt='user'/>
+                        }
                     </TouchableOpacity>
                 </View>
 
@@ -87,7 +126,7 @@ const UserProfile = ({navigation, route}) => {
                 <Text style={[{
                     color: smTextStyle
                 }, styles.nameWrap]}>
-                    ORJI JOSEPH
+                    {LastName} {FirstName}
                 </Text>
 
 
@@ -125,7 +164,7 @@ const UserProfile = ({navigation, route}) => {
                         <Text style={[{
                             color: smTextStyle
                         }, styles.subName]}>
-                            N0
+                            N{ReferralBalance}
                         </Text>
 
                     </View>
@@ -158,7 +197,7 @@ const UserProfile = ({navigation, route}) => {
                                 color: smTextStyle
                             },
                                 styles.subName]}>
-                                09087362752
+                                {EmailAddress}
                             </Text>
 
                         </View>
@@ -184,7 +223,7 @@ const UserProfile = ({navigation, route}) => {
                             <Text style={[{
                                 color: smTextStyle
                             }, styles.subName]}>
-                                09087362752
+                                {Phone}
                             </Text>
 
                         </View>
@@ -283,6 +322,7 @@ const UserProfile = ({navigation, route}) => {
                     <View style={styles.logoutBtnWrap}>
 
                         <TouchableOpacity
+                            onPress={logUserOut}
                             style={[theme === 'Dark' ? styles.logoutBtnD : styles.logoutBtnW, styles.logoutBtn]}>
                             <Text style={{
                                 color: theme === 'Dark'
@@ -333,7 +373,7 @@ const styles = StyleSheet.create({
     nameWrap: {
         padding: 5,
         height: 45,
-
+textTransform:'capitalize',
         alignItems: 'center',
         textAlign: 'center',
         justifyContent: 'center',
@@ -446,5 +486,26 @@ const styles = StyleSheet.create({
 
 })
 
-export default UserProfile;
+UserProfile.propTypes = {
+    data: PropTypes.object.isRequired,
+    logoutUser: PropTypes.func.isRequired,
+    updateUserImage: PropTypes.func.isRequired,
+    clearErrors: PropTypes.func.isRequired,
+    clearMessage: PropTypes.func.isRequired,
+
+};
+
+const mapActionsToProps = {
+    logoutUser,
+    updateUserImage,
+    clearErrors,
+    clearMessage
+}
+const mapStateToProps = (state) => ({
+    data: state.data,
+    user: state.user,
+})
+
+
+export default connect(mapStateToProps,mapActionsToProps)(UserProfile);
 

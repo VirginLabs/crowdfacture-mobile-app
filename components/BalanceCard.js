@@ -4,7 +4,7 @@ import {Dimensions, ImageBackground, StyleSheet, Text, View} from 'react-native'
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
 
-const BalanceCard = ({theme}) => {
+const BalanceCard = ({theme, balance, investment}) => {
     return (
         <View style={[theme === 'Dark' ?
             styles.balanceCardDark : styles.balanceCardWhite, styles.balanceCard]}>
@@ -23,7 +23,7 @@ const BalanceCard = ({theme}) => {
 
                 <View style={styles.middleLayer}>
                     <Text style={styles.balanceText}>
-                        ₦890,000
+                        ₦ {balance === null ? '0' : balance}
                     </Text>
                 </View>
 
@@ -42,7 +42,7 @@ const BalanceCard = ({theme}) => {
                             ₦00
                         </Text>
                         <Text style={styles.numbers}>
-                            ₦000
+                            ₦{investment === null ? '0' : investment}
                         </Text>
 
                     </View>

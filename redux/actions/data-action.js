@@ -24,7 +24,8 @@ import {
 } from "../types";
 
 import React from "react";
-;
+import API_KEY from '../../constants/PRIVATE'
+
 
 export const toggleAddBankScreen = () => (dispatch) => {
     dispatch({
@@ -97,7 +98,7 @@ export const getNotifications = (userId) => (dispatch) => {
 
 
     const promise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/shownotifications.php', Options)
+        fetch(`https://crowdfacture.net/api/v0/php/shownotifications.php?apiKey=${API_KEY}`, Options)
             .then(response => response.json()),
 
     ]);
@@ -134,7 +135,7 @@ export const getProject = (projectId) => (dispatch) => {
     }
 
     const getProjectPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/getproject.php', getProjectOptions)
+        fetch(`https://crowdfacture.net/api/v0/php/getproject.php?apiKey=${API_KEY}`, getProjectOptions)
             .then(response => response.json()),
     ])
 
@@ -162,7 +163,7 @@ export const getAllProject = () => (dispatch) => {
 
 
     const getAllProjectPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/allprojects.php')
+        fetch(`https://crowdfacture.net/api/v0/php/allprojects.php?apiKey=${API_KEY}`)
             .then(response => response.json()),
     ])
 
@@ -195,7 +196,7 @@ export const verifyUserAction = (details) => (dispatch) => {
 
 
     const verifyPromise = Promise.race([
-        fetch('https://crowdfacture.net/api/v0/php/verifyuser.php', data)
+        fetch(`https://crowdfacture.net/api/v0/php/verifyuser.php?apiKey=${API_KEY}`, data)
             .then(response => response.json()),
     ]);
 
@@ -254,7 +255,7 @@ export const passwordResetReq = (email) => (dispatch) => {
         redirect: 'follow'
     };
 
-    fetch("https://crowdfacture.net/api/v0/php/forgot-password.php", requestOptions)
+    fetch(`https://crowdfacture.net/api/v0/php/forgot-password.php?apiKey=${API_KEY}`, requestOptions)
         .then(response => response.json())
         .then((result) => {
             if (result.status === '200') {
@@ -288,7 +289,7 @@ export const getReferredUsers = (userId) => (dispatch) => {
         redirect: 'follow'
     };
 
-    fetch("https://crowdfacture.net/api/v0/php/referredusers.php", requestOptions)
+    fetch(`https://crowdfacture.net/api/v0/php/referredusers.php?apiKey=${API_KEY}`, requestOptions)
         .then(response => response.json())
         .then(result => {
 
@@ -321,7 +322,7 @@ export const getInvestments = (userId) => (dispatch) => {
         redirect: 'follow'
     };
 
-    fetch("https://crowdfacture.net/api/v0/php/transactions.php", requestOptions)
+    fetch(`https://crowdfacture.net/api/v0/php/transactions.php?apiKey=${API_KEY}`, requestOptions)
         .then(response => response.json())
         .then(result => {
 
@@ -354,7 +355,7 @@ export const getDeposits = (userId) => (dispatch) => {
         redirect: 'follow'
     };
 
-    fetch("https://crowdfacture.net/api/v0/php/transactions.php", requestOptions)
+    fetch(`https://crowdfacture.net/api/v0/php/transactions.php?apiKey=${API_KEY}`, requestOptions)
         .then(response => response.json())
         .then(result => {
 
@@ -387,7 +388,7 @@ export const getWithdrawals = (userId) => (dispatch) => {
         redirect: 'follow'
     };
 
-    fetch("https://crowdfacture.net/api/v0/php/transactions.php", requestOptions)
+    fetch(`https://crowdfacture.net/api/v0/php/transactions.php?apiKey=${API_KEY}`, requestOptions)
         .then(response => response.json())
         .then(result => {
 

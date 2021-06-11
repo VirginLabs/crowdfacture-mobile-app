@@ -5,27 +5,26 @@ import {
     StyleSheet,
     ScrollView,
     Dimensions,
-    Text,
+    RefreshControl,
     TouchableOpacity,
     Animated, Easing
 } from 'react-native';
-import {useTabBar} from '../context/TabBarProvider';
 import {MaterialIcons, FontAwesome} from '@expo/vector-icons';
 import {ThemeContext} from "../util/ThemeManager";
 import MyText from "./helpers/MyText";
 import {Colors, DarkColors} from "../constants/Colors";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
 
-const {width, height} = Dimensions.get('screen');
 
 let offsetY = 0;
 
 
-const AnimatedScrollView = ({children, routeName, routeMessage, style, navigation, ...restProps}) => {
+const AnimatedScrollView = ({children,refreshing, onRefresh, routeName, routeMessage, style, navigation, ...restProps}) => {
 
     const {theme, transitionValue} = useContext(ThemeContext);
 
     const Anim = useRef(new Animated.Value(0)).current
+
 
 
 
@@ -42,6 +41,8 @@ const AnimatedScrollView = ({children, routeName, routeMessage, style, navigatio
                 showsVerticalScrollIndicator={false}
                 scrollEnabled
                 contentContainerStyle={styles.scrollView}
+
+                        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}
                 {...restProps}
             >
                 <View style={styles.top}>

@@ -33,6 +33,7 @@ export default function TextInput({  icon, error,touched,color, ...otherProps  }
                         color:color ? color : "#eee",
                         fontFamily:"Gordita-medium"
                     }}
+
                     underlineColorAndroid='transparent'
                     placeholderTextColor={
                        color ? color : "#eee"

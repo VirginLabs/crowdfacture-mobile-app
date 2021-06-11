@@ -7,17 +7,39 @@ import MyProjects from "../components/Tabs/MyProjects";
 import AllProjects from "../components/Tabs/AllProjects";
 import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors} from "../constants/Colors";
-
+import {getAllProject} from "../redux/actions/data-action";
+import {connect} from "react-redux";
+import PropTypes from "prop-types";
+import {getUser, getUserProjects} from "../redux/actions/user-action";
 
 const Tab = createMaterialTopTabNavigator();
 
 
-const Projects = ({navigation}) => {
+
+const wait = timeout => {
+    return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+    });
+};
+
+
+const Projects = (props) => {
+    const [refreshing, setRefreshing] = React.useState(false);
+    const {
+        navigation
+    } = props
+
+    const {loading,userData: {member: {Amount,Phone}}} = props.user
     const {theme} = useContext(ThemeContext);
 
 
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        getUser(Phone)
+        wait(2000).then(() => setRefreshing(false));
+    }, []);
     return (
-        <AnimatedScrollView navigation={navigation} routeMessage='Decide where your money goes!'
+        <AnimatedScrollView onRefresh={onRefresh} refreshing={refreshing} navigation={navigation} routeMessage='Decide where your money goes!'
                             routeName='All projects'>
             <View style={styles.container}>
 
@@ -35,9 +57,7 @@ const Projects = ({navigation}) => {
 
                 },
             }}>
-                <Tab.Screen options={{
-
-                }} name="All Project" component={AllProjects}/>
+                <Tab.Screen name="All Project" component={AllProjects}/>
 
                 <Tab.Screen name="My projects" component={MyProjects}/>
 
@@ -57,5 +77,24 @@ const styles = StyleSheet.create({
 
 })
 
+Projects.propTypes = {
+    data: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+    getUser: PropTypes.func.isRequired,
+};
 
-export default Projects;
+
+const mapActionToPops = {
+    getUser,
+
+}
+
+
+const mapStateToProps = (state) => ({
+    data: state.data,
+    user: state.user,
+})
+
+
+
+export default connect(mapStateToProps,mapActionToPops)(Projects);

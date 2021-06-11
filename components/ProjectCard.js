@@ -19,7 +19,7 @@ const ProjectCard = ({image,theme, projectTitle, action, target, totalCap, price
                     height: 90,
                     borderTopRightRadius: 20,
                     borderTopLeftRadius: 20,
-                }} source={require('../assets/images/bg.jpg')}/>
+                }} source={{uri: image}}/>
             </View>
 
             <View style={styles.projectBody}>
@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
     projectBody:{
         width: '100%',
         padding:10,
+        height:'60%',
         flexDirection:'column',
         alignItems:'flex-start',
         alignContent:'space-between',
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
     projectTitle:{
         width:"100%",
         fontFamily:'Gordita-Black',
-        fontSize:16,
+        fontSize:12,
         textTransform:'capitalize',
 
     },

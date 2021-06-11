@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {FontAwesome} from "@expo/vector-icons";
 import {
     Animated, Easing,
@@ -15,56 +15,85 @@ import {ThemeContext} from "../util/ThemeManager";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 import AddBankForm from "../components/AddBankForm";
 import BottomSheet from "react-native-simple-bottom-sheet";
-
+import {addBank, clearErrors, clearMessage} from "../redux/actions/user-action";
+import {connect} from "react-redux";
+import PropTypes from 'prop-types';
+import ToastMessage from "../components/Toast";
 
 const AccountList = ({bankName, bankAccount, theme}) => (
-     <View style={[
-         {
-             backgroundColor: theme === 'Dark'
-                 ? DarkColors.primaryDarkTwo : Colors.White
-         },
-         styles.accountList]}>
+    <View style={[
+        {
+            backgroundColor: theme === 'Dark'
+                ? DarkColors.primaryDarkTwo : Colors.White
+        },
+        styles.accountList]}>
 
-         <View>
-             <Text style={[
+        <View>
+            <Text style={[
 
-                 {
-                     color:  theme === 'Dark'
-                         ? '#FFFFFF' : "#333"
-                 },
-                 styles.bankAccount]}>
-                 <FontAwesome name='key' size={16}/>  {bankAccount}
-             </Text>
-         </View>
-         <View>
-             <Text style={[
-                 {
-                     color:  theme === 'Dark'
-                         ? DayColors.strongLemon : Colors.PrimaryDarkColor
-                 },
-                 styles.bankName]}>
-                 <FontAwesome name='circle' size={13}/>  {bankName}
-             </Text>
-         </View>
+                {
+                    color: theme === 'Dark'
+                        ? '#FFFFFF' : "#333"
+                },
+                styles.bankAccount]}>
+                <FontAwesome name='key' size={16}/> {bankAccount}
+            </Text>
+        </View>
+        <View>
+            <Text style={[
+                {
+                    color: theme === 'Dark'
+                        ? DayColors.strongLemon : Colors.PrimaryDarkColor
+                },
+                styles.bankName]}>
+                <FontAwesome name='circle' size={13}/> {bankName}
+            </Text>
+        </View>
 
-     </View>
+    </View>
 )
 
 
+const AddBank = (props) => {
 
 
-const AddBank = ({navigation}) => {
+    const {navigation,addBank,clearErrors,
+        clearMessage } = props
 
+
+    const {loading,
+        error, message, userData: {
+            member: { ID, Phone, LastName}, bankDetails,
+        }
+    } = props.user
 
     const {theme} = useContext(ThemeContext);
     const [sheetOpen, setSheetOpen] = useState(false);
 
 
-
-
     const BankDetail = ({item}) => (
         <AccountList theme={theme} bankName={item.BankName} bankAccount={item.AccountNumber}/>
     )
+
+
+    /*useEffect(() =>{
+
+        return () => {
+            setTimeout(() => {
+                clearErrors()
+            }, 3500)
+        }
+
+    },[error])
+
+    useEffect(() =>{
+        return () => {
+            setTimeout(() => {
+                clearMessage()
+            }, 3500)
+        }
+
+    },[message])*/
 
     return (
 
@@ -77,80 +106,64 @@ const AddBank = ({navigation}) => {
             </View>
             <Text style={[
                 {
-                    color:theme === 'Dark' ?  Colors.White : '#333',
+                    color: theme === 'Dark' ? Colors.White : '#333',
                 },
                 styles.title]}>
                 YOUR LOCAL BANK DETAIL
             </Text>
 
 
-       {/*         <MyButton action={() => setSheetOpen(prevState => !prevState)}  title='Add' textStyle={styles.textStyle} buttonStyle={styles.btnStyle}>
-                    <FontAwesome name='plus' size={20}
-                                 color={DayColors.primaryColor}/>
-                </MyButton>*/}
 
 
+            {
+                Object.keys(bankDetails).length > 0 &&
 
+                <FlatList contentContainerStyle={styles.wrap}
+                          data={bankDetails} renderItem={BankDetail} keyExtractor={item => item.ID}/>
+            }
+            <View style={{
+                width: '100%',
+                height: 100,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 90
+            }}>
 
+                {
+                    Object.keys(bankDetails).length < 3 &&
+                    <Text style={{
+                        fontFamily: 'Gordita-bold',
+                        color: theme === 'Dark' ? DayColors.cream : "#131313"
+                    }}>
+                        DRAG TO ADD BANK DETAILS
+                    </Text>
+                }
+            </View>
 
-       <FlatList contentContainerStyle={styles.wrap}
-                 data={BankAccounts} renderItem={BankDetail} keyExtractor={item => item.id}/>
+            {message &&
+            <ToastMessage onHide={() => clearMessage()} message={message} type='message'/>
+            }
 
-                 <View style={{
-                     width:'100%',
-                     height:100,
-                     alignItems:'center',
-                     justifyContent:'center',
-                     marginBottom:90
-                 }}>
-
-                     {
-                         Object.keys(BankAccounts).length < 3 &&
-                         <Text style={{
-                             fontFamily:'Gordita-bold',
-                             color: theme === 'Dark' ? DayColors.cream : "#131313"
-                         }}>
-                             DRAG TO ADD BANK DETAILS
-                         </Text>
-                     }
-                 </View>
-
+            {error &&  <ToastMessage onHide={() => clearErrors()} message={error} type='error'/>}
 
             <BottomSheet wrapperStyle={{
-           flex:1,
+                flex: 1,
                 backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
             }} isOpen={sheetOpen} sliderMaxHeight={600} sliderMinHeight={50}
-            animation={Easing.ease}
-                onOpen={() => setSheetOpen(true)}
+                         animation={Easing.ease}
+                         onOpen={() => setSheetOpen(true)}
             >
                 {(onScrollEndDrag) => (
-                <ScrollView onScrollEndDrag={onScrollEndDrag}>
+                    <ScrollView onScrollEndDrag={onScrollEndDrag}>
 
-         <AddBankForm theme={theme}/>
-                </ScrollView>
-                    )}
+                        <AddBankForm Phone={Phone} loading={loading} action={addBank} id={ID} theme={theme}/>
+                    </ScrollView>
+                )}
             </BottomSheet>
+
         </Animated.View>
     );
 };
-
-const BankAccounts = [
-    {
-        id:"1",
-        BankName:"Access bank",
-        AccountNumber: "724222942424"
-    },
-    {
-        id:"2",
-        BankName:"Access bank",
-        AccountNumber: "724222942424"
-    },
-   /* {
-        id:"3",
-        BankName:"Access bank",
-        AccountNumber: "724222942424"
-    },*/
-]
 
 
 const styles = StyleSheet.create({
@@ -162,12 +175,12 @@ const styles = StyleSheet.create({
         flexDirection: 'column'
     },
     top: {
-        marginTop:10,
+        marginTop: 10,
         width: '100%',
     },
-    title:{
-        fontFamily:'Gordita-Black',
-        fontSize:16,
+    title: {
+        fontFamily: 'Gordita-Black',
+        fontSize: 16,
     },
     wrap: {
         padding: 10,
@@ -175,13 +188,13 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         flexDirection: 'column'
     },
-    textStyle:{
-        color:'#fff',
-        fontFamily:'Gordita-bold',
-        fontSize:16,
+    textStyle: {
+        color: '#fff',
+        fontFamily: 'Gordita-bold',
+        fontSize: 16,
     },
     btnStyle: {
-        marginVertical:10,
+        marginVertical: 10,
         justifyContent: 'space-evenly',
         alignItems: 'center',
         width: '30%',
@@ -190,10 +203,10 @@ const styles = StyleSheet.create({
         height: 50,
         backgroundColor: DarkColors.primaryDarkTwo
     },
-    accountList:{
-        borderWidth:1,
-        borderStyle:'dashed',
-        borderColor:DayColors.cream,
+    accountList: {
+        borderWidth: 1,
+        borderStyle: 'dashed',
+        borderColor: DayColors.cream,
         marginVertical: 5,
         borderRadius: 20,
         padding: 15,
@@ -203,16 +216,38 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
         flexDirection: 'column'
     },
-    bankAccount:{
-        fontFamily:'Gordita-Black',
-        fontSize:16,
+    bankAccount: {
+        fontFamily: 'Gordita-Black',
+        fontSize: 16,
     },
-    bankName:{
-        fontFamily:'Gordita-bold',
-        fontSize:15,
+    bankName: {
+        fontFamily: 'Gordita-bold',
+        fontSize: 15,
     }
 
 
 })
 
-export default AddBank;
+AddBank.propTypes = {
+    data: PropTypes.object.isRequired,
+    addBank: PropTypes.func.isRequired,
+    clearErrors: PropTypes.func.isRequired,
+    clearMessage: PropTypes.func.isRequired,
+
+};
+
+
+const mapActionToPops = {
+    addBank,
+    clearErrors,
+    clearMessage
+}
+
+
+const mapStateToProps = (state) => ({
+    data: state.data,
+    user: state.user,
+})
+
+
+export default connect(mapStateToProps,mapActionToPops)(AddBank);

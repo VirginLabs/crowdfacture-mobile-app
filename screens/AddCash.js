@@ -24,6 +24,17 @@ import BankAccount from "../components/payments/BankAccount";
 import Sumotrust from "../components/payments/Sumotrust";
 import FlutterWave from "../components/payments/CardPayment";
 import BottomSheet from "react-native-simple-bottom-sheet";
+import PropTypes from "prop-types";
+import {getAllProject} from "../redux/actions/data-action";
+import {
+    clearErrors,
+    clearMessage,
+    fundUsingSumotrust,
+    getUniqueAccountNumb,
+    getUser
+} from "../redux/actions/user-action";
+import {connect} from "react-redux";
+import ToastMessage from "../components/Toast";
 
 
 const Item = ({name, iconName, moreInfo, theme, action}) => (
@@ -82,7 +93,26 @@ const Item = ({name, iconName, moreInfo, theme, action}) => (
 
 let content;
 
-const AddCashScreen = ({navigation}) => {
+const AddCashScreen = (props) => {
+
+
+    const {navigation, getUniqueAccountNumb, clearErrors, clearMessage, fundUsingSumotrust} = props
+
+
+    const {
+        loading, message, error, userData:
+            {
+                member: {
+                    ReferralBalance, Active, Email, FirstName, EmailAddress,
+                    ID, Phone, MonnifyAccountNumber, LastName,
+                    MonnifyBankName,
+                    BVNVerified,
+                    SumoTrustID
+                },
+                bankDetails
+            }
+    } = props.user
+
 
     const {theme} = useContext(ThemeContext);
     const animation = useRef(new Animated.Value(0)).current
@@ -92,13 +122,18 @@ const AddCashScreen = ({navigation}) => {
 
 
     if (contentId === '1') {
-        content = <BankAccount theme={theme}/>
+        content = <BankAccount loading={loading} getUniqueAccountNumb={getUniqueAccountNumb} userDetails={{
+            bankDetails,
+            MonnifyAccountNumber,
+            MonnifyBankName,
+            BVNVerified
+        }} ID={ID} Phone={Phone} theme={theme}/>
     }
     if (contentId === '2') {
         content = <Sumotrust user='JOSEPH ASI' theme={theme}/>
     }
     if (contentId === '3') {
-        content = <FlutterWave theme={theme}/>
+        content = <FlutterWave theme={theme} userEmail={Email}/>
     }
     const sheetRef = useRef(null);
 
@@ -109,14 +144,6 @@ const AddCashScreen = ({navigation}) => {
     }
 
 
-    const handleClose = () => {
-        Keyboard.dismiss()
-        Animated.timing(animation, {
-            toValue: 0,
-            duration: 200,
-            useNativeDriver: true
-        }).start()
-    }
 
 
     const PaymentList = ({item}) => (
@@ -147,18 +174,25 @@ const AddCashScreen = ({navigation}) => {
                          sliderMinHeight={0}
 
                          ref={ref => sheetRef.current = ref}>
-<Text style={{
-    width:'100%',
-    textAlign:'center',
-    fontSize:11,
-    fontFamily:'Gordita-medium',
-    color: theme === 'Dark' ? '#eee' : '#333'
-}}>
-    Tap head to close
-</Text>
+                <Text style={{
+                    width: '100%',
+                    textAlign: 'center',
+                    fontSize: 11,
+                    fontFamily: 'Gordita-medium',
+                    color: theme === 'Dark' ? '#eee' : '#333'
+                }}>
+                    Tap head to close
+                </Text>
                 {content}
 
             </BottomSheet>
+
+            {message &&
+            <ToastMessage onHide={() => clearMessage()} message={message} type='message'/>
+            }
+
+            {error &&  <ToastMessage onHide={() => clearErrors()} message={error} type='error'/>}
+
 
         </View>
     );
@@ -189,7 +223,6 @@ const PaymentChannels = [
         sheetName: 'CARD'
 
     },
-
 
 
 ]
@@ -245,4 +278,29 @@ const styles = StyleSheet.create({
 
 })
 
-export default AddCashScreen;
+AddCashScreen.propTypes = {
+    data: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+    getUser: PropTypes.func.isRequired,
+    getUniqueAccountNumb: PropTypes.func.isRequired,
+    fundUsingSumotrust: PropTypes.func.isRequired,
+};
+
+
+const mapActionToPops = {
+    getUser,
+    getUniqueAccountNumb,
+    fundUsingSumotrust,
+    clearErrors,
+    clearMessage,
+
+
+}
+
+
+const mapStateToProps = (state) => ({
+    data: state.data,
+    user: state.user,
+})
+
+export default connect(mapStateToProps, mapActionToPops)(AddCashScreen);

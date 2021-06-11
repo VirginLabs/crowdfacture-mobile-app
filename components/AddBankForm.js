@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {ScrollView,Keyboard,TouchableWithoutFeedback, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, Keyboard, TouchableWithoutFeedback, StyleSheet, Text, View, ActivityIndicator} from 'react-native';
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
@@ -7,6 +7,7 @@ import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import TextInput from "./TextInput";
 import MyButton from "./MyButton";
 import {Picker} from '@react-native-picker/picker';
+import AllBanks from "../constants/AllBanks";
 
 
 const phoneRegExp = /^[+]?\d*$/
@@ -22,7 +23,7 @@ const schema = Yup.object().shape({
 });
 
 
-const AddBankForm = ({theme}) => {
+const AddBankForm = ({theme,Phone, action, id,loading}) => {
 
     const [bankName, setBankName] = useState('');
     const {
@@ -38,8 +39,14 @@ const AddBankForm = ({theme}) => {
         initialValues: {accountNum: '', bankName: '', accountName:'', primary:''
         },
         onSubmit: (values) => {
-            const {BVN} = values;
-            alert(`accountNum: ${values.accountNum} bank name: ${values.bankName} account Name: ${values.accountName}`)
+            const {accountNum,bankName,accountName,primary } = values;
+            const BankDetails = new FormData()
+            BankDetails.append("accountNumber", accountNum)
+            BankDetails.append("accountName", accountName)
+            BankDetails.append("bankName", bankName)
+            BankDetails.append("userId", id)
+            BankDetails.append("IsPrimary", '0')
+            action(BankDetails,Phone)
         }
     });
 
@@ -109,6 +116,7 @@ const AddBankForm = ({theme}) => {
                 label='Bank name'
                 onBlur={handleBlur('bankName')}
                 style={{
+                    color: theme === 'Dark' ? '#eee' : '#333',
                     width:'100%',
                     height:45,
                     flexDirection: 'row',
@@ -120,15 +128,20 @@ const AddBankForm = ({theme}) => {
                 onValueChange={(itemValue, itemIndex) =>
                     setFieldValue('bankName', itemValue)
                 }>
-                <Picker.Item label='Select your Bank' value={initialValues.bankName} key={0} />
-                <Picker.Item label='Eco bank' value='Eco bank' key={1} />
-                <Picker.Item label='First bank' value='First bank' key={2} />
-                <Picker.Item label='Polaris bank' value='Polaris Bank' key={3} />
+                {
+                    AllBanks.map((bank, index) => (
+                    <Picker.Item label={bank} value={bank} key={index} />
+                    ))
+                }
+
+
             </Picker>
             </View>
 
 
-
+            {
+                loading && <ActivityIndicator size="large" color={Colors.Primary}/>
+            }
             <MyButton action={() => handleSubmit()} title='SUBMIT'
                       buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
         </View>
