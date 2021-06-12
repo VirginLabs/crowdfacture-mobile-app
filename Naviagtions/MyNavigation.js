@@ -33,6 +33,8 @@ import ReportsScreen from "../screens/Reports";
 import ProjectScreen from "../screens/ProjectScreen";
 import HistoryScreen from "../screens/HistoryScreen";
 import SumotrustLogin from "../screens/SumotrustLogin";
+import Transactions from "../screens/Transactions";
+import Deposits from "../screens/Deposits";
 
 
 
@@ -143,6 +145,8 @@ animationEnabled: false,
                     <StartStackNavigator.Screen name='Security' component={SecurityScreen}/>
                     <StartStackNavigator.Screen name='Reports' component={ReportsScreen}/>
                     <StartStackNavigator.Screen name='Project' component={ProjectScreen}/>
+                    <StartStackNavigator.Screen name='Transactions' component={Transactions}/>
+                    <StartStackNavigator.Screen name='Deposits' component={Deposits}/>
 
                 </>
                 :

@@ -31,7 +31,8 @@ import {connect} from "react-redux";
 import ToastMessage from "../components/Toast";
 
 
-const Item = ({name, iconName, moreInfo, theme, action}) => (<TouchableOpacity activeOpacity={0.7} style={[
+const Item = ({name, iconName, moreInfo, theme, action}) => (
+    <TouchableOpacity activeOpacity={0.7} style={[
         {
             backgroundColor: theme === 'Dark'
                 ? DarkColors.primaryDarkTwo : Colors.White

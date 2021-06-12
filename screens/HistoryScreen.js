@@ -5,8 +5,9 @@ import AnimatedScrollView from "../components/AnimatedScrollView";
 import {DarkColors, DayColors} from "../constants/Colors";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-const HistoryScreen = ({navigation}) => {
+const HistoryScreen = (props) => {
 
+    const {navigation} = props
     let today;
     const month = new Date().getMonth().toString()
     const day = new Date().getDay().toString()
@@ -16,7 +17,8 @@ const HistoryScreen = ({navigation}) => {
     return (
         <AnimatedScrollView navigation={navigation} routeMessage='Here you see all your investment history'
                             routeName='History'>
-            <View style={styles.container}>
+            <TouchableOpacity onPress={() => navigation.navigate('Transactions')} activeOpacity={0.5}
+                              style={styles.container}>
 
                 <View activeOpacity={0.7} style={[{
                     backgroundColor: DayColors.cream
@@ -69,7 +71,7 @@ const HistoryScreen = ({navigation}) => {
                 </View>
 
 
-                <View style={[
+                <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Dividends')} style={[
                     {
                         backgroundColor: DarkColors.primaryDarkTwo
                     },
@@ -118,12 +120,12 @@ const HistoryScreen = ({navigation}) => {
                             <Ionicons name='ios-arrow-forward' size={18} color='#fff'/>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </TouchableOpacity>
 
 
 
 
-                <View activeOpacity={0.7} style={[
+                <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Deposits')} style={[
                     {
                         backgroundColor: DarkColors.primaryDarkOne
                     },
@@ -173,9 +175,9 @@ const HistoryScreen = ({navigation}) => {
                             <Ionicons name='ios-arrow-forward' size={18} color='#fff'/>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </TouchableOpacity>
 
-            </View>
+            </TouchableOpacity>
         </AnimatedScrollView>
     );
 };
