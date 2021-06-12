@@ -214,11 +214,8 @@ export const sumotrustLogin = (userDetails) => (dispatch) => {
 
                     dispatch(getUser(result.member.Phone))
 
-                    setTimeout(() => {
-                        //Router.push('/dashboard')
-                    }, 2000)
+
                 }
-                //window.location.href = '/dashboard'
             } else {
                 dispatch({
                     type: SET_ERROR,
@@ -258,13 +255,9 @@ export const sumotrustAuth = (userDetails) => (dispatch) => {
 
             dispatch(getUser(res.member.Phone))
 
-            setTimeout(() => {
-               // Router.push('/dashboard')
-            }, 2000)
 
         } else {
             dispatch({
-
                 type: SET_ERROR,
                 payload: res.message
             })

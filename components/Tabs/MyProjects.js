@@ -7,17 +7,19 @@ import {getUserProjects} from "../../redux/actions/user-action";
 import {connect} from "react-redux";
 import {Colors, DarkColors} from "../../constants/Colors";
 import ProjectCard from "../ProjectCard";
+import {getInvestments} from "../../redux/actions/data-action";
+import UserProjectCard from "../UserProjectCard";
 
 const MyProjects = (props) => {
 
 
     const {theme} = useContext(ThemeContext);
-    const {getAllProject,navigation, getUserProjects} = props
+    const {navigation, getUserProjects} = props
     const {userProjects, userData: {member: {ID}}} = props.user
 
+
     const {
-        allProjects,
-        loadingProject
+        loadingProject,
     } = props.data
 
     useEffect(() => {
@@ -26,6 +28,8 @@ const MyProjects = (props) => {
         getUserProjects(formData)
 
     }, []);
+
+
 
     return (
         <View style={[styles.container, {
@@ -37,16 +41,24 @@ const MyProjects = (props) => {
                 loadingProject ?
                     <ActivityIndicator size="large" color={Colors.Primary}/>
                     :
-
-                    userProjects.map((({ID, ProjectImage, ProjectTitle, Active, SoldOut, UpComing, Target, PricePerUnit}) => (
-                        <ProjectCard action={() =>  navigation.navigate('Project', {
-                            projectId: ID,
+Object.keys(userProjects).length > 0 ?
+    userProjects.map((({AddNoUnit, AddAmount,ID,Project}) => (
+                        <UserProjectCard action={() =>  navigation.navigate('Project', {
+                            projectId: Project.ID,
                         })
 
-                        } key={ID} theme={theme} image={ProjectImage} projectTitle={ProjectTitle} Active={Active} SoldOut={SoldOut}
-                                     UpComing={UpComing} target={Target}
-                                     pricePerUnit={PricePerUnit}/>
-                    )))
+                        } key={ID} theme={theme} imageName={Project.ProjectImage} projectName={Project.ProjectTitle}
+                                         totalAmount={AddAmount}
+                 target={Project.Target}
+                                         totalUnits={AddNoUnit}/>
+                    ))) :
+
+
+    <Text style={{
+    color: theme === 'Dark' ? '#eee' : '#131313'
+    }}>
+        NO PROJECT START INVESTING
+    </Text>
             }
         </View>
     );
@@ -55,7 +67,7 @@ const MyProjects = (props) => {
 
 const styles = StyleSheet.create({
     container:{
-
+flex:1,
         flexDirection: 'row',
         alignContent: 'flex-start',
         alignItems: 'flex-start',
@@ -72,11 +84,13 @@ MyProjects.propTypes = {
     data: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
     getUserProjects: PropTypes.func.isRequired,
+    getInvestments: PropTypes.func.isRequired,
 };
 
 
 const mapActionToPops = {
-    getUserProjects
+    getUserProjects,
+    getInvestments
 }
 
 

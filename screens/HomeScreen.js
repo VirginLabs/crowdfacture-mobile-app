@@ -598,4 +598,4 @@ const mapStateToProps = (state) => ({
 
 
 
-export default connect(mapStateToProps, mapActionToPops) (HomeScreen);
+export default connect(mapStateToProps, mapActionToPops)(React.memo(HomeScreen));

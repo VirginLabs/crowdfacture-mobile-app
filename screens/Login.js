@@ -48,9 +48,9 @@ const Login = (props) => {
             {
                 switchForm ?
 
-                    <SignUp toggleForm={toggleForm} navigation={props.navigation}/>
+                    <SignUp toggleForm={toggleForm}/>
                     :
-                    <SignIn toggleForm={toggleForm} navigation={props.navigation}/>
+                    <SignIn toggleForm={toggleForm}/>
             }
 
 

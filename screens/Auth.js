@@ -1,7 +1,16 @@
 import React, {useState,useEffect} from 'react'
 import * as LocalAuthentication from 'expo-local-authentication'
-import {View, StyleSheet,ActivityIndicator, Image,Alert, Text, ImageBackground, StatusBar} from "react-native";
-import {RFPercentage, RFValue} from "react-native-responsive-fontsize";
+import {
+    View,
+    StyleSheet,
+    Image,
+    Alert,
+    Text,
+    ImageBackground,
+    StatusBar,
+    TouchableOpacity
+} from "react-native";
+import {RFPercentage} from "react-native-responsive-fontsize";
 import {Asset} from 'expo-asset';
 import AppLoading from "expo-app-loading";
 import {Colors} from "../constants/Colors";
@@ -146,7 +155,7 @@ const Auth = (props) => {
                     </View>
 
                     <View style={styles.buttonsWrap}>
-                        <MyButton action={() => props.navigation.navigate('Login')} title='SIGN UP'
+                        <MyButton action={() => props.navigation.navigate('Login')} title='START'
                                   buttonStyle={styles.buttonStyle} textStyle={styles.buttonText}/>
                         <MyButton buttonStyle={styles.smBtn} action={onFaceId}>
 
@@ -155,26 +164,18 @@ const Auth = (props) => {
 
                     </View>
 
-                    <View style={styles.smallTextClick}>
-                        <Text style={styles.clickText} onPress={() => {
-                            console.log('WHERE UNA DEY SEE THIS MONEY')
-                        }}>
-                             Have account? Signin
+                    <TouchableOpacity onPress={() => props.navigation.navigate('Sumotrust')} style={styles.smallTextClick}>
+                        <Text style={styles.clickText}>
+                          Login with Sumotrust
                         </Text>
-                    </View>
+                    </TouchableOpacity>
 
                     {/*In our JSX we conditionally render a text to see inform users if their device supports*/}
 
                 </View>
 
 
-                <View style={styles.bottomText}>
-                    <Text style={styles.clickText} onPress={() => {
-                        console.log('WHERE UNA DEY SEE THIS MONEY')
-                    }}>
-                      Sign up with sumotrust
-                    </Text>
-                </View>
+
             </ImageBackground>
 
         </View>

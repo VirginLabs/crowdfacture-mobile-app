@@ -39,7 +39,7 @@ const ToastMessage = ({message, type,onHide}) =>
                     },
                 ],
                 position:'absolute',
-                top:  50,
+                top:  150,
                 margin: 10,
                 marginBottom: 5,
                 backgroundColor: type === 'error' ? 'red' : DayColors.green,

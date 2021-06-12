@@ -1,31 +1,25 @@
-import React, {useContext, useRef, useCallback, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import {
-    Animated,
-    Button,
     View,
     StyleSheet,
     FlatList,
     Text,
     TouchableOpacity,
     StatusBar,
-    Keyboard,
-    ScrollView
 } from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import {ThemeContext} from "../util/ThemeManager";
-import {FontAwesome, FontAwesome5} from "@expo/vector-icons";
+import { FontAwesome5} from "@expo/vector-icons";
 
 import BackButton from "../components/BackBtn";
-import MyBottomSheet from "../components/BottomSheet";
 
 
-import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp} from "react-native-responsive-screen";
 import BankAccount from "../components/payments/BankAccount";
 import Sumotrust from "../components/payments/Sumotrust";
 import FlutterWave from "../components/payments/CardPayment";
 import BottomSheet from "react-native-simple-bottom-sheet";
 import PropTypes from "prop-types";
-import {getAllProject} from "../redux/actions/data-action";
 import {
     clearErrors,
     clearMessage,
@@ -37,8 +31,7 @@ import {connect} from "react-redux";
 import ToastMessage from "../components/Toast";
 
 
-const Item = ({name, iconName, moreInfo, theme, action}) => (
-    <TouchableOpacity activeOpacity={0.7} style={[
+const Item = ({name, iconName, moreInfo, theme, action}) => (<TouchableOpacity activeOpacity={0.7} style={[
         {
             backgroundColor: theme === 'Dark'
                 ? DarkColors.primaryDarkTwo : Colors.White
@@ -102,11 +95,11 @@ const AddCashScreen = (props) => {
     const {
         loading, message, error, userData:
             {
-                member: {
-                    ReferralBalance, Active, Email, FirstName, EmailAddress,
-                    ID, Phone, MonnifyAccountNumber, LastName,
+                member: {EmailAddress,
+                    ID, Phone, MonnifyAccountNumber,
                     MonnifyBankName,
                     BVNVerified,
+                    LastName,
                     SumoTrustID
                 },
                 bankDetails
@@ -115,8 +108,6 @@ const AddCashScreen = (props) => {
 
 
     const {theme} = useContext(ThemeContext);
-    const animation = useRef(new Animated.Value(0)).current
-    const [panelOpen, setPanelOpen] = useState(false);
     //which content is shown in the bottom sheet
     const [contentId, setContentId] = useState('');
 
@@ -130,10 +121,14 @@ const AddCashScreen = (props) => {
         }} ID={ID} Phone={Phone} theme={theme}/>
     }
     if (contentId === '2') {
-        content = <Sumotrust user='JOSEPH ASI' theme={theme}/>
+        content = <Sumotrust SumoTrustID={SumoTrustID} user='JOSEPH ASI' theme={theme}/>
     }
     if (contentId === '3') {
-        content = <FlutterWave theme={theme} userEmail={Email}/>
+        content = <FlutterWave
+            userEmail={EmailAddress}
+            phonenumber={Phone}
+            customerName={LastName}
+         theme={theme} />
     }
     const sheetRef = useRef(null);
 

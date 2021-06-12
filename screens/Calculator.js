@@ -31,11 +31,11 @@ const CalculatorScreen = ({navigation}) => {
 
     const [projectTarget, setProjectTarget] = useState(500000000);
     const [unitsPurchased, setUnitsPurchased] = useState(1);
-    const [units, setUnits] = useState(1);
     const [target, setTarget] = useState(500000000);
     const [estimatedProfit, setEstimatedProfit] = useState(null);
     const [error, setError] = useState('')
     const [result, setResult] = useState(0)
+
 
 
     function Calculator(units, quarterly_profit, target_amount, amount_per_unit) {
@@ -54,7 +54,7 @@ const CalculatorScreen = ({navigation}) => {
 
     const calculateResult = () => {
         // theResult = parseInt(result) + units
-        const calcResult = Calculator(units, estimatedProfit, target, pricePerUnit)
+        const calcResult = Calculator(unitsPurchased, estimatedProfit, target, pricePerUnit)
         if (calcResult === -1) {
             setError('Profit provided Too small')
             setResult(0)
@@ -78,6 +78,7 @@ const CalculatorScreen = ({navigation}) => {
             </View>
             <Text style={[
                 {
+                    fontFamily:'Gordita-bold',
                     color: theme === 'Dark' ? Colors.White : '#333',
                 },
                 styles.title]}>
@@ -175,12 +176,37 @@ const CalculatorScreen = ({navigation}) => {
                         returnKeyType='next'
                         returnKeyLabel='next'
                         required
+                        onChange={calculateResult}
                         value={estimatedProfit}
                         onChangeText={setEstimatedProfit}
 
                     />
 
                 </View>
+            </View>
+
+            <View style={{
+                width:'100%',
+                alignItems:'center',
+flexDirection:'column'
+            }}>
+                <Text style={{
+                    textAlign:'center',
+                    fontFamily:'Gordita-medium',
+                    fontSize:16,
+                    color: '#f66658'
+                }}>
+                    {error && error}
+                </Text>
+
+                <Text style={{
+                    fontFamily:'Gordita-bold',
+                    fontSize:20,
+                    color: theme === 'Dark' ?
+                        DayColors.strongLemon : '#131313'
+                }}>
+                 Profit:   ₦{result * 4}
+                </Text>
             </View>
 
         </Animated.View>

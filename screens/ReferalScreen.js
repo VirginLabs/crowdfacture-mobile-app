@@ -1,13 +1,27 @@
-import React, {useContext} from "react";
-import {StyleSheet, Text, Animated, Button, View, StatusBar, TouchableOpacity} from "react-native";
+import React, {useContext, useEffect} from "react";
+import {StyleSheet, Text, Animated, View, StatusBar, TouchableOpacity} from "react-native";
 import {ThemeContext} from "../util/ThemeManager";
 import {DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 
 import {FontAwesome5} from "@expo/vector-icons";
+import {getReferredUsers} from "../redux/actions/data-action";
+import {connect} from "react-redux";
+import PropTypes from "prop-types";
 
-const ReferralScreen = ({navigation}) => {
+
+const ReferralScreen = (props) => {
     const {theme} = useContext(ThemeContext);
+
+    const {getReferredUsers,navigation} = props
+    const {referredUser, loading} = props.data
+    const {userData: {member: {ReferralBalance, ID}}} = props.user
+
+    useEffect(() => {
+        const formdata = new FormData();
+        formdata.append("userId", ID);
+        getReferredUsers(formdata)
+    }, []);
 
     return (
         <Animated.View style={[styles.container, {
@@ -30,7 +44,12 @@ const ReferralScreen = ({navigation}) => {
                     fontSize: 22,
                     fontFamily: 'Gordita-Black'
                 }}>
-                    ₦0
+
+                    {
+                        ReferralBalance ? '₦0.00' :
+                           '₦'+ReferralBalance
+                    }
+
                 </Text>
 
                 <View style={{
@@ -56,7 +75,9 @@ const ReferralScreen = ({navigation}) => {
                             fontSize: 16,
                             color: theme === 'Dark' ? '#fff' : '#131313',
                         }}>
-                            You've invited 0 People
+                            You've invited {
+                            Object.keys(referredUser).length
+                        } People
                         </Text>
                         <Text style={{
                             fontSize: 11,
@@ -150,4 +171,19 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ReferralScreen
+ReferralScreen.propTypes = {
+    data: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+    mapActionsToProps: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+    data: state.data,
+    user: state.user,
+})
+
+const mapActionsToProps = {
+    getReferredUsers
+}
+
+export default connect(mapStateToProps, mapActionsToProps)(ReferralScreen)

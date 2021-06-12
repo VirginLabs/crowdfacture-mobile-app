@@ -1,10 +1,8 @@
 import React, {useContext} from 'react';
 
 import {Animated, StatusBar, StyleSheet, Text, View} from 'react-native';
-import AnimatedScrollView from "../components/AnimatedScrollView";
-import MyText from "../components/helpers/MyText";
 import {ThemeContext} from "../util/ThemeManager";
-import {Colors, DarkColors} from "../constants/Colors";
+import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 
 
@@ -24,7 +22,23 @@ const DividendScreen = ({navigation}) => {
                 },
                 styles.title]}>
                 DIVIDEND SCREEN
+
             </Text>
+
+            <View style={{
+                width:'90%',
+                alignItems:'center',  padding:8,
+                backgroundColor: DayColors.lemon,
+borderRadius:10,
+                margin:10,
+            }}>
+                <Text style={{
+fontFamily:'Gordita-medium',
+                    color :'#131313'
+                }}>
+                    Comming soon
+                </Text>
+            </View>
 
         </Animated.View>
     );

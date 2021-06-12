@@ -32,6 +32,7 @@ import SecurityScreen from "../screens/Security";
 import ReportsScreen from "../screens/Reports";
 import ProjectScreen from "../screens/ProjectScreen";
 import HistoryScreen from "../screens/HistoryScreen";
+import SumotrustLogin from "../screens/SumotrustLogin";
 
 
 
@@ -109,8 +110,6 @@ export const ProfileStackNav = () => {
 }
 
 export const MyNavigation = ({authenticated}) => {
-
-    console.log(authenticated)
     return (
         <CFStackNavigator.Navigator
             keyboardHandlingEnabled={true}
@@ -151,6 +150,7 @@ animationEnabled: false,
 
                     <CFStackNavigator.Screen name='Auth' component={Auth}/>
                     <CFStackNavigator.Screen name='Login' component={Login}/>
+                    <CFStackNavigator.Screen name='Sumotrust' component={SumotrustLogin}/>
 
                 </>
             }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import * as Yup from "yup";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {Colors, DayColors} from "../../constants/Colors";
@@ -11,14 +11,14 @@ import {useFormik} from "formik";
 const phoneRegExp = /^[+]?\d*$/
 const schema = Yup.object().shape({
     pin: Yup.string()
-        .min(2, "Amount is Too short")
-        .max(50, "Amount is Too long")
+        .min(2, "PIN is Too short")
+        .max(50, "PIN is Too long")
         .matches(phoneRegExp, 'Wrong input')
         .required("Amount is Required"),
 });
 
 
-const SetPin = ({theme, id}) => {
+const SetPin = ({theme, userId,updateWithdrawalPin, loading}) => {
 
     const {
         handleChange, handleSubmit, handleBlur,
@@ -31,7 +31,10 @@ const SetPin = ({theme, id}) => {
         },
         onSubmit: (values) => {
             const {pin} = values;
-            alert(`pin: ${values.pin}`)
+            const userPinData = new FormData()
+            userPinData.append('pin',pin)
+            userPinData.append('userId',userId)
+            updateWithdrawalPin(userPinData)
         }
     });
 
@@ -71,6 +74,9 @@ const SetPin = ({theme, id}) => {
                 {errors.pin}
             </Text>
 
+            {
+                loading && <ActivityIndicator size="large" color={Colors.Primary}/>
+            }
             <MyButton action={() => handleSubmit()} title='SUBMIT'
                       buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
         </View>

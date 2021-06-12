@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import {Colors, DayColors} from "../../constants/Colors";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 import TextInput from "../TextInput";
@@ -23,7 +23,7 @@ const schema = Yup.object().shape({
         .required("Password is Required"),
 });
 
-const UpdatePassword = ({theme}) => {
+const UpdatePassword = ({theme,updatePassword, loading, userId,}) => {
 
 
     const {
@@ -39,7 +39,12 @@ const UpdatePassword = ({theme}) => {
         },
         onSubmit: (values) => {
             const {oldPassword,newPassword} = values;
-            alert(`Old Password: ${newPassword}`)
+
+            const PasswordData = new FormData()
+            PasswordData.append("oldPassword",oldPassword)
+            PasswordData.append("newPassword",newPassword)
+            PasswordData.append("userId",userId)
+            updatePassword(PasswordData)
         }
     });
 
@@ -99,6 +104,11 @@ const UpdatePassword = ({theme}) => {
             <Text style={styles.errorText} numberOfLines={1}>
                 {errors.newPassword}
             </Text>
+
+
+            {
+                loading && <ActivityIndicator size="large" color={Colors.Primary}/>
+            }
 
             <MyButton action={() => handleSubmit()} title='SUBMIT'
                       buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>

@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 
 import {Animated, StatusBar, StyleSheet, Text, View} from 'react-native';
-import {Colors, DarkColors} from "../constants/Colors";
+import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import {ThemeContext} from "../util/ThemeManager";
 
@@ -22,7 +22,20 @@ const ExchangeScreen = ({navigation}) => {
                 styles.title]}>
                 EXCHANGE SCREEN
             </Text>
-
+            <View style={{
+                width:'90%',
+                alignItems:'center',  padding:8,
+                backgroundColor: DayColors.lemon,
+                borderRadius:10,
+                margin:10,
+            }}>
+                <Text style={{
+                    fontFamily:'Gordita-medium',
+                    color :'#131313'
+                }}>
+                    Comming soon
+                </Text>
+            </View>
         </Animated.View>
     );
 };

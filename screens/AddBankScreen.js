@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {FontAwesome} from "@expo/vector-icons";
 import {
     Animated, Easing,
@@ -63,7 +63,7 @@ const AddBank = (props) => {
 
     const {loading,
         error, message, userData: {
-            member: { ID, Phone, LastName}, bankDetails,
+            member: { ID, Phone}, bankDetails,
         }
     } = props.user
 
@@ -76,24 +76,7 @@ const AddBank = (props) => {
     )
 
 
-    /*useEffect(() =>{
 
-        return () => {
-            setTimeout(() => {
-                clearErrors()
-            }, 3500)
-        }
-
-    },[error])
-
-    useEffect(() =>{
-        return () => {
-            setTimeout(() => {
-                clearMessage()
-            }, 3500)
-        }
-
-    },[message])*/
 
     return (
 

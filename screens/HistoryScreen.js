@@ -208,16 +208,17 @@ const styles = StyleSheet.create({
     container: {
 
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         flexWrap: 'wrap',
+        alignContent:'center',
         justifyContent: 'space-evenly',
         paddingTop: 15
     },
     card: {
-        marginTop: 10,
-        width: '100%',
+        marginTop: 20,
+        width: '90%',
         padding:15,
-        height: 200,
+        height: 190,
         borderRadius: 30,
         flexDirection: 'column',
         alignItems: 'center',
@@ -234,7 +235,8 @@ const styles = StyleSheet.create({
         height: '50%',
         width: '80%',
         alignItems:'center',
-        justifyContent:'center'
+        justifyContent:'center',
+
 
     },
     cardBottom:{

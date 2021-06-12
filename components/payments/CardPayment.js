@@ -8,14 +8,14 @@ import {useFormik} from "formik";
 import TextInput from "../TextInput";
 import MyButton from "../MyButton";
 
-import PayWithFlutterwave from 'flutterwave-react-native';
-import PayWithFlutterwaveV2 from "flutterwave-react-native";
+
+import {PayWithFlutterwave} from 'flutterwave-react-native';
 
 
 
 const phoneRegExp = /^[+]?\d*$/
 const schema = Yup.object().shape({
-    amount: Yup.string()
+    Amount: Yup.string()
         .min(2, "Amount is Too short")
         .max(50, "Amount is Too long")
         .matches(phoneRegExp, 'Wrong input')
@@ -23,7 +23,7 @@ const schema = Yup.object().shape({
 });
 
 
-const FlutterWave = ({theme, userEmail}) => {
+const FlutterWave = ({theme, userEmail,phoneNumber}) => {
 
     const {
         handleChange, handleSubmit, handleBlur,
@@ -32,11 +32,11 @@ const FlutterWave = ({theme, userEmail}) => {
         touched
     } = useFormik({
         validationSchema: schema,
-        initialValues: {Amount: '',
+        initialValues: {Amount: 0,
         },
         onSubmit: (values) => {
-            const {BVN} = values;
-            alert(`Amount: ${values.Amount}`)
+            const {Amount} = values;
+
         }
     });
 
@@ -99,15 +99,20 @@ const FlutterWave = ({theme, userEmail}) => {
                       buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>*/}
 
 
-            <PayWithFlutterwaveV2
+            <PayWithFlutterwave
 
             onRedirect={handleOnRedirect}
             options={{
-                txref: 'txref',
-                PBFPubKey: 'FLWPUBK-9abc4f038a6908015c127b8b99cb4096-X',
-                customer_email: 'customer-email@example.com',
-                amount: values.Amount,
+                authorization:'FLWPUBK-9abc4f038a6908015c127b8b99cb4096-X',
+                tx_ref: 'txrefytru',
+                customer: {
+                   email: userEmail,
+                    phonenumber:phoneNumber,
+                },
+
+                amount: parseFloat(values.Amount),
                 currency: 'NGN',
+                payment_options: 'card'
             }}
         />
         </View>

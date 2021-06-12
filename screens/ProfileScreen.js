@@ -1,14 +1,37 @@
 import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {FontAwesome, Ionicons} from '@expo/vector-icons';
-import {StyleSheet, Button, Text, View, Animated, TouchableOpacity, Platform, Image} from 'react-native';
+import {
+    StyleSheet,
+    Button,
+    Text,
+    View,
+    Alert,
+    Animated,
+    TouchableOpacity,
+    Platform,
+    Image,
+    ActivityIndicator
+} from 'react-native';
 import AnimatedScrollView from "../components/AnimatedScrollView";
 import {ThemeContext} from "../util/ThemeManager";
 import * as ImagePicker from "expo-image-picker";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import {clearErrors, clearMessage, logoutUser, updateUserImage} from "../redux/actions/user-action";
+import {clearErrors, clearMessage, getUser, logoutUser, updateUserImage} from "../redux/actions/user-action";
 import {connect} from "react-redux";
 import PropTypes from "prop-types";
+import ToastMessage from "../components/Toast";
+
+
+
+
+
+const wait = timeout => {
+    return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+    });
+};
+
 
 const createFormData = (photo, body = {}) => {
     const data = new FormData();
@@ -30,34 +53,35 @@ let textStyle, boxStyle, smTextStyle;
 
 const UserProfile = (props) => {
 
+
+    const [refreshing, setRefreshing] = React.useState(false);
     const {toggleTheme, theme} = useContext(ThemeContext);
     const [permission, setPermission] = useState(false);
 
     const [photo, setPhoto] = useState(null);
 
     const {
-        logoutUser, navigation,updateUserImage, clearErrors,
+        logoutUser,getUser, navigation,updateUserImage, clearErrors,
         clearMessage
     } = props
     const {error, loading, message, userData} = props.user
 
 
     const {member: {LastName,ReferralBalance, Active, FirstName, Token, Phone, EmailAddress, ID, ProfilePicture}} = userData
-    const logUserOut = useCallback(() => {
-        logoutUser()
-    }, [])
+
 
     useEffect(() => {
         (async () => {
             if (Platform.OS !== 'web') {
                 const {status} = await ImagePicker.requestCameraPermissionsAsync();
                 if (status !== 'granted') {
-                    alert('Sorry, we need camera roll permission to make this work')
+                    Alert.alert('Sorry, we need camera roll permission to make this work')
                 }
 
             }
         })();
     }, [])
+
 
 
     const handleChoosePhoto = async () => {
@@ -70,18 +94,63 @@ const UserProfile = (props) => {
         console.log(result)
         if (!result.cancelled) {
             setPhoto(result.uri)
+
         }
+    }
+
+    const handleUploadPhoto = () => {
+
+           const body = createFormData(photo, { userId: '123' })
+        console.log(photo)
+
     }
 
     const uploadPhoto = useCallback(() => {
         const body = createFormData(photo)
 
         const formData = new FormData();
-        //formData.append('profileImage', image, image.name);
-        //formData.append('userId', ID)
-        //updateUserImage(formData);
+       // formData.append('profileImage', photo);
+      //  formData.append('userId', ID)
+       // updateUserImage(body);
         console.log(body)
     }, [])
+
+
+
+
+
+
+    const takeImage = async () => {
+        // make sure that we have the permission
+
+            // launch the camera with the following settings
+            let image = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [3, 3],
+                quality: 1,
+                base64: true,
+            })
+            // make sure a image was taken:
+            if (!image.cancelled) {
+
+
+                 //console.log(image.base64)
+                const formData = new FormData();
+                formData.append('profileImage', image.base64);
+                formData.append('userId', ID)
+                 updateUserImage(formData);
+
+            }
+
+    }
+
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        getUser(Phone)
+        wait(2000).then(() => setRefreshing(false));
+    }, []);
 
 
     textStyle = theme === 'Dark' ? '#fff' : Colors.PrimaryDarkColor
@@ -89,12 +158,12 @@ const UserProfile = (props) => {
     boxStyle = theme === 'Dark' ? DarkColors.primaryDarkTwo : Colors.White
 
     return (
-        <AnimatedScrollView routeMessage='Your profile' navigation={navigation} routeName='Profile'>
+        <AnimatedScrollView refreshing={refreshing} onRefresh={onRefresh} routeMessage='Your profile' navigation={navigation} routeName='Profile'>
             <Animated.View style={styles.container}>
 
 
                 <View style={styles.profileImageWrap}>
-                    <TouchableOpacity activeOpacity={0.8} onPress={handleChoosePhoto}
+                    <TouchableOpacity activeOpacity={0.8} onPress={takeImage}
                                       style={styles.profileImageContainer}>
 
 
@@ -119,8 +188,17 @@ const UserProfile = (props) => {
                                     borderRadius: 120,
                                 }} resizeMode='cover' source={{uri:ProfilePicture}} alt='user'/>
                         }
-                    </TouchableOpacity>
+
+                        {
+                            loading && <ActivityIndicator size="large" color='#131313'/>
+                        }
+
+                            </TouchableOpacity>
+
+
                 </View>
+
+
 
 
                 <Text style={[{
@@ -322,7 +400,8 @@ const UserProfile = (props) => {
                     <View style={styles.logoutBtnWrap}>
 
                         <TouchableOpacity
-                            onPress={logUserOut}
+                            activeOpacity={0.5}
+                            onPress={logoutUser}
                             style={[theme === 'Dark' ? styles.logoutBtnD : styles.logoutBtnW, styles.logoutBtn]}>
                             <Text style={{
                                 color: theme === 'Dark'
@@ -342,6 +421,13 @@ const UserProfile = (props) => {
 
 
             </Animated.View>
+
+
+            {message &&
+            <ToastMessage onHide={() => clearMessage()} message={message} type='message'/>
+            }
+
+            {error &&  <ToastMessage onHide={() => clearErrors()} message={error} type='error'/>}
         </AnimatedScrollView>
 
     );
@@ -492,6 +578,7 @@ UserProfile.propTypes = {
     updateUserImage: PropTypes.func.isRequired,
     clearErrors: PropTypes.func.isRequired,
     clearMessage: PropTypes.func.isRequired,
+    getUser: PropTypes.func.isRequired,
 
 };
 
@@ -499,7 +586,8 @@ const mapActionsToProps = {
     logoutUser,
     updateUserImage,
     clearErrors,
-    clearMessage
+    clearMessage,
+    getUser
 }
 const mapStateToProps = (state) => ({
     data: state.data,

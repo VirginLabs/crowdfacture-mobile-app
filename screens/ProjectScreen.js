@@ -43,8 +43,8 @@ const {route, navigation} = props
     const {theme} = useContext(ThemeContext);
     const [sheetOpen, setSheetOpen] = useState(false);
 
-    const [buyUnitsState, setBuyUnitsState] = useState(false)
     const {projectId} = route.params;
+
 
     const {error, loading, message, userData: {member: {LastName, ID, Phone}}} = props.user
     const {
@@ -58,9 +58,12 @@ const {route, navigation} = props
         loadingProject
     } = props.data
 
+
+
+
      useEffect(() => {
         const formData = new FormData()
-        formData.append('projectId', projectId.toString())
+        formData.append('projectId', projectId)
         getProject(formData)
 
     }, [projectId]);
@@ -79,7 +82,7 @@ const {route, navigation} = props
     } = useFormik({
         validationSchema: schema,
         initialValues: {
-            number: '',
+            number: 0,
         },
         onSubmit: (values) => {
             const {number} = values;
@@ -410,7 +413,8 @@ const {route, navigation} = props
                                 alignItems: 'center',
                                 justifyContent: 'center',
                             }} activeOpacity={0.8}>
-                                <Ionicons name='heart' color="#eee" size={24}/>
+                                <Ionicons name='heart' color={theme === 'Dark'
+                                ? '#eed' : "#333"} size={24}/>
                             </TouchableOpacity>
 
 
@@ -436,6 +440,8 @@ const {route, navigation} = props
             </Text>
             </View>
             }
+
+            {project.Active === '1' &&
             <BottomSheet wrapperStyle={{
                 width: wp('100%'),
                 backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
@@ -459,7 +465,7 @@ const {route, navigation} = props
                     <ToastMessage onHide={() => clearMessage()} message={message} type='message'/>
                     }
 
-                    {error &&  <ToastMessage onHide={() => clearErrors()} message={error} type='error'/>}
+                    {error && <ToastMessage onHide={() => clearErrors()} message={error} type='error'/>}
                     <Text style={{
                         paddingVertical: 20,
                         fontSize: 25,
@@ -475,10 +481,10 @@ const {route, navigation} = props
                     justifyContent: 'center',
                     flexDirection: 'column',
                     padding: 10,
-                    width:'100%' ,
+                    width: '100%',
                 }}>
 
-                    <View style={{paddingHorizontal: 32, marginTop: 15, width:'100%' ,}}>
+                    <View style={{paddingHorizontal: 32, marginTop: 15, width: '100%',}}>
                         <TextInput
                             color={theme === 'Dark' ? '#eee' : '#131313'}
                             icon='money'
@@ -498,22 +504,24 @@ const {route, navigation} = props
                         {errors.number}
                     </Text>
 
-                    <Text style={{fontSize: 16,  color:theme === 'Dark' ? '#eee' : '#131313', padding:5}} numberOfLines={1}>
-                        {total}
-                </Text>
+                    <Text style={{fontSize: 16, color: theme === 'Dark' ? '#eee' : '#131313', padding: 5}}
+                          numberOfLines={1}>
+                        ₦{total}
+                    </Text>
 
                     {
                         loading && <ActivityIndicator size="large" color={Colors.Primary}/>
                     }
 
                     {
-                     <MyButton action={() => handleSubmit()} title='BUY'
-                                                     buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
+                        <MyButton action={() => handleSubmit()} title='BUY'
+                                  buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
                     }
 
 
                 </View>
             </BottomSheet>
+            }
 
 
 
@@ -607,4 +615,4 @@ const mapStateToProps = (state) => ({
 })
 
 
-export default connect(mapStateToProps,mapActionToPops)(ProjectScreen);
+export default connect(mapStateToProps,mapActionToPops) (React.memo(ProjectScreen));

@@ -4,7 +4,7 @@ import {Text, View, StyleSheet} from 'react-native';
 import {Colors, DayColors} from "../../constants/Colors";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 
-const Sumotrust = ({theme}) => {
+const Sumotrust = ({theme,SumoTrustID}) => {
     return (
         <View style={styles.sumotrust}>
             <View style={[{

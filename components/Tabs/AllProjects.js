@@ -36,6 +36,7 @@ const AllProjects = (props) => {
                 loadingProject ?
                 <ActivityIndicator size="large" color={Colors.Primary}/>
                 :
+                    Object.keys(allProjects).length > 0 &&
                 allProjects.map((({ID, ProjectImage, ProjectTitle, Active, SoldOut, UpComing, Target, PricePerUnit}) => (
                     <ProjectCard action={() =>  navigation.navigate('Project', {
                         projectId: ID,

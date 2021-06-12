@@ -1,57 +1,51 @@
 import React, {useContext, useRef, useState} from 'react';
 
-import {Animated, Keyboard, StatusBar, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Animated, StatusBar, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import {Ionicons} from "@expo/vector-icons";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
-import MyBottomSheet from "../components/BottomSheet";
 import SetPin from "../components/Forms/SetPin";
 import UpdatePassword from "../components/payments/PasswordUpdate";
-
+import {toggleModal, toggleSecurity} from "../redux/actions/data-action";
+import {clearErrors, clearMessage, sendOtp, updatePassword, updateWithdrawalPin} from "../redux/actions/user-action";
+import BottomSheet from "react-native-simple-bottom-sheet";
+import PropTypes from "prop-types";
+import {connect} from "react-redux";
+import ToastMessage from "../components/Toast";
 
 
 let content;
 
-const SecurityScreen = ({navigation}) => {
+const SecurityScreen = (props) => {
+
+    const {navigation} = props
     const {theme} = useContext(ThemeContext);
-    const animation = useRef(new Animated.Value(0)).current
+    const sheetRef = useRef(null);
+    const {clearMessage,updatePassword,clearErrors,updateWithdrawalPin,sendOtp} = props
+    const {loading,message,error,otpMessage,userData:{member: {ID}}} = props.user
 
     //which content is shown in the bottom sheet
     const [contentKey, setContentKey] = useState('');
 
     if (contentKey === '1') {
-        content = <SetPin theme={theme}/>
+        content = <SetPin userId={ID} updateWithdrawalPin={updateWithdrawalPin} loading={loading} theme={theme}/>
 
     }
     if (contentKey === '2') {
-        content = <UpdatePassword theme={theme}/>
+        content = <UpdatePassword userId={ID} loading={loading}  updatePassword={updatePassword} theme={theme}/>
     }
 
 
     const handleOpen = (id) => {
         setContentKey(id)
-        console.log(contentKey)
-        Animated.timing(animation, {
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true
-        }).start();
+        sheetRef.current.togglePanel()
 
     }
 
 
-    const handleClose = () => {
-        setContentKey('')
-        console.log(contentKey)
-        Keyboard.dismiss()
-        Animated.timing(animation, {
-            toValue: 0,
-            duration: 200,
-            useNativeDriver: true
-        }).start()
-    }
+
 
 
     return (
@@ -81,7 +75,7 @@ const SecurityScreen = ({navigation}) => {
                             {
                                 backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee'
                             },
-                            styles.securityButton]} activeOpacity={.9}
+                            styles.securityButton]} activeOpacity={0.6}
                                           onPress={() => handleOpen(id)}>
                             <Ionicons name={icon} size={22} color={theme === 'Dark' ?
                                 DayColors.cream
@@ -117,12 +111,29 @@ const SecurityScreen = ({navigation}) => {
 
             </View>
 
-            <MyBottomSheet theme={theme} animation={animation} handleClose={handleClose}>
+            <BottomSheet wrapperStyle={{
+                width: wp('100%'),
+                backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#fff',
+            }}
+                         sliderMinHeight={0}
+
+                         ref={ref => sheetRef.current = ref}>
 
                 {content}
 
-            </MyBottomSheet>
+            </BottomSheet>
 
+
+
+            {message &&
+            <ToastMessage onHide={() => clearMessage()} message={message} type='message'/>
+            }
+            {
+                otpMessage &&
+                <ToastMessage onHide={() => clearMessage()} message={otpMessage} type='message'/>
+            }
+
+            {error &&  <ToastMessage onHide={() => clearErrors()} message={error} type='error'/>}
 
         </Animated.View>
     );
@@ -190,4 +201,31 @@ const styles = StyleSheet.create({
 
 });
 
-export default SecurityScreen;
+SecurityScreen.propTypes = {
+    data: PropTypes.object.isRequired,
+    updatePassword: PropTypes.func.isRequired,
+    updateWithdrawalPin: PropTypes.func.isRequired,
+    clearErrors: PropTypes.func.isRequired,
+    clearMessage: PropTypes.func.isRequired,
+    toggleModal: PropTypes.func.isRequired,
+    sendOtp: PropTypes.func.isRequired,
+};
+
+
+const mapActionToPops = {
+    toggleSecurity,
+    updatePassword,
+    clearErrors,
+    clearMessage,
+    updateWithdrawalPin,
+    toggleModal,
+    sendOtp
+}
+
+
+const mapStateToProps = (state) => ({
+    data: state.data,
+    user: state.user,
+})
+
+export default connect(mapStateToProps, mapActionToPops) (SecurityScreen);

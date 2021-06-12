@@ -1,16 +1,15 @@
 import React, {useContext} from 'react';
 
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import AnimatedScrollView from "../components/AnimatedScrollView";
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import MyProjects from "../components/Tabs/MyProjects";
 import AllProjects from "../components/Tabs/AllProjects";
 import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors} from "../constants/Colors";
-import {getAllProject} from "../redux/actions/data-action";
 import {connect} from "react-redux";
 import PropTypes from "prop-types";
-import {getUser, getUserProjects} from "../redux/actions/user-action";
+import {getUser} from "../redux/actions/user-action";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -97,4 +96,4 @@ const mapStateToProps = (state) => ({
 
 
 
-export default connect(mapStateToProps,mapActionToPops)(Projects);
+export default connect(mapStateToProps,mapActionToPops)(React.memo(Projects));

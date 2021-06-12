@@ -1,10 +1,10 @@
 import React, {useContext} from 'react';
 
-import {Animated, StatusBar, TouchableOpacity, StyleSheet, Text, View, FlatList} from 'react-native';
+import {Animated, StatusBar, TouchableOpacity, StyleSheet, Text, View} from 'react-native';
 import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
-import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {FontAwesome5, Ionicons} from "@expo/vector-icons";
 
 

@@ -15,7 +15,7 @@ import {connect, Provider} from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import {persistor, store} from "./redux/store";
-import {DarkColors} from "./constants/Colors";
+import {Colors, DarkColors} from "./constants/Colors";
 import PropTypes from "prop-types";
 import mapStateToProps from "react-redux/lib/connect/mapStateToProps";
 import NavManager from "./Naviagtions/NavManager";
@@ -80,7 +80,8 @@ const App = (props)  =>{
 
 
 const navTheme = DefaultTheme;
-    navTheme.colors.background = '#333'
+    navTheme.colors.background = theme === 'Dark' ?
+        Colors.PrimaryDarkColor : '#eee'
 
     return (
 
