@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useMemo, useState} from 'react';
+import React, { useContext, useEffect, useState} from 'react';
 import {ThemeContext} from "../util/ThemeManager";
 import {
     Pressable,
@@ -7,6 +7,7 @@ import {
     Text,
     Dimensions,
     View,
+    Share,
     StyleSheet,
     TouchableOpacity,
     ImageBackground, ActivityIndicator
@@ -27,8 +28,6 @@ import {getAllProject} from "../redux/actions/data-action";
 import {getUser} from "../redux/actions/user-action";
 import ToastMessage from "../components/Toast";
 
-
-let backPressed = 0;
 
 
 
@@ -51,7 +50,7 @@ const HomeScreen = (props) => {
     }
     const {route: {name}} = props;
 
-    const [copiedText, setCopiedText] = useState('');
+
     const {
         getUser,
         getAllProject,
@@ -59,7 +58,7 @@ const HomeScreen = (props) => {
 
 
 
-    const {loading,userData: {member: {Amount,Phone, InvestedAmount, ReferralID, LastName}}} = props.user
+    const {userData: {member: {Amount,Phone, InvestedAmount, ReferralID, LastName}}} = props.user
     const {
         allProjects,
         loadingProject
@@ -68,11 +67,10 @@ const HomeScreen = (props) => {
             getAllProject(),
         []);
 
-    const copyToClipboard = () => {
-        setToastVisible(prevState => !prevState)
-        Clipboard.setString(ReferralID);
-    };
+
     const {theme} = useContext(ThemeContext);
+
+
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -80,6 +78,26 @@ const HomeScreen = (props) => {
         wait(2000).then(() => setRefreshing(false));
     }, []);
 
+
+
+    const onShare = async () => {
+        try {
+            const result = await Share.share({
+                message: `I just invested in Crowdfacture a manufacturing company that let's you co-own a factory at 30% equity stake for life click the link to register https://crowdfacture.com/auth?refCode=${ReferralID}`,
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    };
 
 
     return (
@@ -174,15 +192,16 @@ const HomeScreen = (props) => {
 
                                     </Text>
 
-                                    <MyButton title='COPY CODE'
-                                              action={copyToClipboard} textStyle={{
-                                        color:
-                                            theme === 'Dark'
-                                                ? DayColors.primaryColor : "#eee",
-                                        fontFamily: 'Gordita-medium',
-                                    }} buttonStyle={styles.buttonCopy}>
-                                        <FontAwesome name='copy' size={18} color={theme === 'Dark'
-                                            ? DayColors.primaryColor : "#eee"}/>
+
+
+
+
+                                    <MyButton title='SHARE LINK'
+                                              action={onShare} textStyle={{
+                                        color: "#131313",
+                                        fontFamily: 'Gordita-bold',
+                                    }} buttonStyle={styles.buttonShare}>
+                                        <FontAwesome name='share-alt' size={18} color={"#333"}/>
                                     </MyButton>
                                 </View>
 
@@ -413,6 +432,15 @@ const styles = StyleSheet.create({
         height: 55,
         backgroundColor: DarkColors.primaryDarkTwo
     },
+    buttonShare:{
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+        width: '60%',
+        flexDirection: 'row',
+        borderRadius: 12,
+        height: 55,
+        backgroundColor: DayColors.green
+    },
 
     buttonClose: {
         alignItems: 'center',
@@ -492,7 +520,7 @@ const styles = StyleSheet.create({
     },
     refMessage: {
         width: '90%',
-        fontFamily: "Gordita",
+        fontFamily: "Gordita-medium",
         color: "#ddd",
         fontSize: 10,
         lineHeight: 15,

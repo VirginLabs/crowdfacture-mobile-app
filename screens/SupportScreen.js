@@ -1,15 +1,27 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 
-import {Animated, StatusBar, TouchableOpacity, StyleSheet, Text, View} from 'react-native';
+import {Animated, StatusBar, TouchableOpacity, StyleSheet, Linking, Text, View} from 'react-native';
 import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import { widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {FontAwesome5, Ionicons} from "@expo/vector-icons";
+import {openComposer, openInbox} from "react-native-email-link";
+import Clipboard from "expo-clipboard";
+import ToastMessage from "../components/Toast";
+
 
 
 const SupportScreen = ({navigation}) => {
     const {theme} = useContext(ThemeContext);
+    const [toastVisible, setToastVisible] = useState(false);
+
+    const copyToClipboard = (clipboardString) => {
+        setToastVisible(prevState => !prevState)
+        Clipboard.setString(clipboardString);
+    };
+
+
     return (
         <Animated.View style={[styles.container, {
             backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
@@ -26,6 +38,12 @@ const SupportScreen = ({navigation}) => {
                 SUPPORT
             </Text>
 
+            {
+                toastVisible &&
+
+                <ToastMessage onHide={() => setToastVisible(false)} message='COPIED' type='message'/>
+            }
+
             <View style={styles.dialsWrap}>
                 <View style={styles.iconWrap}>
                     <FontAwesome5 name='headset' size={60} color={DayColors.cream}/>
@@ -33,33 +51,80 @@ const SupportScreen = ({navigation}) => {
 
 
                 <View>
-                    {
-                        SupportButtons.map((({key, icon, title}) => (
-                            <TouchableOpacity key={key} style={[
-                                {
-                                    backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee'
-                                },
-                                styles.contactButton]} activeOpacity={.9}
-                                              onPress={() => console.log('copied')}>
-                                <Ionicons name={icon} size={20} color={theme === 'Dark' ?
-                                    DayColors.lemon : DayColors.green}/>
 
-                                <View style={{
-                                    width: '60%',
-                                    justifyContent: 'center',
-                                    alignItems: 'center'
-                                }}>
-                                    <Text style={{
-                                        color: theme === 'Dark' ? '#eee' : '#131313',
-                                        fontSize: 16,
-                                        fontFamily: 'Gordita-bold'
-                                    }}>
-                                        {title}
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        )))
-                    }
+                    <TouchableOpacity style={[
+                        {
+                            backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee'
+                        },
+                        styles.contactButton]} onPress={() => copyToClipboard('https://tawk.to/chat/607ebd6e5eb20e09cf34c723/1f3nh7vcm')}>
+                        <Ionicons name='chatbubble-sharp' size={20} color={theme === 'Dark' ?
+                            DayColors.lemon : DayColors.green}/>
+
+                        <View style={{
+                            width: '60%',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            <Text style={{
+                                color: theme === 'Dark' ? '#eee' : '#131313',
+                                fontSize: 16,
+                                fontFamily: 'Gordita-bold'
+                            }}>
+                                Connect to live chat
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+
+
+                    <TouchableOpacity style={[
+                        {
+                            backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee'
+                        },
+                        styles.contactButton]} onPress={() => copyToClipboard('support@crowdfacture.net')}>
+                        <Ionicons name='ios-mail' size={20} color={theme === 'Dark' ?
+                            DayColors.lemon : DayColors.green}/>
+
+                        <View style={{
+                            width: '60%',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            <Text style={{
+                                color: theme === 'Dark' ? '#eee' : '#131313',
+                                fontSize: 16,
+                                fontFamily: 'Gordita-bold'
+                            }}>
+                                Send us a mail
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+
+
+
+
+
+                    <TouchableOpacity style={[
+                        {
+                            backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee'
+                        },
+                        styles.contactButton]} onPress={() => copyToClipboard('+2348148008091')}>
+                        <Ionicons name='ios-call' size={20} color={theme === 'Dark' ?
+                            DayColors.lemon : DayColors.green}/>
+
+                        <View style={{
+                            width: '60%',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            <Text style={{
+                                color: theme === 'Dark' ? '#eee' : '#131313',
+                                fontSize: 16,
+                                fontFamily: 'Gordita-bold'
+                            }}>
+                                Call us
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
 
 
@@ -69,24 +134,6 @@ const SupportScreen = ({navigation}) => {
     );
 };
 
-
-const SupportButtons = [
-    {
-        key: '1',
-        icon: 'chatbubble-sharp',
-        title: 'Connect to live chat'
-    },
-    {
-        key: '2',
-        icon: 'ios-mail',
-        title: '  Send us a mail'
-    },
-    {
-        key: '3',
-        icon: 'ios-call',
-        title: '  Call us'
-    }
-]
 
 
 const styles = StyleSheet.create({

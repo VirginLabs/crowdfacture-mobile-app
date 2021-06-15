@@ -202,12 +202,13 @@ export const verifyUserAction = (details) => (dispatch) => {
 
     verifyPromise.then((res) => {
         if (res.status === "200") {
-
+console.log(res)
             if (res.verified === false) {
                 dispatch({
                     type: SET_VERIFIED,
                     payload: false
                 })
+
 
                 dispatch({
                     type: SET_VERIFY_MSG,

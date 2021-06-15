@@ -1,12 +1,25 @@
-import React from 'react';
+import React, {useState} from 'react';
 
-import {Text, View, StyleSheet, TouchableWithoutFeedback, Keyboard, ActivityIndicator} from 'react-native';
+import {
+    Text,
+    View,
+    StyleSheet,
+    TouchableWithoutFeedback,
+    Keyboard,
+    ActivityIndicator,
+    TouchableOpacity
+} from 'react-native';
 import {Colors, DayColors} from "../../constants/Colors";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 import TextInput from "../TextInput";
 import MyButton from "../MyButton";
 import {useFormik} from "formik";
 import * as Yup from "yup";
+import {Ionicons} from "@expo/vector-icons";
+import Clipboard from 'expo-clipboard';
+import ToastMessage from "../Toast";
+
+
 
 const phoneRegExp = /^[+]?\d*$/
 const schema = Yup.object().shape({
@@ -18,9 +31,16 @@ const schema = Yup.object().shape({
 });
 
 
-const BankAccount = ({theme,getUniqueAccountNumb, ID,Phone, userDetails,loading}) => {
+const BankAccount = ({theme, getUniqueAccountNumb, ID, Phone, userDetails, loading,}) => {
 
+    const {MonnifyAccountNumber, MonnifyBankName, BVNVerified, bankDetails} = userDetails
 
+    const [toastVisible, setToastVisible] = useState(false);
+
+    const copyToClipboard = () => {
+        setToastVisible(prevState => !prevState)
+        Clipboard.setString(MonnifyAccountNumber);
+    };
     const {
         handleChange, handleSubmit, handleBlur,
         values,
@@ -28,7 +48,8 @@ const BankAccount = ({theme,getUniqueAccountNumb, ID,Phone, userDetails,loading}
         touched
     } = useFormik({
         validationSchema: schema,
-        initialValues: {BVN: '',
+        initialValues: {
+            BVN: '',
         },
         onSubmit: (values) => {
             const {BVN} = values;
@@ -42,68 +63,165 @@ const BankAccount = ({theme,getUniqueAccountNumb, ID,Phone, userDetails,loading}
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={styles.accountNumber}>
-            <View style={[
+
+            <View style={styles.accountNumber}>
                 {
-                    height:100
-                },
-                styles.infoAlert]}>
-                <View style={styles.infoHead}>
-                    <Text style={[styles.infoHeadText, {
-                        color: theme === 'Dark' ?
-                            Colors.White : "#131313"
-                    }]}>
-                        UNIQUE ACCOUNT NUMBER
-                    </Text>
-                </View>
-                <View style={styles.infoHeadBody}>
-                    <Text style={[{
-                        fontFamily: 'Gordita-medium',
-                        textAlign: 'center',
-                        fontSize:12,
-                        color: theme === 'Dark' ?
-                            Colors.White : "#333"
+                    toastVisible &&
 
-                    }]}>
-                        Copy your Unique Crowdfacture account number and transfer your
-                        desired
-                        Amount to fund you crowdfacture account
-                    </Text>
-                </View>
+                    <ToastMessage onHide={() => setToastVisible(false)} message='COPIED' type='message'/>
+                }
+                {
+                    BVNVerified ? <View style={[
+                            {
+                                height: 100
+                            },
+                            styles.infoAlert]}>
+                            <View style={styles.infoHead}>
+                                <Text style={[styles.infoHeadText, {
+                                    color: theme === 'Dark' ?
+                                        Colors.White : "#131313"
+                                }]}>
+                                    COPY ACCOUNT NUMBER
+                                </Text>
+                            </View>
+
+                            <View style={styles.infoHeadBody}>
+                                <Text style={[{
+                                    fontFamily: 'Gordita-medium',
+                                    textAlign: 'center',
+                                    fontSize: 12,
+                                    color: theme === 'Dark' ?
+                                        Colors.White : "#333"
+
+                                }]}>
+                                    Copy your Unique Crowdfacture account number and transfer your
+                                    desired
+                                    Amount to fund you Crowdfacture account
+                                </Text>
+                            </View>
+                        </View> :
+
+                        <View style={[
+                            {
+                                height: 100
+                            },
+                            styles.infoAlert]}>
+                            <View style={styles.infoHead}>
+                                <Text style={[styles.infoHeadText, {
+                                    color: theme === 'Dark' ?
+                                        Colors.White : "#131313"
+                                }]}>
+                                    GENERATE ACCOUNT NUMBER
+                                </Text>
+                            </View>
+                            <View style={styles.infoHeadBody}>
+                                <Text style={[{
+                                    fontFamily: 'Gordita-medium',
+                                    textAlign: 'center',
+                                    fontSize: 12,
+                                    color: theme === 'Dark' ?
+                                        Colors.White : "#333"
+
+                                }]}>
+                                    Provide your BVN below to generate Crowdfacture account number, make a deposit to
+                                    the account to fund your crowdfacture main balance.
+                                </Text>
+                            </View>
 
 
+                        </View>
+                }
+
+                {
+                    BVNVerified ? <View style={{
+                    width:'100%',
+                        flexDirection:'column',
+                        alignItems:'center',
+                        justifyContent:'center'
+                    }}>
+
+                        <Text style={{
+                            padding:10,
+                            fontSize:16,
+                            fontFamily:'Gordita-medium',
+                            color: theme === 'Dark' ? '#eee' : "#555"
+                        }}>
+                            {MonnifyBankName}
+                        </Text>
+
+                        <View style={{
+                            borderWidth:1,
+                            borderColor:theme === 'Dark' ? DayColors.lemon : DayColors.strongLemon,
+                            borderStyle:'dashed',
+                            borderRadius:10,
+                            padding:8,
+                        }}>
+
+                            <Text style={{
+
+                                fontSize:20,
+                                fontFamily:'Gordita-bold',
+                                color: theme === 'Dark' ? DayColors.green : DayColors.cream
+                            }}>
+                                {MonnifyAccountNumber}
+                            </Text>
+
+                        </View>
+
+
+                        <TouchableOpacity style={
+                            {
+                                width:120,
+                                height:45,
+                                flexDirection:'row',
+                                justifyContent:'space-evenly',
+                                alignItems:'center',
+                                backgroundColor: DayColors.strongLemon,
+                                borderRadius:8,
+                                margin:10
+                            }
+                        }  onPress={copyToClipboard}>
+                            <Ionicons name='ios-copy' size={20} color={theme === 'Dark' ? DayColors.green : '#333'}/>
+                            <Text style={{
+                                fontFamily:'Gordita-bold'
+                            }}>
+                                COPY
+                            </Text>
+                        </TouchableOpacity>
+
+                        </View> :
+
+                        <>
+                            <View style={{paddingHorizontal: 32, marginTop: 15, width: wp('100%'),}}>
+                                <TextInput
+                                    color={theme === 'Dark' ? '#eee' : '#131313'}
+                                    icon='key'
+                                    placeholder='Enter your BVN'
+                                    autoCapitalize='none'
+                                    keyboardType='numeric'
+                                    keyboardAppearance='dark'
+                                    returnKeyType='go'
+                                    returnKeyLabel='go'
+                                    onChangeText={handleChange('BVN')}
+                                    onBlur={handleBlur('BVN')}
+                                    error={errors.BVN}
+                                    touched={touched.BVN}
+                                />
+                            </View>
+                            <Text style={styles.errorText} numberOfLines={1}>
+                                {errors.BVN}
+                            </Text>
+
+                            {
+                                loading && <ActivityIndicator size="large" color={Colors.Primary}/>
+                            }
+
+                            <MyButton action={() => handleSubmit()} title='SUBMIT'
+                                      buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
+
+                        </>
+                }
             </View>
-
-
-            <View style={{paddingHorizontal: 32, marginTop: 15, width: wp('100%'),}}>
-                <TextInput
-                    color={theme === 'Dark' ? '#eee' : '#131313'}
-                    icon='key'
-                    placeholder='Enter your BVN'
-                    autoCapitalize='none'
-                    keyboardAppearance='dark'
-                    returnKeyType='go'
-                    returnKeyLabel='go'
-                    onChangeText={handleChange('BVN')}
-                    onBlur={handleBlur('BVN')}
-                    error={errors.BVN}
-                    touched={touched.BVN}
-                />
-            </View>
-            <Text style={styles.errorText} numberOfLines={1}>
-                {errors.BVN}
-            </Text>
-
-            {
-                loading && <ActivityIndicator size="large" color={Colors.Primary}/>
-            }
-
-            <MyButton action={() => handleSubmit()} title='SUBMIT'
-                      buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
-
-
-
-        </View>
         </TouchableWithoutFeedback>
     );
 };
@@ -138,7 +256,7 @@ const styles = StyleSheet.create({
     infoHeadBody: {
         fontFamily: 'Gordita-medium',
     },
-    submitBtn:{
+    submitBtn: {
         height: 50,
         marginHorizontal: 20,
         alignItems: 'center',
@@ -152,9 +270,11 @@ const styles = StyleSheet.create({
         fontFamily: 'Gordita-bold',
         fontSize: 16
     },
-    errorText: {fontSize: 14,
+    errorText: {
+        fontSize: 14,
         alignItems: "flex-start", width: '75%',
-        color: '#FF5A5F', padding: 8}
+        color: '#FF5A5F', padding: 8
+    }
 
 
 })

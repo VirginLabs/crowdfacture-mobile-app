@@ -7,7 +7,7 @@ import MyButton from "./MyButton";
 
 const ProjectCard = ({image,theme, projectTitle, action, target, pricePerUnit,UpComing, Active, SoldOut}) => {
     return (
-        <TouchableOpacity onPress={action} activeOpacity={0.5} style={[
+        <TouchableOpacity onPress={action} style={[
             {
                 backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkFour : '#fff',
             },

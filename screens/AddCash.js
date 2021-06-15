@@ -264,8 +264,8 @@ const styles = StyleSheet.create({
     },
     moreInfo: {
         fontFamily: 'Gordita-medium',
-        lineHeight: 20,
-        fontSize: 14,
+        lineHeight: 18,
+        fontSize: 12,
     },
     body: {
         width: '60%'

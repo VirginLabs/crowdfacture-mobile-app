@@ -1,6 +1,15 @@
 import React, {useContext, useEffect} from 'react';
 
-import {Text, View, StyleSheet, StatusBar, ScrollView, ActivityIndicator, FlatList} from 'react-native';
+import {
+    Text,
+    View,
+    StyleSheet,
+    StatusBar,
+    ScrollView,
+    ActivityIndicator,
+    FlatList,
+    TouchableOpacity
+} from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import {ThemeContext} from "../util/ThemeManager";
@@ -127,6 +136,8 @@ const Transactions = (props) => {
 
 {
     loading ?     <ActivityIndicator  size="large" color={Colors.Primary}/>:
+
+        Object.keys(investments).length > 0 ?
           <FlatList data={investments}
                     contentContainerStyle={{
                         width:wp('90%'),
@@ -136,6 +147,41 @@ const Transactions = (props) => {
                         flexDirection: 'column'
                     }}
                     renderItem={Investment} keyExtractor={item => item.ID}/>
+                    :
+            <View style={{
+                width:'100%',
+                flexDirection:'column',
+                alignItems:'center'
+            }}>
+                <Text style={{
+                    fontFamily:'Gordita-medium',
+                    color :theme === 'Dark' ? '#eee':  '#131313'
+                }}>
+                    Oops.. You have no investments yet
+                </Text>
+
+
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('Projects')}
+                    style={{
+                    margin:10,
+                    width:'70%',
+                    height:35,
+                    borderRadius:10,
+                    backgroundColor:DayColors.primaryColor,
+                    alignItems:'center',
+                    justifyContent:'center'
+                }}>
+                    <Text style={{
+                        fontFamily:'Gordita-bold'
+                    }}>
+                        INVEST NOW
+                    </Text>
+                </TouchableOpacity>
+
+
+            </View>
+
             }
         </View>
     );

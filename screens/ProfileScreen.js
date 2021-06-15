@@ -1,8 +1,7 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState} from 'react';
 import {FontAwesome, Ionicons} from '@expo/vector-icons';
 import {
     StyleSheet,
-    Button,
     Text,
     View,
     Alert,
@@ -16,7 +15,7 @@ import AnimatedScrollView from "../components/AnimatedScrollView";
 import {ThemeContext} from "../util/ThemeManager";
 import * as ImagePicker from "expo-image-picker";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import {clearErrors, clearMessage, getUser, logoutUser, updateUserImage} from "../redux/actions/user-action";
 import {connect} from "react-redux";
 import PropTypes from "prop-types";
@@ -35,7 +34,7 @@ const wait = timeout => {
 
 const createFormData = (photo, body = {}) => {
     const data = new FormData();
-    data.append('photo', {
+    data.append('profileImage', {
         name: photo.fileName,
         type: photo.type,
         uri: Platform.OS === 'ios' ? photo.uri.replace('file://', '')
@@ -84,41 +83,6 @@ const UserProfile = (props) => {
 
 
 
-    const handleChoosePhoto = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        })
-        console.log(result)
-        if (!result.cancelled) {
-            setPhoto(result.uri)
-
-        }
-    }
-
-    const handleUploadPhoto = () => {
-
-           const body = createFormData(photo, { userId: '123' })
-        console.log(photo)
-
-    }
-
-    const uploadPhoto = useCallback(() => {
-        const body = createFormData(photo)
-
-        const formData = new FormData();
-       // formData.append('profileImage', photo);
-      //  formData.append('userId', ID)
-       // updateUserImage(body);
-        console.log(body)
-    }, [])
-
-
-
-
-
 
     const takeImage = async () => {
         // make sure that we have the permission
@@ -135,11 +99,16 @@ const UserProfile = (props) => {
             if (!image.cancelled) {
 
 
+               await setPhoto(image.uri)
                  //console.log(image.base64)
+
+
                 const formData = new FormData();
-                formData.append('profileImage', image.base64);
-                formData.append('userId', ID)
+               formData.append('profileImage',photo);
+               formData.append('userId', ID);
                  updateUserImage(formData);
+
+                //react does not support file url so we write the code below
 
             }
 
@@ -169,9 +138,10 @@ const UserProfile = (props) => {
 
                         {
                             ProfilePicture === null ?
-                                <Text className={{
+                                <Text style={{
                                     color: '#131313',
-                                    fontSize:20,
+                                    fontSize:30,
+                                    textTransform: 'uppercase',
                                     fontFamily:'Gordita-Black'
                                 }}>
 
@@ -400,6 +370,7 @@ const UserProfile = (props) => {
                     <View style={styles.logoutBtnWrap}>
 
                         <TouchableOpacity
+
                             activeOpacity={0.5}
                             onPress={logoutUser}
                             style={[theme === 'Dark' ? styles.logoutBtnD : styles.logoutBtnW, styles.logoutBtn]}>
@@ -553,7 +524,7 @@ textTransform:'capitalize',
     },
     logoutBtn: {
         marginVertical: 4,
-        width: 120,
+        width: '100%',
         height: 50,
         borderRadius: 10,
         flexDirection: 'row',

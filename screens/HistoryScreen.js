@@ -73,19 +73,19 @@ const HistoryScreen = (props) => {
 
                 <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Dividends')} style={[
                     {
-                        backgroundColor: DarkColors.primaryDarkTwo
+                        backgroundColor: DayColors.primaryColor
                     },
                     styles.card]}>
                     <View style={styles.cardTop}>
                         <Text style={{
-                            color: '#fff',
+                            color: '#131313',
                             fontFamily:'Gordita-bold',
                             fontSize:25
                         }}>
                             Returns
                         </Text>
                         <Text  style={{
-                            color: '#eee',
+                            color: '#333',
                             fontFamily:'Gordita-bold',
                             fontSize:13
                         }}>
@@ -97,7 +97,7 @@ const HistoryScreen = (props) => {
                     <View style={styles.description}>
                         <Text style={{
                             fontSize:13,
-                            color:'#eee',
+                            color:'#131313',
                             fontFamily:'Gordita-medium',
                             lineHeight:20
                         }}>
@@ -127,20 +127,20 @@ const HistoryScreen = (props) => {
 
                 <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Deposits')} style={[
                     {
-                        backgroundColor: DarkColors.primaryDarkOne
+                        backgroundColor: DayColors.green
                     },
                     styles.card]}>
 
                     <View style={styles.cardTop}>
                         <Text style={{
-                            color: '#fff',
+                            color: '#131313',
                             fontFamily:'Gordita-bold',
                             fontSize:25
                         }}>
                             Deposits
                         </Text>
                         <Text  style={{
-                            color: '#eee',
+                            color: '#333',
                             fontFamily:'Gordita-bold',
                             fontSize:13
                         }}>
@@ -152,7 +152,7 @@ const HistoryScreen = (props) => {
                     <View style={styles.description}>
                         <Text style={{
                             fontSize:13,
-                            color:'#eee',
+                            color:'#333',
                             fontFamily:'Gordita-medium',
                             lineHeight:20
                         }}>
@@ -185,24 +185,6 @@ const HistoryScreen = (props) => {
 
 
 
-const Transactions = [
-    {
-        Date: "10 Oct, 2021",
-        Type: "Investment",
-        body: "Proper documentation of the total projects invested",
-
-    }, {
-        Date: "22 April, 2021",
-        Type: "Returns",
-        body: "Always know how much profit you have generated from your investment",
-        link: true
-    },
-    {
-        Date: "12 June, 2021",
-        Type: "Deposits",
-        body: "Keep track of the money you have deposited on crowdfacture"
-    },
-]
 
 
 

@@ -1,5 +1,5 @@
-import React, {useCallback, useContext, useEffect} from "react";
-import {View, Text, Animated, StatusBar, StyleSheet, ScrollView, ActivityIndicator} from "react-native";
+import React, {useCallback, useContext, useEffect, useMemo} from "react";
+import {View, Text, StatusBar, StyleSheet, ScrollView, ActivityIndicator} from "react-native";
 import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
@@ -11,26 +11,27 @@ import PropTypes from "prop-types";
 
 const NotificationScreen = (props) => {
 
-
+let noti = [];
 
     const {notificationState,notificationLoading,notifications} = props.data
     const { userData: { member: { ID}}} = props.user
     const {navigation,getNotifications} = props
-    const getNotified = useCallback(() =>{
-        const notiData = new FormData()
-        notiData.append('userId', ID)
-        getNotifications(notiData)
-    },[notificationState])
+    const getNotified = () =>{
 
-    const {theme, transitionValue} = useContext(ThemeContext);
+    }
+
+    const {theme} = useContext(ThemeContext);
 
 
     useEffect(() =>{
         //called anytime the notification is toggled
 
-       getNotified()
+        const notiData = new FormData()
+        notiData.append('userId', ID)
+        getNotifications(notiData)
 
-    }, [])
+        noti = notifications
+    }, [ID])
 
     return (
         <ScrollView
@@ -56,31 +57,41 @@ const NotificationScreen = (props) => {
             </Text>
             <View style={styles.notificationWrap}>
                 {
-                    notificationLoading && <ActivityIndicator size="large" color={Colors.Primary}/>
+                    notificationLoading ? <ActivityIndicator size="large" color={Colors.Primary}/>
+                    :
+                        noti.length !== 0 &&
+                        <View>
+
+                        </View>
+
+                }
+                {
+
+                        !notificationLoading && noti.length === 0 &&
+
+                        <View style={{
+                            width: '90%',
+                            alignItems: 'center',
+                            padding: 8,
+                            backgroundColor: DayColors.lemon,
+                            borderRadius: 10,
+                            margin: 10,
+                        }}>
+                            <Text style={{
+                                fontFamily: 'Gordita-bold',
+                                color: '#333',
+                            }}>
+                                You have no notification
+                            </Text>
+                        </View>
+
 
                 }
 
 
+                {
 
-
-                    {
-                        !notificationLoading && Object.keys(notifications).length < 1 &&
-                        <View style={{
-                            width:'90%',
-                            alignItems:'center',  padding:8,
-                            backgroundColor: DayColors.lemon,
-                            borderRadius:10,
-                            margin:10,
-                        }}>
-                        <Text style={{
-                            fontFamily: 'Gordita-bold',
-                            color: '#131313'
-                        }}>
-                            You have no notification
-                        </Text>
-                        </View>
-                    }
-
+                }
             </View>
         </ScrollView>
     );
@@ -103,6 +114,8 @@ const styles = StyleSheet.create({
     notificationWrap:{
         flex:1,
         width: '90%',
+        flexDirection: 'column',
+        alignItems: "center"
     }
 })
 

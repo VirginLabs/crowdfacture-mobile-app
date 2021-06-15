@@ -83,16 +83,13 @@ export const signUpUser = (userData,history) => (dispatch) => {
                         payload: "Verification link sent, check spam if not found"
                     })
                 } else {
-                    setAuthorizationHeader(result.member.Token, result.message.LastName);
+                    setAuthorizationHeader(result.member.Token, result.message.LastName, result.member.Phone);
                     /* dispatch({
                          type: SET_USER,
                          payload: result.member
                      })*/
                     dispatch(getUser(result.member.Phone))
 
-                    setTimeout(() => {
-                        history.push('/dashboard')
-                    }, 1500)
 
                 }
                 //window.location.href = '/dashboard'
@@ -147,7 +144,7 @@ export const loginUser = (user,navigation) => (dispatch) => {
 
 
 
-                    setAuthorizationHeader(result.member.Token, result.member.LastName)
+                    setAuthorizationHeader(result.member.Token, result.member.LastName, result.member.Phone)
                     /* dispatch({
                            type: SET_USER,
                            payload: result.member
@@ -210,7 +207,7 @@ export const sumotrustLogin = (userDetails) => (dispatch) => {
                         payload: "Please verify your email"
                     })
                 } else {
-                    setAuthorizationHeader(result.member.Token, result.message.LastName);
+                    setAuthorizationHeader(result.member.Token, result.message.LastName, result.member.Phone);
 
                     dispatch(getUser(result.member.Phone))
 
@@ -251,7 +248,7 @@ export const sumotrustAuth = (userDetails) => (dispatch) => {
     sumoPromise.then((res) => {
         if (res.status === '200') {
 
-            setAuthorizationHeader(res.member.Token, res.message.LastName);
+            setAuthorizationHeader(res.member.Token, res.message.LastName, res.member.Phone);
 
             dispatch(getUser(res.member.Phone))
 
@@ -763,11 +760,12 @@ export const clearMessage = () => (dispatch) => {
 };
 
 
-const setAuthorizationHeader = async (token, lastName) => {
-    const testObject = {'Token': token, 'user': lastName, 'exp': Date.now(), 'Authorization': true};
+const setAuthorizationHeader = async (token, lastName,phone) => {
+    const testObject = {'Token': token, 'user': lastName, 'exp': Date.now(), 'phonenumber':phone, 'Authorization': true};
     const IdToken = `${token}`;
     try {
-        await AsyncStorage.setItem('CRWDFCTRBearer', JSON.stringify(testObject));
+       // await AsyncStorage.setItem('CRWDFCTRBearer', JSON.stringify(testObject));
+        AsyncStorage.setItem('crowdFactureUser', phone)
      } catch (err) {
     console.log('Error @A_first_time_launch: ', err);
 }

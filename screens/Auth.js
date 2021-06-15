@@ -8,17 +8,20 @@ import {
     Text,
     ImageBackground,
     StatusBar,
-    TouchableOpacity
+    TouchableOpacity, ActivityIndicator
 } from "react-native";
 import {RFPercentage} from "react-native-responsive-fontsize";
 import {Asset} from 'expo-asset';
 import AppLoading from "expo-app-loading";
-import {Colors} from "../constants/Colors";
+import {Colors, DayColors} from "../constants/Colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 import MyButton from "../components/MyButton";
+import PropTypes from "prop-types";
+import {clearErrors, clearMessage, getUser, loginUser} from "../redux/actions/user-action";
+import {connect} from "react-redux";
 
 function cacheImages(images) {
     return images.map(image => {
@@ -36,6 +39,18 @@ const Auth = (props) => {
     // wherever the useState is located
     const [isBiometricSupported, setIsBiometricSupported] = useState(false);
     // wherever the useState is located
+
+    const [isBioMetric, setIsBioMetric] = useState(true);
+
+    const {getUser, clearMessage, clearError} = props
+    const {loading} = props.user
+
+    useEffect(() =>{
+        AsyncStorage.getItem('crowdFactureUser').then(value =>{
+            if(value === null) setIsBioMetric(false)
+        })
+    },[])
+
 
 
 // Check if hardware supports biometrics
@@ -88,7 +103,11 @@ const Auth = (props) => {
 
     const auth =  await LocalAuthentication.authenticateAsync();
             if(auth.success){
-                Alert.alert('Authenticated', 'Welcome back !')
+
+                AsyncStorage.getItem('crowdFactureUser').then(value =>{
+                    getUser(value)
+                    //Alert.alert('Authenticated', `Welcome back ! ${value}`)
+                })
             }else{
                  Alert.alert(
                     'Biometric record not found',
@@ -102,24 +121,6 @@ const Auth = (props) => {
             Alert.alert('An error as occured', error?.message);
         }
     };
-
-
-
-    const handleBiometric = async () => {
-        const savedBiometrics = await LocalAuthentication.isEnrolledAsync();
-        if (!savedBiometrics) {
-          //  Alert.alert('Authenticated', 'Welcome back !')
-            return Alert.alert(
-                'Biometric record not found',
-                'Please verify your identity with your password',
-                'OK',
-                () => onFaceId()
-            );
-        }
-    }
-
-
-
 
 
 
@@ -157,10 +158,13 @@ const Auth = (props) => {
                     <View style={styles.buttonsWrap}>
                         <MyButton action={() => props.navigation.navigate('Login')} title='START'
                                   buttonStyle={styles.buttonStyle} textStyle={styles.buttonText}/>
-                        <MyButton buttonStyle={styles.smBtn} action={onFaceId}>
+                        {
+                            isBioMetric &&   <MyButton buttonStyle={styles.smBtn} action={onFaceId}>
 
-                            <Image source={require('../assets/fingerprint.png')} style={styles.btnImage}/>
-                        </MyButton>
+                                <Image source={require('../assets/fingerprint.png')} style={styles.btnImage}/>
+                            </MyButton>
+                        }
+
 
                     </View>
 
@@ -170,8 +174,11 @@ const Auth = (props) => {
                         </Text>
                     </TouchableOpacity>
 
-                    {/*In our JSX we conditionally render a text to see inform users if their device supports*/}
 
+                    {/*In our JSX we conditionally render a text to see inform users if their device supports*/}
+                    {
+                        loading && <ActivityIndicator size="large" color={DayColors.primaryColor}/>
+                    }
                 </View>
 
 
@@ -285,6 +292,23 @@ const styles = StyleSheet.create({
 
 })
 
-export default Auth;
+Auth.propTypes = {
+    data: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+    getUser: PropTypes.func.isRequired,
+}
+const mapActionToPops = {
+    getUser,
+
+}
+
+
+const mapStateToProps = (state) => ({
+    data: state.data,
+    user: state.user,
+})
+
+
+export default connect(mapStateToProps, mapActionToPops) (Auth);
 
 

@@ -1,6 +1,15 @@
 import React, {useContext, useEffect} from 'react';
 
-import {Text, View, StyleSheet, StatusBar, ScrollView, ActivityIndicator, FlatList} from 'react-native';
+import {
+    Text,
+    View,
+    StyleSheet,
+    StatusBar,
+    ScrollView,
+    ActivityIndicator,
+    FlatList,
+    TouchableOpacity
+} from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import {ThemeContext} from "../util/ThemeManager";
@@ -129,18 +138,21 @@ const Deposits = (props) => {
     )
 
     return (
-        <View
-            style={[styles.container, {
-                backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
-                    : "#f5f5f5"
-            }]}>
-            <View style={styles.top}>
-                <BackButton theme={theme} navigation={navigation}/>
-            </View>
+
+
+            <View
+                style={[styles.container, {
+                    backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
+                        : "#f5f5f5"
+                }]}>
+                <View style={styles.top}>
+                    <BackButton theme={theme} navigation={navigation}/>
+                </View>
 
             {
-                loading ?     <ActivityIndicator  size="large" color={Colors.Primary}/>:
-                    <FlatList data={deposits}
+                loading ?    <ActivityIndicator  size="large" color={Colors.Primary}/>:
+                    Object.keys(deposits).length > 0 ?
+                <FlatList data={deposits}
                               contentContainerStyle={{
                                   width:wp('90%'),
                                   alignItems: 'center',
@@ -148,9 +160,53 @@ const Deposits = (props) => {
                                   justifyContent: 'flex-start',
                                   flexDirection: 'column'
                               }}
-                              renderItem={Investment} keyExtractor={item => item.ID}/>
+                              renderItem={Investment} keyExtractor={item => item.ID}/> :
+
+                        Object.keys(deposits).length < 1 &&
+                        <View style={{
+                            width:'100%',
+                            flexDirection:'column',
+                            alignItems:'center',
+                            justifyContent:'center',
+                        }}>
+                            <Text style={{
+                                fontFamily:'Gordita-medium',
+                                color :theme === 'Dark' ? '#eee':  '#131313'
+                            }}>
+                                Oops.. You have no deposit yet
+                            </Text>
+
+
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate('AddCash')}
+                                style={{
+                                margin:10,
+                                width:'70%',
+                                height:35,
+                                borderRadius:10,
+                                backgroundColor:DayColors.primaryColor,
+                                alignItems:'center',
+                                justifyContent:'center'
+                            }}>
+                                <Text style={{
+                                    fontFamily:'Gordita-bold'
+                                }}>
+                                    DEPOSIT NOW
+                                </Text>
+                            </TouchableOpacity>
+
+
+                        </View>
+
             }
+
+
+
+
         </View>
+
+
+
     );
 };
 

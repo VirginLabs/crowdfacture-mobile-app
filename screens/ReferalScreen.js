@@ -1,5 +1,5 @@
 import React, {useContext, useEffect} from "react";
-import {StyleSheet, Text, Animated, View, StatusBar, TouchableOpacity} from "react-native";
+import {StyleSheet, Text, Animated, View, StatusBar, TouchableOpacity, Share} from "react-native";
 import {ThemeContext} from "../util/ThemeManager";
 import {DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
@@ -15,13 +15,34 @@ const ReferralScreen = (props) => {
 
     const {getReferredUsers,navigation} = props
     const {referredUser, loading} = props.data
-    const {userData: {member: {ReferralBalance, ID}}} = props.user
+    const {userData: {member: {ReferralBalance, ReferralID,ID}}} = props.user
 
     useEffect(() => {
         const formdata = new FormData();
         formdata.append("userId", ID);
         getReferredUsers(formdata)
     }, []);
+
+
+    const onShare = async () => {
+        try {
+            const result = await Share.share({
+                message: `I just invested in Crowdfacture a manufacturing company that let's you co-own a factory at 30% equity stake for life click the link to register https://crowdfacture.com/auth?refCode=${ReferralID}`,
+            });
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
 
     return (
         <Animated.View style={[styles.container, {
@@ -93,8 +114,10 @@ const ReferralScreen = (props) => {
                 </View>
 
                 <View style={styles.buttonWrap}>
-                    <TouchableOpacity style={{
-                        backgroundColor:'#1DA1F2',
+                    <TouchableOpacity
+                        onPress={onShare}
+                        style={{
+                        backgroundColor:DayColors.primaryColor,
                         width:200,
                         height:45,
                         alignItems: 'center',
@@ -102,35 +125,18 @@ const ReferralScreen = (props) => {
                         flexDirection: 'row',
                         borderRadius:10
                     }}>
-                        <FontAwesome5 name='twitter' size={20} color={'#131313'}/>
+                        <FontAwesome5 name='share-alt' size={20} color={'#131313'}/>
                             <Text style={{
-                                color: '#131313'
+                                color: '#131313',
+                                fontFamily:'Gordita-bold'
                             }}>
-                                Share on twitter
+                                Share referral link
                             </Text>
 
 
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={{
-                        backgroundColor: DayColors.green,
-                        width:200,
-                        height:45,
-                        alignItems: 'center',
-                        justifyContent: 'space-evenly',
-                        flexDirection: 'row',
-                        borderRadius:10
-                    }}>
-                        <FontAwesome5 name='whatsapp' size={20} color='#131313'/>
-                        <Text style={{
-                            color: '#131313',
-                            fontFamily:'Gordita-medium'
-                        }}>
-                            Share on whatsapp
-                        </Text>
 
-
-                    </TouchableOpacity>
                 </View>
 
             </View>
@@ -174,7 +180,7 @@ const styles = StyleSheet.create({
 ReferralScreen.propTypes = {
     data: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
-    mapActionsToProps: PropTypes.func.isRequired,
+    getReferredUsers: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
