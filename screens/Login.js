@@ -1,7 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import {
     StatusBar,
-    Button,
     ScrollView
 } from 'react-native';
 import {Colors} from "../constants/Colors";

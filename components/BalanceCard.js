@@ -1,8 +1,7 @@
 import React from 'react';
-
-import {Dimensions, ImageBackground, StyleSheet, Text, View} from 'react-native';
-import {Colors, DarkColors, DayColors} from "../constants/Colors";
-import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
+import {ImageBackground, StyleSheet, Text, View} from 'react-native';
+import {DarkColors, DayColors} from "../constants/Colors";
+import { widthPercentageToDP as wp} from "react-native-responsive-screen";
 
 const BalanceCard = ({theme, balance, investment}) => {
     return (

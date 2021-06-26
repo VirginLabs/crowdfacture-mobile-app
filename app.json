@@ -25,19 +25,24 @@
     "ios": {
       "bundleIdentifier": "com.crowdfacture.crowdfacture-mobile",
       "buildNumber": "1.0.0",
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to let user put a photo in his profile page.",
+        "NSFaceIDUsageDescription": "This app uses face id to authenticate user"
+      }
     },
     "android": {
       "versionCode": 1,
       "package": "com.crowdfacture.crowdfacture_mobile",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo/Crowdfacture-ORANGE-PNG.png",
         "backgroundColor": "#00040F"
       },
-      "permissions": ["CAMERA","WRITE_EXTERNAL_STORAGE"]
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.crowdfacture.crowdfacture_mobile",
+      "permissions": ["CAMERA","WRITE_EXTERNAL_STORAGE","USE_BIOMETRIC","USE_FINGERPRINT"]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/Crowdfacture-icon.ico"
     },
     "description": ""
   }

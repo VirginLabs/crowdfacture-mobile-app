@@ -97,7 +97,7 @@ const navTheme = DefaultTheme;
                     <ThemeProvider>
                             <TabBarProvider>
                                 <RootSiblingParent>
-                         <NavManager/>
+                                    <MyNavigation/>
                                 </RootSiblingParent>
 
 

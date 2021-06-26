@@ -4,10 +4,10 @@ import PropTypes from "prop-types";
 import {MyNavigation} from "./MyNavigation";
 
 const NavManager = (props) => {
-    const {authenticated} = props.user
+
     return (
         <>
-          <MyNavigation authenticated={authenticated}/>
+
         </>
     );
 };

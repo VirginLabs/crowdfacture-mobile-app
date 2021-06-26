@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useMemo} from "react";
+import React, { useContext, useEffect} from "react";
 import {View, Text, StatusBar, StyleSheet, ScrollView, ActivityIndicator} from "react-native";
 import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";

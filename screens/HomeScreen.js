@@ -21,7 +21,6 @@ import MyButton from "../components/MyButton";
 import {FontAwesome} from "@expo/vector-icons";
 import DeckButton from "../components/DeckButton";
 import ProjectCard from "../components/ProjectCard";
-import Clipboard from 'expo-clipboard';
 import {connect} from "react-redux";
 import PropTypes from 'prop-types'
 import {getAllProject} from "../redux/actions/data-action";
@@ -101,7 +100,8 @@ const HomeScreen = (props) => {
 
 
     return (
-        <AnimatedScrollView onRefresh={onRefresh} refreshing={refreshing} navigation={props.navigation} routeMessage={`${LastName} Welcome Home`} routeName='Dashboard'>
+        <AnimatedScrollView onRefresh={onRefresh} refreshing={refreshing} navigation={props.navigation}
+                            routeMessage={`${LastName} Welcome Home`} routeName='Dashboard'>
             <View style={styles.container}>
 
 

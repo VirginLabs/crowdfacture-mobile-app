@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {Animated, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";

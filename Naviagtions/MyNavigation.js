@@ -1,5 +1,5 @@
 import React from "react";
-
+import {useSelector} from "react-redux";
 import {createStackNavigator} from '@react-navigation/stack';
 // You can import Ionicons from @expo/vector-icons/Ionicons if you use Expo or
 // react-native-vector-icons/Ionicons otherwise.
@@ -111,7 +111,9 @@ export const ProfileStackNav = () => {
     )
 }
 
-export const MyNavigation = ({authenticated}) => {
+export const MyNavigation = () => {
+    const user = useSelector((state) => state.user)
+   // console.log(authentication)
     return (
         <CFStackNavigator.Navigator
             keyboardHandlingEnabled={true}
@@ -129,7 +131,7 @@ animationEnabled: false,
         >
 
 
-            { authenticated ?
+            { user.authenticated ?
                 <>
                     <CFStackNavigator.Screen name='Dashboard' component={TabNavigator}/>
                     <CFStackNavigator.Screen name='Notification' component={PopupNavigation}/>
@@ -178,7 +180,7 @@ function PopupNavigation() {
 }
 
 
-export const MyStartNavigation = ({authentication}) => {
+export const MyStartNavigation = () => {
     return (
         <StartStackNavigator.Navigator
 

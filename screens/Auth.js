@@ -20,7 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import MyButton from "../components/MyButton";
 import PropTypes from "prop-types";
-import {clearErrors, clearMessage, getUser, loginUser} from "../redux/actions/user-action";
+import {getUser} from "../redux/actions/user-action";
 import {connect} from "react-redux";
 
 function cacheImages(images) {
@@ -39,11 +39,13 @@ const Auth = (props) => {
     // wherever the useState is located
     const [isBiometricSupported, setIsBiometricSupported] = useState(false);
     // wherever the useState is located
+    const {getUser, clearMessage, clearError} = props
+    const {loading} = props.user
+
 
     const [isBioMetric, setIsBioMetric] = useState(true);
 
-    const {getUser, clearMessage, clearError} = props
-    const {loading} = props.user
+
 
     useEffect(() =>{
         AsyncStorage.getItem('crowdFactureUser').then(value =>{
