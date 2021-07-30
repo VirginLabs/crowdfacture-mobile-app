@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "849209237733",
+    "project_id": "crowdfacture-ec388",
+    "storage_bucket": "crowdfacture-ec388.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:849209237733:android:459c3ce0fa9175d565b40c",
+        "android_client_info": {
+          "package_name": "com.crowdfacture.crowdfacture_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "849209237733-sjpasr0ft5l398mposnfho72jgc5p0h7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASQB6vFoyic1e4Ios9lWlbG8zJhdlLrVs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "849209237733-sjpasr0ft5l398mposnfho72jgc5p0h7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

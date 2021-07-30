@@ -65,24 +65,7 @@ const Auth = (props) => {
 
 
 
-    const _loadAssetsAsync = async () => {
-        const imageAssets = cacheImages([
-            require('../assets/images/bg.jpg'),
-        ]);
 
-
-        await Promise.all([...imageAssets]);
-    }
-
-    if (!loadAssets) {
-        return (
-            <AppLoading
-                startAsync={_loadAssetsAsync}
-                onFinish={() => setLoadAssets(true)}
-                onError={console.warn}
-            />
-        );
-    }
 
     const onFaceId = async () => {
         try {
