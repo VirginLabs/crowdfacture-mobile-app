@@ -313,7 +313,7 @@ const HomeScreen = (props) => {
 const DeckBtnObj = [
     {
         id: '1',
-        icon: 'heart',
+        icon: 'heart-outline',
         screen:'Favourites',
         btnTitle: 'Favourites',
 
@@ -321,7 +321,7 @@ const DeckBtnObj = [
     {
         id: '2',
         screen:'Liquidate',
-        icon: 'hand-holding-water',
+        icon: 'ios-water',
         btnTitle: 'Liquidate',
 
     },
@@ -334,7 +334,7 @@ const DeckBtnObj = [
     },
     {
         id: '4',
-        icon: 'phone',
+        icon: 'call-outline',
         screen: 'Support',
         btnTitle: 'Support',
 
@@ -348,25 +348,26 @@ const DeckBtnObj = [
     },
     {
         id: '6',
-        icon: 'money-bill',
+        icon: 'cash',
         screen: 'Dividends',
         btnTitle: 'Dividends',
 
     },
     {
         id: '7',
-        icon: 'shield-alt',
-        screen: 'Security',
-        btnTitle: 'Security',
-
-    },
-    {
-        id: '8',
-        icon: 'chart-line',
+        icon: 'stats-chart',
         screen: 'Reports',
         btnTitle: 'Reports',
 
     },
+    {
+        id: '8',
+        icon: 'shield-outline',
+        screen: 'Security',
+        btnTitle: 'Security',
+
+    },
+
 ]
 
 const styles = StyleSheet.create({

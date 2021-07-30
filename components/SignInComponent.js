@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 
-import {ActivityIndicator, Animated, Dimensions, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, Animated, Dimensions, Linking, StyleSheet, Text, View} from 'react-native';
 import TextInput from "./TextInput";
 import MyButton from "./MyButton";
 import {Colors, DayColors} from "../constants/Colors";
@@ -12,6 +12,15 @@ import {clearErrors, clearMessage, loginUser} from "../redux/actions/user-action
 import {connect} from "react-redux";
 
 import ToastMessage from "../components/Toast";
+
+
+const handlePress =  (url) => {
+    // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+    // by some browser in the mobile
+    Linking.openURL(url);
+
+};
+
 
 const phoneRegExp = /^[+]?\d*$/
 const LoginSchema = Yup.object().shape({
@@ -138,6 +147,21 @@ const SignIn = (props) => {
                 {errors.password}
             </Text>
 
+            <View
+                style={{
+                width: '70%',
+                marginBottom:10,
+                alignItems:'center',
+            }}>
+
+                <Text onPress={() => handlePress('https://www.crowdfacture.com/resetpassword')} style={{
+                    color:'#ccc',
+                    fontSize:12,
+                    fontFamily:'Gordita-bold'
+                }}>
+                    Forgot password?
+                </Text>
+            </View>
 
             <MyButton action={() => handleSubmit()} title='LOGIN'
                       buttonStyle={styles.loginButton} textStyle={styles.buttonText}/>
@@ -150,7 +174,10 @@ const SignIn = (props) => {
                     loading && <ActivityIndicator size="large" color={Colors.Primary}/>
                 }
 
-                <Text onPress={toggleForm} style={{color: '#fff', fontFamily: 'Gordita-medium'}}>
+                <Text onPress={toggleForm} style={{color: '#fff',
+marginVertical:8,
+                    fontSize:12,
+                    fontFamily: 'Gordita-medium'}}>
                     Create new account
                 </Text>
             </View>
@@ -188,9 +215,9 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         fontFamily: 'Gordita-bold',
-        fontSize: 18
+        fontSize: 14,
     },
-    errorText: {fontSize: 14, alignItems: "flex-start", width: '75%', color: '#FF5A5F', padding: 8}
+    errorText: {fontSize: 10, alignItems: "flex-start", width: '75%', color: '#FF5A5F', padding: 2}
 
 })
 

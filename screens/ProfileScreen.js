@@ -382,8 +382,10 @@ const UserProfile = (props) => {
                             }>
                                 Logout
                             </Text>
-                            <FontAwesome name='power-off' size={20} color={theme === 'Dark'
-                                ? DayColors.cream : Colors.PrimaryDarkColor}/>
+
+                            <Ionicons name="log-out" size={18}  color={theme === 'Dark'
+                                ? DayColors.cream : Colors.PrimaryDarkColor} />
+
                         </TouchableOpacity>
                     </View>
 

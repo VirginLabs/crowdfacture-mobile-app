@@ -21,17 +21,18 @@ export default function TextInput({  icon, error,touched,color, ...otherProps  }
         >
             <View style={{ padding: 10,flex:0.1, alignItems:"center" }}>
                 {
-                    color ? <FontAwesome name={icon} color={Colors.Primary} size={16}/>
+                    color ? <FontAwesome name={icon} color={Colors.Primary} size={14}/>
                     :
 
-                    <Icon name={icon} color={Colors.Primary} size={16} />
+                    <Icon name={icon} color={Colors.Primary} size={14} />
                 }
             </View>
             <View style={{ flex: 0.9 }}>
                 <RNTextInput
                     style={{
                         color:color ? color : "#eee",
-                        fontFamily:"Gordita-medium"
+                        fontFamily:"Gordita-medium",
+                        fontSize:9,
                     }}
 
                     underlineColorAndroid='transparent'

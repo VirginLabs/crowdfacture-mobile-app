@@ -1,14 +1,23 @@
-import React, {useContext, useState} from 'react';
+import React, {useCallback, useContext, useState} from 'react';
 
-import {Animated, StatusBar, TouchableOpacity, StyleSheet, Linking, Text, View} from 'react-native';
+import {Animated, StatusBar, TouchableOpacity, StyleSheet, Linking, Text, View, Alert} from 'react-native';
 import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import { widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {FontAwesome5, Ionicons} from "@expo/vector-icons";
-import {openComposer, openInbox} from "react-native-email-link";
 import Clipboard from "expo-clipboard";
 import ToastMessage from "../components/Toast";
+import call from 'react-native-phone-call';
+
+
+const handlePress =  (url) => {
+        // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+        // by some browser in the mobile
+         Linking.openURL(url);
+
+};
+
 
 
 
@@ -16,6 +25,19 @@ const SupportScreen = ({navigation}) => {
     const {theme} = useContext(ThemeContext);
     const [toastVisible, setToastVisible] = useState(false);
 
+
+
+    const triggerCall = (phone) => {
+        // Check for perfect 10 digit length
+
+
+        const args = {
+            number: phone,
+            prompt: true,
+        };
+        // Make a call
+        call(args).catch(console.error);
+    };
     const copyToClipboard = (clipboardString) => {
         setToastVisible(prevState => !prevState)
         Clipboard.setString(clipboardString);
@@ -56,18 +78,18 @@ const SupportScreen = ({navigation}) => {
                         {
                             backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee'
                         },
-                        styles.contactButton]} onPress={() => copyToClipboard('https://tawk.to/chat/607ebd6e5eb20e09cf34c723/1f3nh7vcm')}>
-                        <Ionicons name='chatbubble-sharp' size={20} color={theme === 'Dark' ?
+                        styles.contactButton]} onPress={() => handlePress('https://tawk.to/chat/607ebd6e5eb20e09cf34c723/1f3nh7vcm')}>
+                        <Ionicons name='chatbubble-sharp' size={14} color={theme === 'Dark' ?
                             DayColors.lemon : DayColors.green}/>
 
                         <View style={{
                             width: '60%',
                             justifyContent: 'center',
-                            alignItems: 'center'
+                            alignItems: 'flex-start'
                         }}>
                             <Text style={{
                                 color: theme === 'Dark' ? '#eee' : '#131313',
-                                fontSize: 16,
+                                fontSize: 12,
                                 fontFamily: 'Gordita-bold'
                             }}>
                                 Connect to live chat
@@ -80,18 +102,18 @@ const SupportScreen = ({navigation}) => {
                         {
                             backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee'
                         },
-                        styles.contactButton]} onPress={() => copyToClipboard('support@crowdfacture.net')}>
-                        <Ionicons name='ios-mail' size={20} color={theme === 'Dark' ?
+                        styles.contactButton]} onPress={() => handlePress('mailto:support@crowdfacture.net')}>
+                        <Ionicons name='ios-mail' size={14} color={theme === 'Dark' ?
                             DayColors.lemon : DayColors.green}/>
 
                         <View style={{
                             width: '60%',
                             justifyContent: 'center',
-                            alignItems: 'center'
+                            alignItems: 'flex-start'
                         }}>
                             <Text style={{
                                 color: theme === 'Dark' ? '#eee' : '#131313',
-                                fontSize: 16,
+                                fontSize: 12,
                                 fontFamily: 'Gordita-bold'
                             }}>
                                 Send us a mail
@@ -100,25 +122,22 @@ const SupportScreen = ({navigation}) => {
                     </TouchableOpacity>
 
 
-
-
-
                     <TouchableOpacity style={[
                         {
                             backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee'
                         },
-                        styles.contactButton]} onPress={() => copyToClipboard('+2348148008091')}>
-                        <Ionicons name='ios-call' size={20} color={theme === 'Dark' ?
+                        styles.contactButton]} onPress={() => triggerCall('+2348061406019')}>
+                        <Ionicons name='ios-call' size={14} color={theme === 'Dark' ?
                             DayColors.lemon : DayColors.green}/>
 
                         <View style={{
                             width: '60%',
                             justifyContent: 'center',
-                            alignItems: 'center'
+                            alignItems: 'flex-start'
                         }}>
                             <Text style={{
                                 color: theme === 'Dark' ? '#eee' : '#131313',
-                                fontSize: 16,
+                                fontSize: 12,
                                 fontFamily: 'Gordita-bold'
                             }}>
                                 Call us

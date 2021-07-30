@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 
-import {ActivityIndicator, StatusBar, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, Linking, StatusBar, StyleSheet, Text, View} from 'react-native';
 import TextInput from "./TextInput";
 import MyButton from "./MyButton";
 import {Colors} from "../constants/Colors";
@@ -34,6 +34,14 @@ const LoginSchema = Yup.object().shape({
         .email("Invalid email")
         .required("Email is required")
 });
+
+
+const handlePress =  (url) => {
+    // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+    // by some browser in the mobile
+    Linking.openURL(url);
+
+};
 
 
 const SignUp = (props) => {
@@ -108,7 +116,7 @@ const {toggleForm,navigation} = props
                 <TextInput
                     keyboardType='default'
                     icon='user'
-                    placeholder='Enter your first Name'
+                    placeholder='Your first Name'
                     autoCapitalize='none'
                     keyboardAppearance='dark'
                     returnKeyType='next'
@@ -127,7 +135,7 @@ const {toggleForm,navigation} = props
                 <TextInput
                     keyboardType='default'
                     icon='user'
-                    placeholder='Enter your last Name'
+                    placeholder='Your last Name'
                     autoCapitalize='none'
                     keyboardAppearance='dark'
                     returnKeyType='next'
@@ -145,7 +153,7 @@ const {toggleForm,navigation} = props
                 <TextInput
                     keyboardType='phone-pad'
                     icon='phone'
-                    placeholder='your Phone number'
+                    placeholder='Your phone number'
                     autoCapitalize='none'
                     keyboardAppearance='dark'
                     returnKeyType='next'
@@ -162,7 +170,7 @@ const {toggleForm,navigation} = props
             <View style={{paddingHorizontal: 32, marginBottom: 1, width: '100%',}}>
                 <TextInput
                     icon='mail'
-                    placeholder='Enter your email'
+                    placeholder='Your email'
                     autoCapitalize='none'
                     autoCompleteType='email'
                     keyboardType='email-address'
@@ -182,7 +190,7 @@ const {toggleForm,navigation} = props
                 <TextInput
                     required
                     icon='key'
-                    placeholder='Enter your password'
+                    placeholder='Your password'
                     secureTextEntry
                     autoCompleteType='password'
                     autoCapitalize='none'
@@ -204,13 +212,52 @@ const {toggleForm,navigation} = props
                 <TextInput
                     keyboardType='default'
                     icon='add-user'
-                    placeholder='Referral Code'
+                    placeholder='Referral Code (optional)'
                     autoCapitalize='none'
                     keyboardAppearance='dark'
                     returnKeyType='next'
                     returnKeyLabel='next'
                     onChangeText={handleChange('referral')}
                 />
+            </View>
+
+            <View
+                style={{
+                    width: '80%',
+                    marginBottom:10,
+                    alignItems:'center',
+                    justifyContent:'center',
+                    flexDirection:'row'
+                }}>
+
+                <Text  style={{
+                    color:'#ccc',
+                    fontSize:10,
+                    fontFamily:'Gordita-medium',
+                }}>
+                    By signing up, you agree to &nbsp;
+                </Text>
+                <Text onPress={() => handlePress('https://www.crowdfacture.com/terms')} style={{
+                    color:'#665cf1',
+                    fontSize:10,
+                    fontFamily:'Gordita-medium',
+                }}>
+                 our Terms &nbsp;
+                </Text>
+                <Text style={{
+                    color:'#ccc',
+                    fontSize:10,
+                    fontFamily:'Gordita-medium',
+                }}>
+        of Use &  &nbsp;
+                </Text>
+                <Text onPress={() => handlePress('https://www.crowdfacture.com/privacy')} style={{
+                    color:'#665cf1',
+                    fontSize:10,
+                    fontFamily:'Gordita-medium',
+                }}>
+       Privacy Policy
+                </Text>
             </View>
 
             <MyButton action={() => handleSubmit()} title='SIGN UP'
@@ -224,7 +271,9 @@ const {toggleForm,navigation} = props
             <View  style={{
                 padding:8, width:'75%', alignItems:'center'
             }}>
-                <Text onPress={toggleForm} style={{color:'#fff', fontFamily:'Gordita-medium'}}>
+                <Text onPress={toggleForm} style={{color:'#fff',
+                    fontSize:12,
+                    fontFamily:'Gordita-medium'}}>
                    Login to your account
                 </Text>
             </View>
@@ -256,9 +305,9 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         fontFamily: 'Gordita-bold',
-        fontSize: 18
+        fontSize: 14
     },
-    errorText: {fontSize: 14, alignItems: "flex-start", width: '75%', color: '#FF5A5F', padding: 8}
+    errorText: {fontSize: 10, alignItems: "flex-start", width: '75%', color: '#FF5A5F', padding: 2}
 
 })
 

@@ -16,7 +16,7 @@ import AppLoading from "expo-app-loading";
 import {Colors, DayColors} from "../constants/Colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { Ionicons } from '@expo/vector-icons';
 
 import MyButton from "../components/MyButton";
 import PropTypes from "prop-types";
@@ -146,7 +146,8 @@ const Auth = (props) => {
                         {
                             isBioMetric &&   <MyButton buttonStyle={styles.smBtn} action={onFaceId}>
 
-                                <Image source={require('../assets/fingerprint.png')} style={styles.btnImage}/>
+                               {/* <Image source={require('../assets/fingerprint.png')} style={styles.btnImage}/>*/}
+                                <Ionicons name="finger-print" size={28} color="#fff" />
                             </MyButton>
                         }
 
@@ -238,8 +239,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         borderRadius: 10,
-        borderColor: "#ccc",
-        borderWidth: 2
+        borderColor: "#ddd",
+        borderWidth: 1
 
     },
     btnImage: {
@@ -247,8 +248,8 @@ const styles = StyleSheet.create({
         height: 40,
     },
     buttonText: {
-        fontFamily: 'Poppins-bold',
-        fontSize: 20
+        fontFamily: 'Gordita-bold',
+        fontSize: 18
     },
     smallTextClick: {
         width: wp('75%'),

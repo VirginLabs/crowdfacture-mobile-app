@@ -119,7 +119,7 @@ Keyboard.dismiss
                 <TextInput
                     keyboardType='default'
                     icon='add-user'
-                    placeholder='Referral Code'
+                    placeholder='Referral Code (Optional)'
                     autoCapitalize='none'
                     keyboardAppearance='dark'
                     returnKeyType='next'
@@ -129,7 +129,7 @@ Keyboard.dismiss
             </View>
 
 
-            <MyButton action={() => handleSubmit()} title='LOGIN WITH SUMOTRSUT'
+            <MyButton action={() => handleSubmit()} title='SIGNUP'
                       buttonStyle={styles.loginButton} textStyle={styles.buttonText}/>
 
             <View style={{
@@ -140,7 +140,10 @@ Keyboard.dismiss
                     loading && <ActivityIndicator size="large" color={Colors.Primary}/>
                 }
 
-                <Text onPress={setSwitchSumo} style={{color: '#fff', fontFamily: 'Gordita-medium'}}>
+                <Text onPress={setSwitchSumo} style={{color: '#fff',
+                    marginVertical:8,
+                    fontSize:12,
+                    fontFamily: 'Gordita-medium'}}>
                     Login with sumotrust
                 </Text>
             </View>
@@ -150,11 +153,14 @@ Keyboard.dismiss
                 padding:5,
                 backgroundColor: DayColors.dimGreen,
                 borderRadius:10,
+                marginTop:15,
             }} activeOpacity = {.9} onPress={() => {
             }}>
 
                 <Text onPress={() => props.navigation.navigate('Auth')} style={{
                     padding:10,
+                    fontSize:10,
+
                     color: '#fff', fontFamily: 'Gordita-medium'}}>
                     GO BACK
                 </Text>
@@ -192,11 +198,11 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     buttonText: {
-        fontFamily: 'Gordita-bold',
-        fontSize: 18,
+        fontFamily: 'Gordita-Black',
+        fontSize: 12,
         color: "#131313"
     },
-    errorText: {fontSize: 14, alignItems: "flex-start", width: '75%', color: '#FF5A5F', padding: 8}
+    errorText: {fontSize: 10, alignItems: "flex-start", width: '75%', color: '#FF5A5F', padding: 2}
 
 })
 
