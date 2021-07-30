@@ -35,6 +35,7 @@ import HistoryScreen from "../screens/HistoryScreen";
 import SumotrustLogin from "../screens/SumotrustLogin";
 import Transactions from "../screens/Transactions";
 import Deposits from "../screens/Deposits";
+import ListingScreen from "../screens/ListingScreen";
 
 
 
@@ -140,6 +141,7 @@ animationEnabled: false,
                     <StartStackNavigator.Screen name='AddBank' component={AddBankScreen}/>
                     <StartStackNavigator.Screen name='Favourites' component={FavouriteScreen}/>
                     <StartStackNavigator.Screen name='Liquidate' component={LiquidateScreen}/>
+                    <StartStackNavigator.Screen name='AddListing' component={ListingScreen}/>
                     <StartStackNavigator.Screen name='Exchange' component={ExchangeScreen}/>
                     <StartStackNavigator.Screen name='Support' component={SupportScreen}/>
                     <StartStackNavigator.Screen name='Calculator' component={CalculatorScreen}/>

@@ -21,7 +21,7 @@ import MyButton from "../components/MyButton";
 import {FontAwesome} from "@expo/vector-icons";
 import DeckButton from "../components/DeckButton";
 import ProjectCard from "../components/ProjectCard";
-import {connect} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import PropTypes from 'prop-types'
 import {getAllProject} from "../redux/actions/data-action";
 import {getUser} from "../redux/actions/user-action";
@@ -39,6 +39,8 @@ const wait = timeout => {
 
 
 const HomeScreen = (props) => {
+    const data = useSelector(state => state.data)
+    const {theme} = data;
 
     const [refreshing, setRefreshing] = React.useState(false);
 
@@ -66,8 +68,6 @@ const HomeScreen = (props) => {
             getAllProject(),
         []);
 
-
-    const {theme} = useContext(ThemeContext);
 
 
 
@@ -105,13 +105,93 @@ const HomeScreen = (props) => {
             <View style={styles.container}>
 
 
+                <Modal
+                    animated={true}
+                    animationType="slide"
+                    transparent={true}
+                    visible={isModalVisible}
+                    onRequestClose={() => {
+                        Alert.alert("Modal has been closed.");
+                        setIsModalVisible(!isModalVisible);
+                    }}
+                >
+
+
+
+                    <View style={styles.centeredView}>
+                        {
+                            toastVisible &&
+
+                            <ToastMessage onHide={() => setToastVisible(false)} message='COPIED' type='message'/>
+                        }
+                        <View style={[{
+                            backgroundColor: theme === 'Dark' ? DarkColors.primaryDark :
+                                "#eee",
+                        }
+                            , styles.modalView]}>
+
+                            <Pressable
+                                style={[{
+                                    backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
+                                        "#ddd",
+                                }
+                                    ,
+                                    styles.buttonClose]}
+                                onPress={() => setIsModalVisible(!isModalVisible)}
+                            >
+                                <FontAwesome name='close' size={20}
+                                             color={theme === 'Dark'
+                                                 ? DayColors.primaryColor : Colors.PrimaryDarkColor}/>
+
+                            </Pressable>
+                            <View style={styles.modalContent}>
+                                <Text style={[
+                                    {
+                                        color: theme === 'Dark' ? Colors.White :
+                                            DarkColors.primaryDarkThree
+                                    },
+                                    styles.refModalTitle
+                                ]}>
+                                    Refer & Earn
+                                </Text>
+
+                                <Text style={[
+                                    {
+                                        color: theme === 'Dark' ? Colors.White :
+                                            DarkColors.primaryDarkThree
+                                    },
+                                    styles.refMsg]}>
+                                    Get ₦1,000 when you refer a friend to invest and another N1500 when the person
+                                    you
+                                    referred refers another person to invest, copy and share your referral link.
+
+                                </Text>
+
+
+
+
+
+                                <MyButton title='SHARE LINK'
+                                          action={onShare} textStyle={{
+                                    color: "#131313",
+                                    fontFamily: 'Gordita-bold',
+                                }} buttonStyle={styles.buttonShare}>
+                                    <FontAwesome name='share-alt' size={18} color={"#333"}/>
+                                </MyButton>
+                            </View>
+
+
+                        </View>
+                    </View>
+                </Modal>
+
                 <BalanceCard theme={theme} balance={Amount} investment={InvestedAmount}/>
                 <View style={styles.buttonWrap}>
                     <TouchableOpacity activeOpacity={0.7} style={styles.addBalanceBtn}
                                       onPress={() => props.navigation.navigate('AddCash')}>
 
                         <Text style={{
-                            fontSize: 14,
+                            fontSize: 12,
                             fontFamily: "Gordita-Black",
                             color: Colors.PrimaryDarkColor
                         }}
@@ -120,101 +200,21 @@ const HomeScreen = (props) => {
                         </Text>
 
                         <Text style={{
-                            fontSize: 10,
+                            fontSize: 9,
                             fontFamily: "Gordita-medium",
                             color: DarkColors.primaryDarkThree
                         }}
                               numberOfLines={1}>
-                            Fund account
+                            Fund your account
                         </Text>
 
                     </TouchableOpacity>
-
-                    <Modal
-                        animated={true}
-                        animationType="slide"
-                        transparent={true}
-                        visible={isModalVisible}
-                        onRequestClose={() => {
-                            Alert.alert("Modal has been closed.");
-                            setIsModalVisible(!isModalVisible);
-                        }}
-                    >
-
-
-
-                        <View style={styles.centeredView}>
-                            {
-                                toastVisible &&
-
-                                <ToastMessage onHide={() => setToastVisible(false)} message='COPIED' type='message'/>
-                            }
-                            <View style={[{
-                                backgroundColor: theme === 'Dark' ? DarkColors.primaryDark :
-                                    "#eee",
-                            }
-                                , styles.modalView]}>
-
-                                <Pressable
-                                    style={[{
-                                        backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
-                                            "#ddd",
-                                    }
-                                        ,
-                                        styles.buttonClose]}
-                                    onPress={() => setIsModalVisible(!isModalVisible)}
-                                >
-                                    <FontAwesome name='close' size={20}
-                                                 color={theme === 'Dark'
-                                                     ? DayColors.primaryColor : Colors.PrimaryDarkColor}/>
-
-                                </Pressable>
-                                <View style={styles.modalContent}>
-                                    <Text style={[
-                                        {
-                                            color: theme === 'Dark' ? Colors.White :
-                                                DarkColors.primaryDarkThree
-                                        },
-                                        styles.refModalTitle
-                                    ]}>
-                                        Refer & Earn
-                                    </Text>
-
-                                    <Text style={[
-                                        {
-                                            color: theme === 'Dark' ? Colors.White :
-                                                DarkColors.primaryDarkThree
-                                        },
-                                        styles.refMsg]}>
-                                        Get ₦1,000 when you refer a friend to invest and another N1500 when the person
-                                        you
-                                        referred refers another person to invest, copy and share your referral link.
-
-                                    </Text>
-
-
-
-
-
-                                    <MyButton title='SHARE LINK'
-                                              action={onShare} textStyle={{
-                                        color: "#131313",
-                                        fontFamily: 'Gordita-bold',
-                                    }} buttonStyle={styles.buttonShare}>
-                                        <FontAwesome name='share-alt' size={18} color={"#333"}/>
-                                    </MyButton>
-                                </View>
-
-
-                            </View>
-                        </View>
-                    </Modal>
 
 
                     <TouchableOpacity onPress={() => props.navigation.navigate('Projects')} activeOpacity={0.7} style={styles.investBtn}>
 
                         <Text style={{
-                            fontSize: 14,
+                            fontSize: 12,
                             fontFamily: "Gordita-Black",
                             color: theme === 'Dark' ? Colors.White :
                                 DarkColors.primaryDarkThree
@@ -224,13 +224,13 @@ const HomeScreen = (props) => {
                         </Text>
 
                         <Text style={{
-                            fontSize: 10,
+                            fontSize: 9,
                             fontFamily: "Gordita-medium",
                             color: theme === 'Dark' ? Colors.White :
                                 DarkColors.primaryDarkThree
                         }}
                               numberOfLines={1}>
-                            Fund account
+                            Buy units now
                         </Text>
 
                     </TouchableOpacity>
@@ -250,7 +250,7 @@ const HomeScreen = (props) => {
                     </View>
                     <View style={styles.refBtnWrap}>
                         <MyButton action={toggleModal} buttonStyle={styles.refBtn}>
-                            <FontAwesome name={'user-plus'} size={20} color='#131313'/>
+                            <FontAwesome name={'user-plus'} size={18} color='#131313'/>
                         </MyButton>
                     </View>
                 </TouchableOpacity>
@@ -414,15 +414,15 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         alignItems: 'center',
         fontFamily: 'Gordita-Black',
-        fontSize: 20,
+        fontSize: 18,
         lineHeight: 25,
     },
     refMsg: {
         textAlign: 'center',
         alignItems: 'center',
         fontFamily: 'Gordita-medium',
-        fontSize: 12,
-        lineHeight: 15,
+        fontSize: 10,
+        lineHeight: 18,
     },
     buttonCopy: {
         justifyContent: 'space-evenly',
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
         width: '60%',
         flexDirection: 'row',
         borderRadius: 12,
-        height: 55,
+        height: 50,
         backgroundColor: DayColors.green
     },
 
@@ -516,6 +516,7 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     refTitle: {
+        fontSize:12,
         fontFamily: "Gordita-bold",
         color: Colors.White
     },
@@ -541,7 +542,7 @@ const styles = StyleSheet.create({
         width: 45,
         height: 45,
         borderRadius: 100,
-        backgroundColor: Colors.Primary,
+        backgroundColor: DayColors.cream,
         alignItems: 'center',
         justifyContent: 'center',
 
@@ -597,7 +598,7 @@ const styles = StyleSheet.create({
         alignContent: 'flex-start',
         alignItems: 'flex-start',
         flexWrap: 'wrap',
-        justifyContent: 'space-evenly'
+        justifyContent: 'flex-start'
     },
 
 

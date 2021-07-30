@@ -7,12 +7,12 @@ import {Colors, DayColors} from "../../constants/Colors";
 import {heightPercentageToDP as hp} from "react-native-responsive-screen";
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import PropTypes from "prop-types";
-import {clearErrors} from "../../redux/actions/user-action";
-import {connect} from "react-redux";
+
+
+import { useDispatch, useSelector} from "react-redux";
 
 import ToastMessage from "../Toast";
-import {sumotrustAuth, sumotrustLogin} from "../../redux/actions/user-action";
+import {sumotrustAuth, sumotrustLogin,clearErrors } from "../../redux/actions/user-action";
 
 const phoneRegExp = /^[+]?\d*$/
 const LoginSchema = Yup.object().shape({
@@ -32,8 +32,11 @@ const LoginSchema = Yup.object().shape({
 
 const SumotrustSignIn = (props) => {
 
-    const {setSwitchSumo, clearMessage,sumotrustLogin, clearErrors} = props
-    const {error, message, loading} = props.user
+    const user = useSelector(state => state.user)
+
+    const dispatch = useDispatch()
+    const {setSwitchSumo} = props
+    const {error, message, loading} = user
 
     const {
         handleChange, handleSubmit, handleBlur,
@@ -50,7 +53,7 @@ const SumotrustSignIn = (props) => {
             const user = new FormData();
             user.append("phoneNumber", phone);
             user.append("password", password);
-            sumotrustLogin(user)
+            dispatch(sumotrustLogin(user))
         }
     });
 
@@ -154,10 +157,10 @@ const SumotrustSignIn = (props) => {
 
 
             {message &&
-            <ToastMessage message={message} onHide={() => clearMessage()} type='message'/>
+            <ToastMessage message={message} onHide={() => dispatch(clearMessage())} type='message'/>
             }
 
-            {error &&  <ToastMessage message={error} onHide={() => clearErrors()} type='error'/>}
+            {error &&  <ToastMessage message={error} onHide={() => dispatch(clearErrors())} type='error'/>}
 
 
 
@@ -192,24 +195,7 @@ const styles = StyleSheet.create({
 
 })
 
-SumotrustSignIn.propTypes = {
-    data: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
-    clearErrors: PropTypes.func.isRequired,
-    sumotrustAuth: PropTypes.func.isRequired,
-    sumotrustLogin: PropTypes.func.isRequired,
-}
-const mapActionToPops = {
-    clearErrors,
-    sumotrustAuth,
-    sumotrustLogin,
-}
 
 
-const mapStateToProps = (state) => ({
-    data: state.data,
-    user: state.user,
-})
 
-
-export default connect(mapStateToProps, mapActionToPops)(SumotrustSignIn);
+export default SumotrustSignIn;

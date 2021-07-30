@@ -14,6 +14,7 @@ import {ThemeContext} from "../util/ThemeManager";
 import MyText from "./helpers/MyText";
 import {Colors, DarkColors} from "../constants/Colors";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
+import {useSelector} from "react-redux";
 
 
 let offsetY = 0;
@@ -21,9 +22,9 @@ let offsetY = 0;
 
 const AnimatedScrollView = ({children,refreshing, onRefresh, routeName, routeMessage, style, navigation, ...restProps}) => {
 
-    const {theme, transitionValue} = useContext(ThemeContext);
+    const data = useSelector(state => state.data)
+    const {theme} = data;
 
-    const Anim = useRef(new Animated.Value(0)).current
 
 
 
@@ -104,12 +105,12 @@ flex:1
         fontFamily: 'Gordita-bold',
         color: "#1c1c1c",
         fontWeight: 'bold',
-        fontSize: 18,
+        fontSize: 16,
     },
 
     message: {
         padding: 3,
-        fontSize: 10,
+        fontSize: 8,
         fontFamily: 'Gordita',
     },
 

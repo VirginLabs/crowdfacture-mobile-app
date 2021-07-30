@@ -7,7 +7,7 @@ import MyProjects from "../components/Tabs/MyProjects";
 import AllProjects from "../components/Tabs/AllProjects";
 import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors} from "../constants/Colors";
-import {connect} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import PropTypes from "prop-types";
 import {getUser} from "../redux/actions/user-action";
 
@@ -23,13 +23,15 @@ const wait = timeout => {
 
 
 const Projects = (props) => {
+    const user = useSelector(state => state.user)
+    const data = useSelector(state => state.data)
     const [refreshing, setRefreshing] = React.useState(false);
     const {
         navigation
     } = props
 
-    const {loading,userData: {member: {Amount,Phone}}} = props.user
-    const {theme} = useContext(ThemeContext);
+    const {loading,userData: {member: {Amount,Phone}}} = user
+   const {theme} = data
 
 
     const onRefresh = React.useCallback(() => {

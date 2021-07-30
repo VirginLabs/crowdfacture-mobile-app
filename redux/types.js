@@ -44,3 +44,4 @@ export const SET_REFERRED_USER = "SET_REFERRED_USER";
 export const SET_INVESTMENTS = "SET_INVESTMENTS";
 export const SET_DEPOSITS = "SET_DEPOSITS";
 export const SET_RETURNS = "SET_RETURNS";
+export const TOGGLE_THEME = "TOGGLE_THEME";

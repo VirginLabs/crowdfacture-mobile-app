@@ -131,9 +131,6 @@ const styles = StyleSheet.create({
     infoAlert: {
         borderRadius: 15,
         width: wp('90%'),
-        borderWidth: 1,
-        borderStyle: 'dashed',
-        borderColor: DayColors.cream,
         alignItems: 'center',
         justifyContent: 'center',
         padding: 8

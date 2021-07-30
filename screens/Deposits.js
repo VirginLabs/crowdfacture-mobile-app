@@ -11,10 +11,9 @@ import {
 } from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
-import {ThemeContext} from "../util/ThemeManager";
 import {clearErrors, clearMessage} from "../redux/actions/user-action";
 import {getDeposits, getInvestments, getWithdrawals} from "../redux/actions/data-action";
-import {connect} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import PropTypes from "prop-types";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {Ionicons} from "@expo/vector-icons";
@@ -104,6 +103,8 @@ const DepositItem = ({ TransactionReference,
     )
 
 const Deposits = (props) => {
+    const user = useSelector(state => state.user)
+    const data = useSelector(state => state.data)
 
     const {getWithdrawals, getDeposits, getInvestments,route,navigation} = props
 
@@ -117,9 +118,9 @@ const Deposits = (props) => {
         userData: {
             member: {ID, LastName},
         }
-    } = props.user
+    } = user
 
-    const {theme} = useContext(ThemeContext);
+    const {theme} = data;
 
     useEffect(() => {
         const formdata = new FormData();

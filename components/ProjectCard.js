@@ -45,7 +45,7 @@ const ProjectCard = ({image,theme, projectTitle, action, target, pricePerUnit,Up
 
                 <Text style={[
                     {
-                        color:theme === 'Dark' ? "#fff" : '#121212'
+                        color:theme === 'Dark' ? "#ddd" : '#121212'
                     },
                     styles.pricePerUnit]}>
                    Price/unit: ₦{
@@ -109,14 +109,14 @@ const styles = StyleSheet.create({
     projectTitle:{
         width:"100%",
         fontFamily:'Gordita-Black',
-        fontSize:12,
+        fontSize:10,
         textTransform:'capitalize',
 
     },
     projectTarget:{
         width:"100%",
         fontFamily:'Gordita-medium',
-        fontSize:10,
+        fontSize:8,
         marginTop:3,
 
         textTransform:'capitalize',
@@ -124,8 +124,8 @@ const styles = StyleSheet.create({
     pricePerUnit:{
         marginTop:8,
         width:"100%",
-        fontFamily:'Gordita-bold',
-        fontSize:12,
+        fontFamily:'Gordita-medium',
+        fontSize:9,
         textTransform:'capitalize'
     },
     activeBtnB:{
@@ -170,12 +170,12 @@ const styles = StyleSheet.create({
     textStyle:{
         color:'#fff',
         fontFamily:'Gordita-bold',
-        fontSize:12,
+        fontSize:10,
     },
     textStyleW:{
         color:'#333',
         fontFamily:'Gordita-bold',
-        fontSize:12,
+        fontSize:10,
     }
 })
 

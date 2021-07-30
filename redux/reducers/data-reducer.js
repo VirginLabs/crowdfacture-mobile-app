@@ -2,7 +2,7 @@ import {
     TOGGLE_AUTH,
     TOGGLE_NOTIFICATION,
     TOGGLE_MODAL,
-
+    TOGGLE_THEME,
     TOGGLE_ADD_CASH_PAGE, SIDE_NOTIFICATION, TOGGLE_MENU,
     RESET_UI, LOADING_NOTIFICATION, SET_NOTIFICATION,
     SET_PROJECT, SET_PROJECTS, LOADING_PROJECT,
@@ -11,6 +11,7 @@ import {
     SET_INVESTMENTS, SET_RETURNS, SET_DEPOSITS
 
 } from "../types";
+import {StatusBar} from "react-native";
 
 const initialState = {
     project: [],
@@ -28,6 +29,7 @@ const initialState = {
     menuState: false,
     verified: false,
     loading: false,
+    theme: 'Dark',
     referredUser: {},
     investments: {},
     deposits: {},
@@ -41,6 +43,21 @@ const dataReducer = (state = initialState, action) => {
             return {
                 ...state,
                 loadingProject: true
+            }
+        case TOGGLE_THEME:
+            let themValue ;
+
+                if (state.theme === "Light") {
+                   themValue = 'Dark'
+                    StatusBar.setBarStyle("light-content");
+                } else {
+                    themValue = "Light";
+                    StatusBar.setBarStyle("dark-content");
+                }
+
+            return {
+                ...state,
+                theme: themValue
             }
         case LOADING:
             return {

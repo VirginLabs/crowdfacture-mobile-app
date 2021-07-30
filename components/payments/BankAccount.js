@@ -31,7 +31,7 @@ const schema = Yup.object().shape({
 });
 
 
-const BankAccount = ({theme, getUniqueAccountNumb, ID, Phone, userDetails, loading,}) => {
+const BankAccount = ({theme, getUniqueAccountNumb, ID, navigation, userDetails, loading,}) => {
 
     const {MonnifyAccountNumber, MonnifyBankName, BVNVerified, bankDetails} = userDetails
 
@@ -44,6 +44,7 @@ const BankAccount = ({theme, getUniqueAccountNumb, ID, Phone, userDetails, loadi
     const {
         handleChange, handleSubmit, handleBlur,
         values,
+        isValid,
         errors,
         touched
     } = useFormik({
@@ -89,7 +90,7 @@ const BankAccount = ({theme, getUniqueAccountNumb, ID, Phone, userDetails, loadi
                                 <Text style={[{
                                     fontFamily: 'Gordita-medium',
                                     textAlign: 'center',
-                                    fontSize: 12,
+                                    fontSize: 10,
                                     color: theme === 'Dark' ?
                                         Colors.White : "#333"
 
@@ -116,11 +117,12 @@ const BankAccount = ({theme, getUniqueAccountNumb, ID, Phone, userDetails, loadi
                             </View>
                             <View style={styles.infoHeadBody}>
                                 <Text style={[{
-                                    fontFamily: 'Gordita-medium',
+                                    fontFamily: 'Gordita',
                                     textAlign: 'center',
-                                    fontSize: 12,
+                                    fontSize: 9,
+                                    lineHeight:15,
                                     color: theme === 'Dark' ?
-                                        Colors.White : "#333"
+                                        '#eee' : "#333"
 
                                 }]}>
                                     Provide your BVN below to generate Crowdfacture account number, make a deposit to
@@ -133,7 +135,7 @@ const BankAccount = ({theme, getUniqueAccountNumb, ID, Phone, userDetails, loadi
                 }
 
                 {
-                    BVNVerified ? <View style={{
+                    BVNVerified && <View style={{
                     width:'100%',
                         flexDirection:'column',
                         alignItems:'center',
@@ -189,8 +191,10 @@ const BankAccount = ({theme, getUniqueAccountNumb, ID, Phone, userDetails, loadi
                             </Text>
                         </TouchableOpacity>
 
-                        </View> :
+                        </View> }
 
+{ !BVNVerified &&
+    Object.keys(bankDetails).length > 2 ?
                         <>
                             <View style={{paddingHorizontal: 32, marginTop: 15, width: wp('100%'),}}>
                                 <TextInput
@@ -216,10 +220,52 @@ const BankAccount = ({theme, getUniqueAccountNumb, ID, Phone, userDetails, loadi
                                 loading && <ActivityIndicator size="large" color={Colors.Primary}/>
                             }
 
-                            <MyButton action={() => handleSubmit()} title='SUBMIT'
-                                      buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
+                            {
+                                isValid ?
 
-                        </>
+                                    <MyButton action={() => handleSubmit()} title='SUBMIT'
+                                              buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
+
+                                    :
+                                    <TouchableOpacity activeOpacity={1} style={{
+                                        backgroundColor: '#ddd',
+                                        height: 50,
+                                        marginHorizontal: 20,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginVertical: 5,
+                                        width: 160,
+                                        borderRadius: 10,
+                                    }}>
+                                        <Text style={{
+                                            fontSize: 12,
+                                            fontFamily: 'Gordita-bold'
+                                        }}>
+                                            SUBMIT
+                                        </Text>
+
+                                    </TouchableOpacity>
+
+                            }
+                                </> :
+
+   <View style={{
+width:'100%',
+       alignItems:'center',
+       justifyContent:'center',
+   }}>
+
+       <Text onPress={()=> navigation.navigate('AddBank')} style={[styles.infoHeadText, {
+        borderBottomWidth:1,
+           borderBottomColor:'#acacac',
+           color: theme === 'Dark' ?
+               DayColors.cream : "#131313"
+       }]}>
+           Please click to add your bank account details
+       </Text>
+
+   </View>
+
                 }
             </View>
         </TouchableWithoutFeedback>
@@ -239,9 +285,7 @@ const styles = StyleSheet.create({
     infoAlert: {
         borderRadius: 15,
         width: wp('90%'),
-        borderWidth: 1,
-        borderStyle: 'dashed',
-        borderColor: DayColors.cream,
+
         alignItems: 'center',
         padding: 8
     },
@@ -251,7 +295,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     infoHeadText: {
+        textAlign:'center',
         fontFamily: 'Gordita-Black',
+        fontSize:12,
     },
     infoHeadBody: {
         fontFamily: 'Gordita-medium',
@@ -268,12 +314,12 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         fontFamily: 'Gordita-bold',
-        fontSize: 16
+        fontSize: 12
     },
     errorText: {
         fontSize: 14,
         alignItems: "flex-start", width: '75%',
-        color: '#FF5A5F', padding: 8
+        color: '#FF5A5F', padding: 3
     }
 
 

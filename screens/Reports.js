@@ -4,9 +4,12 @@ import {Animated, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
+import {useSelector} from "react-redux";
 
 const ReportsScreen = ({navigation}) => {
-    const {theme} = useContext(ThemeContext);
+    const user = useSelector(state => state.user)
+    const data = useSelector(state => state.data)
+    const {theme} = data;
     return (
         <Animated.View style={[styles.container, {
             backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree

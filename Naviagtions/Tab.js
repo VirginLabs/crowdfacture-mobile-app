@@ -15,7 +15,7 @@ tab.name === 'Dashboard' ?
             : <FontAwesome5 name={icon} size={size} color={color}/>
             }
             <Text
-                style={{color: textColor, fontFamily: 'Poppins-bold', fontSize: textSize}}
+                style={{color: textColor, fontFamily: 'Gordita-medium', fontSize: textSize}}
 
             >{tab.name}</Text>
 

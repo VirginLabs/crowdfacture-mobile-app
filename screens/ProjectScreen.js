@@ -11,7 +11,7 @@ import {
     TouchableOpacity,
     View, Button, StatusBar, Modal, Alert, ActivityIndicator, TextInput as RNTextInput, Easing
 } from 'react-native';
-import {ThemeContext} from "../util/ThemeManager";
+
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
@@ -22,7 +22,7 @@ import TextInput from "../components/TextInput";
 import MyButton from "../components/MyButton";
 import {getProject} from "../redux/actions/data-action";
 import {buyUnitAction, clearErrors, clearMessage, saveProject, unSaveProject} from "../redux/actions/user-action";
-import {connect} from "react-redux";
+import {connect, useDispatch, useSelector} from "react-redux";
 import PropTypes from "prop-types";
 import ToastMessage from "../components/Toast";
 
@@ -40,23 +40,25 @@ const ProjectScreen = (props) => {
 
 const {route, navigation} = props
     const [total, setTotal] = useState(0)
-    const {theme} = useContext(ThemeContext);
+    const user = useSelector(state => state.user)
+    const data = useSelector(state => state.data)
+    const dispatch = useDispatch()
     const [sheetOpen, setSheetOpen] = useState(false);
 
     const {projectId} = route.params;
 
 
-    const {error, loading, message, userData: {member: {LastName, ID, Phone}}} = props.user
+    const {error, loading, message, userData: {member: { ID, Phone}}} = user
     const {
-        getProject, buyUnitAction, saveProject,
+        saveProject,
         unSaveProject,
-        clearMessage,
-        clearErrors
+
     } = props
     const {
+        theme,
         project,
         loadingProject
-    } = props.data
+    } = data
 
 
 
@@ -64,7 +66,7 @@ const {route, navigation} = props
      useEffect(() => {
         const formData = new FormData()
         formData.append('projectId', projectId)
-        getProject(formData)
+        dispatch(getProject(formData))
 
     }, [projectId]);
 
@@ -93,7 +95,7 @@ const {route, navigation} = props
             buyData.append('numberOfUnit', number)
             buyData.append('projectId', projectId)
             buyData.append('totalPercentageReturn', '30')
-            buyUnitAction(buyData,Phone)
+            dispatch(buyUnitAction(buyData,Phone))
         }
     });
 
@@ -152,7 +154,7 @@ const {route, navigation} = props
                         <View style={styles.projectTitle}>
                             <Text style={{
                                 color: theme === 'Dark' ? '#fff' : '#131313',
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontFamily: 'Gordita-Black'
                             }}>
                                 {
@@ -160,10 +162,10 @@ const {route, navigation} = props
                                 }
                             </Text>
                             <Text style={{
-                                fontSize: 13,
+                                fontSize: 9,
                                 color: textColor,
                                 fontFamily: 'Gordita-medium',
-                                lineHeight: 20
+                                lineHeight: 15
                             }}>
                                 {
                                     project.ProjectDescription
@@ -173,8 +175,9 @@ const {route, navigation} = props
                             </Text>
 
                             <Text style={{
+                                marginTop:10,
                                 color: theme === 'Dark' ? DayColors.cream : '#131313',
-                                fontSize: 18,
+                                fontSize: 12,
                                 fontFamily: 'Gordita-bold'
                             }}>
                                 Target: ₦{project.Target}
@@ -462,10 +465,10 @@ const {route, navigation} = props
 
 
                     {message &&
-                    <ToastMessage onHide={() => clearMessage()} message={message} type='message'/>
+                    <ToastMessage onHide={() => dispatch(clearMessage())} message={message} type='message'/>
                     }
 
-                    {error && <ToastMessage onHide={() => clearErrors()} message={error} type='error'/>}
+                    {error && <ToastMessage onHide={() => dispatch(clearErrors())} message={error} type='error'/>}
                     <Text style={{
                         paddingVertical: 20,
                         fontSize: 25,
@@ -559,11 +562,11 @@ const styles = StyleSheet.create({
         borderRadius: 15
     },
     cardTextOne: {
-        fontSize: 15,
+        fontSize: 12,
         fontFamily: 'Gordita-bold'
     },
     cardTextTwo: {
-        fontSize: 11,
+        fontSize: 8,
         fontFamily: 'Gordita-medium'
     },
     bottomSheet: {},
@@ -587,32 +590,7 @@ const styles = StyleSheet.create({
 });
 
 
-ProjectScreen.propTypes = {
-    data: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
-    buyUnitAction: PropTypes.func.isRequired,
-    getProject: PropTypes.func.isRequired,
-    saveProject: PropTypes.func.isRequired,
-    clearErrors: PropTypes.func.isRequired,
-    clearMessage: PropTypes.func.isRequired,
-    unSaveProject: PropTypes.func.isRequired,
-};
 
 
-const mapActionToPops = {
-    getProject,
-    buyUnitAction,
-    saveProject,
-    unSaveProject,
-    clearErrors,
-    clearMessage,
 
-
-}
-const mapStateToProps = (state) => ({
-    data: state.data,
-    user: state.user,
-})
-
-
-export default connect(mapStateToProps,mapActionToPops) (React.memo(ProjectScreen));
+export default ProjectScreen;

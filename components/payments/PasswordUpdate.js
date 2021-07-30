@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Colors, DayColors} from "../../constants/Colors";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 import TextInput from "../TextInput";
@@ -28,7 +28,8 @@ const UpdatePassword = ({theme,updatePassword, loading, userId,}) => {
 
     const {
         handleChange, handleSubmit, handleBlur,
-        values,
+        isValid,
+
         errors,
         touched
     } = useFormik({
@@ -110,8 +111,32 @@ const UpdatePassword = ({theme,updatePassword, loading, userId,}) => {
                 loading && <ActivityIndicator size="large" color={Colors.Primary}/>
             }
 
-            <MyButton action={() => handleSubmit()} title='SUBMIT'
-                      buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
+            {
+                isValid ?
+
+                    <MyButton action={() => handleSubmit()} title='SUBMIT'
+                              buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
+
+                    :
+                    <TouchableOpacity activeOpacity={1} style={{
+                        backgroundColor: '#ddd',
+                        height: 50,
+                        marginHorizontal: 20,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginVertical: 5,
+                        width: 160,
+                        borderRadius: 10,
+                    }}>
+                        <Text style={{
+                            fontSize: 12,
+                            fontFamily: 'Gordita-bold'
+                        }}>
+                            SUBMIT
+                        </Text>
+
+                    </TouchableOpacity>
+            }
         </View>
     );
 };
@@ -128,9 +153,6 @@ const styles = StyleSheet.create({
     infoAlert: {
         borderRadius: 15,
         width: wp('90%'),
-        borderWidth: 1,
-        borderStyle: 'dashed',
-        borderColor: DayColors.cream,
         alignItems: 'center',
         justifyContent: 'center',
         padding: 8
@@ -158,8 +180,10 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     errorText:{
+        fontSize: 10,
+        padding:1,
         color:'#ff5d57',
-        fontFamily:'Gordita-medium'
+        fontFamily: 'Gordita-medium',
     }
 });
 

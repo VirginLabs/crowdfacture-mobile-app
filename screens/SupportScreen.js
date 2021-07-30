@@ -9,6 +9,7 @@ import {FontAwesome5, Ionicons} from "@expo/vector-icons";
 import Clipboard from "expo-clipboard";
 import ToastMessage from "../components/Toast";
 import call from 'react-native-phone-call';
+import {useSelector} from "react-redux";
 
 
 const handlePress =  (url) => {
@@ -22,7 +23,9 @@ const handlePress =  (url) => {
 
 
 const SupportScreen = ({navigation}) => {
-    const {theme} = useContext(ThemeContext);
+    const user = useSelector(state => state.user)
+    const data = useSelector(state => state.data)
+    const {theme} = data
     const [toastVisible, setToastVisible] = useState(false);
 
 

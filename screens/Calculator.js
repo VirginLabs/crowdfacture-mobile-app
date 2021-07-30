@@ -6,9 +6,13 @@ import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import TextInput from "../components/TextInput";
 import {Picker} from "@react-native-picker/picker";
+import {useSelector} from "react-redux";
 
 const CalculatorScreen = ({navigation}) => {
-    const {theme} = useContext(ThemeContext);
+
+    const data = useSelector(state => state.data)
+    const {theme} = data;
+
     /*
     * Calculator algorithm
     *

@@ -9,9 +9,10 @@ import {useFormik} from "formik";
 import * as Yup from "yup";
 import PropTypes from "prop-types";
 import {clearErrors, clearMessage, loginUser} from "../redux/actions/user-action";
-import {connect} from "react-redux";
+import {connect, useDispatch, useSelector} from "react-redux";
 
 import ToastMessage from "../components/Toast";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const handlePress =  (url) => {
@@ -39,11 +40,13 @@ const LoginSchema = Yup.object().shape({
 
 
 const SignIn = (props) => {
+    const user = useSelector(state => state.user)
 
+    const dispatch = useDispatch()
     const {navigation,toggleForm} = props
+    const [phone, setPhone] = useState('');
 
-    const {toggleAuth, clearMessage, clearErrors, loginUser, signUpUser} = props
-    const {error, message, loading} = props.user
+    const {error, message, loading} = user
 
     const [userMessage, setUserMessage] = useState(false)
     const [userError, setUserError] = useState(false)
@@ -52,18 +55,19 @@ const SignIn = (props) => {
         handleChange, handleSubmit, handleBlur,
         values,
         errors,
-        touched
+        touched,
+        setFieldValue
     } = useFormik({
         validationSchema: LoginSchema,
         initialValues: {
-            phone: '', password: '',
+            phone:'', password: '',
         },
         onSubmit: (values) => {
             const {phone, password} = values;
             const user = new FormData();
             user.append("phoneNumber", phone);
             user.append("password", password);
-            loginUser(user,navigation)
+            dispatch(loginUser(user,navigation))
         }
     });
 
@@ -74,7 +78,7 @@ const SignIn = (props) => {
         }
         return () => {
             setTimeout(() => {
-                clearErrors()
+                dispatch(clearErrors())
             }, 3500)
         }
 
@@ -87,11 +91,18 @@ const SignIn = (props) => {
         }
         return () => {
             setTimeout(() => {
-                clearMessage()
+                dispatch(clearMessage())
             }, 3500)
         }
 
     }, [message])
+
+    useEffect(() => {
+        AsyncStorage.getItem('crowdFactureUser').then(value =>{
+            setFieldValue('phone',value)
+            //Alert.alert('Authenticated', `Welcome back ! ${value}`)
+        })
+    },[])
 
     return (
 
@@ -109,6 +120,7 @@ const SignIn = (props) => {
             <View style={{paddingHorizontal: 32, marginBottom: 1, width: '100%',}}>
                 <TextInput
                     icon='phone'
+                    value={values.phone}
                     placeholder='Enter your phone number'
                     autoCapitalize='none'
                     keyboardType='numeric'
@@ -184,10 +196,10 @@ marginVertical:8,
 
 
                 {message &&
-                <ToastMessage message={message} type='message'/>
+                <ToastMessage message={message} onHide={()=> dispatch(clearMessage())} type='message'/>
                 }
 
-                {error &&  <ToastMessage message={error} type='error'/>}
+                {error &&  <ToastMessage message={error} onHide={() => dispatch(clearErrors())} type='error'/>}
 
 
 
@@ -221,24 +233,7 @@ const styles = StyleSheet.create({
 
 })
 
-SignIn.propTypes = {
-    data: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
-    loginUser: PropTypes.func.isRequired,
-    clearErrors: PropTypes.func.isRequired,
-    clearMessage: PropTypes.func.isRequired,
-}
-const mapActionToPops = {
-    loginUser,
-    clearErrors,
-    clearMessage
-}
 
 
-const mapStateToProps = (state) => ({
-    data: state.data,
-    user: state.user,
-})
 
-
-export default connect(mapStateToProps, mapActionToPops)(SignIn);
+export default SignIn;

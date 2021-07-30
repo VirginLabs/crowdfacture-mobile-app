@@ -94,7 +94,7 @@ const navTheme = DefaultTheme;
                     <MyStartNavigation/>
 
                     :
-                    <ThemeProvider>
+
                             <TabBarProvider>
                                 <RootSiblingParent>
                                     <MyNavigation/>
@@ -105,7 +105,6 @@ const navTheme = DefaultTheme;
 
 
 
-                    </ThemeProvider>
             }
         </NavigationContainer>
     </PersistGate>

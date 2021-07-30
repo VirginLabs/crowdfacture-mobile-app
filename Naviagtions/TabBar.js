@@ -1,15 +1,17 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {View, StyleSheet, Dimensions, Animated, Easing} from 'react-native';
-import {useTabBar} from '../context/TabBarProvider';
 import Tab from './Tab';
-import {ThemeContext} from "../util/ThemeManager";
+
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
-import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp} from "react-native-responsive-screen";
+import {useSelector} from "react-redux";
 
 const {width} = Dimensions.get('screen');
 
 let textColor;
 const TabBar = ({state, navigation}) => {
+    const data = useSelector(state => state.data)
+    const {theme} = data;
 
     const [selected, setSelected] = useState('Home');
     const {routes} = state;
@@ -17,12 +19,11 @@ const TabBar = ({state, navigation}) => {
 
 
     const renderSize = currentTab => (currentTab === selected ? 22 : 18);
-    const textSize = currentTab => (currentTab === selected ? 12 : 8);
+    const textSize = currentTab => (currentTab === selected ? 10 : 8);
 
 
     const animation = useRef(new Animated.Value(0)).current;
 
-    const {theme} = useContext(ThemeContext);
     if(theme === 'Dark') {
         textColor = currentTab => (currentTab === selected ? Colors.Primary : '#eee');
     }else{

@@ -20,12 +20,18 @@ import {
     SET_PASS_MESSAGE,
     CLEAR_PASS_MESSAGE,
     SET_REFERRED_USER,
-     SET_INVESTMENTS, SET_DEPOSITS, SET_RETURNS
+    SET_INVESTMENTS, SET_DEPOSITS, SET_RETURNS, TOGGLE_THEME
 } from "../types";
 
 import React from "react";
 import API_KEY from '../../constants/PRIVATE'
 
+
+export const toggleTheme = () => (dispatch) => {
+    dispatch({
+        type: TOGGLE_THEME
+    })
+}
 
 export const toggleAddBankScreen = () => (dispatch) => {
     dispatch({

@@ -1,21 +1,23 @@
 import React, {useContext, useEffect} from "react";
 import {StyleSheet, Text, Animated, View, StatusBar, TouchableOpacity, Share} from "react-native";
-import {ThemeContext} from "../util/ThemeManager";
 import {DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 
 import {FontAwesome5} from "@expo/vector-icons";
 import {getReferredUsers} from "../redux/actions/data-action";
-import {connect} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import PropTypes from "prop-types";
 
 
 const ReferralScreen = (props) => {
-    const {theme} = useContext(ThemeContext);
+
+    const user = useSelector(state => state.user)
+    const data = useSelector(state => state.data)
+
 
     const {getReferredUsers,navigation} = props
-    const {referredUser, loading} = props.data
-    const {userData: {member: {ReferralBalance, ReferralID,ID}}} = props.user
+    const {referredUser, loading, theme} =data
+    const {userData: {member: {ReferralBalance, ReferralID,ID}}} = user
 
     useEffect(() => {
         const formdata = new FormData();

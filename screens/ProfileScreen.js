@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState} from 'react';
-import {FontAwesome, Ionicons} from '@expo/vector-icons';
+import React, { useEffect, useState} from 'react';
+import {FontAwesome,FontAwesome5, Ionicons} from '@expo/vector-icons';
 import {
     StyleSheet,
     Text,
@@ -9,21 +9,28 @@ import {
     TouchableOpacity,
     Platform,
     Image,
-    ActivityIndicator
+    ActivityIndicator, Linking
 } from 'react-native';
 import AnimatedScrollView from "../components/AnimatedScrollView";
-import {ThemeContext} from "../util/ThemeManager";
+
 import * as ImagePicker from "expo-image-picker";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import {clearErrors, clearMessage, getUser, logoutUser, updateUserImage} from "../redux/actions/user-action";
-import {connect} from "react-redux";
+import {connect, useDispatch, useSelector} from "react-redux";
 import PropTypes from "prop-types";
 import ToastMessage from "../components/Toast";
+import {toggleTheme} from "../redux/actions/data-action";
 
 
 
 
+const handlePress =  (url) => {
+    // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+    // by some browser in the mobile
+    Linking.openURL(url);
+
+};
 
 const wait = timeout => {
     return new Promise(resolve => {
@@ -52,18 +59,21 @@ let textStyle, boxStyle, smTextStyle;
 
 const UserProfile = (props) => {
 
+    const dispatch = useDispatch()
 
+const user = useSelector(state => state.user)
+const data = useSelector(state => state.data)
     const [refreshing, setRefreshing] = React.useState(false);
-    const {toggleTheme, theme} = useContext(ThemeContext);
+
     const [permission, setPermission] = useState(false);
 
     const [photo, setPhoto] = useState(null);
 
     const {
-        logoutUser,getUser, navigation,updateUserImage, clearErrors,
-        clearMessage
+ navigation
     } = props
-    const {error, loading, message, userData} = props.user
+    const {error, loading, message, userData} = user
+    const { theme} = data
 
 
     const {member: {LastName,ReferralBalance, Active, FirstName, Token, Phone, EmailAddress, ID, ProfilePicture}} = userData
@@ -117,7 +127,7 @@ const UserProfile = (props) => {
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-        getUser(Phone)
+        dispatch(getUser(Phone))
         wait(2000).then(() => setRefreshing(false));
     }, []);
 
@@ -181,14 +191,14 @@ const UserProfile = (props) => {
                 <TouchableOpacity
                     style={[styles.emailWrap, styles[`themeBtn${theme}`]]}
                     activeOpacity={0.8}
-                    onPress={toggleTheme}
+                    onPress={() => dispatch(toggleTheme())}
                     title="Toggle">
                     {
                         theme === "Dark" ?
-                            <Ionicons name='md-sunny' size={25} color={Colors.Primary}/>
+                            <Ionicons name='md-sunny' size={18} color={Colors.Primary}/>
 
                             :
-                            <FontAwesome name='moon-o' size={25} color='white'/>
+                            <FontAwesome name='moon-o' size={18} color='white'/>
                     }
                 </TouchableOpacity>
 
@@ -202,7 +212,7 @@ const UserProfile = (props) => {
                                       backgroundColor: '#fff'
                                   }, styles.boxOne]}>
                     <View style={styles.actionIcon}>
-                        <FontAwesome name={'user-plus'} size={20} color={theme === 'Dark'
+                        <FontAwesome name={'user-plus'} size={14} color={theme === 'Dark'
                             ? DayColors.cream : Colors.PrimaryDarkColor}/>
                     </View>
                     <View style={styles.actionName}>
@@ -217,7 +227,7 @@ const UserProfile = (props) => {
 
                     </View>
                     <View style={styles.actionBtn}>
-                        <FontAwesome name='chevron-right' size={16} color={theme === 'Dark'
+                        <FontAwesome name='chevron-right' size={14} color={theme === 'Dark'
                             ? DayColors.cream : Colors.PrimaryDarkColor}/>
                     </View>
                 </TouchableOpacity>
@@ -261,7 +271,7 @@ const UserProfile = (props) => {
                         backgroundColor: '#fff'
                     }, styles.boxOne]}>
                         <View style={styles.actionIcon}>
-                            <FontAwesome name='phone' size={18} color={theme === 'Dark'
+                            <FontAwesome name='phone' size={14} color={theme === 'Dark'
                                 ? DayColors.cream : Colors.PrimaryDarkColor}/>
                         </View>
                         <View style={styles.actionName}>
@@ -287,8 +297,8 @@ const UserProfile = (props) => {
                         backgroundColor: '#fff'
                     }, styles.boxOne]}>
                         <View style={styles.actionIcon}>
-                            <FontAwesome name='phone' size={18} color={theme === 'Dark'
-                                ? DayColors.cream : Colors.PrimaryDarkColor}/>
+                            <FontAwesome name="bank" size={14} color={theme === 'Dark'
+                                ? DayColors.cream : Colors.PrimaryDarkColor} />
                         </View>
                         <View style={styles.actionName}>
                             <Text style={[{color: textStyle}, styles.actionTitle]}>
@@ -302,7 +312,7 @@ const UserProfile = (props) => {
 
                         </View>
                         <View style={styles.actionBtn}>
-                            <FontAwesome name='chevron-right' size={16} color={theme === 'Dark'
+                            <FontAwesome name='chevron-right' size={14} color={theme === 'Dark'
                                 ? DayColors.cream : Colors.PrimaryDarkColor}/>
                         </View>
                     </TouchableOpacity>
@@ -316,27 +326,124 @@ const UserProfile = (props) => {
                     }, styles.boxOne]}>
 
                         <View style={styles.actionIcon}>
-                            <FontAwesome name='users' size={18} color={theme === 'Dark'
+                            <FontAwesome name='users' size={14} color={theme === 'Dark'
                                 ? DayColors.cream : Colors.PrimaryDarkColor}/>
                         </View>
                         <View style={styles.actionName}>
                             <Text style={[{color: textStyle}, styles.actionTitle]}>
                                 Join our community
                             </Text>
+                            <View style={{
+                                width:'100%',
+                                alignItems:'center',
+                                flexDirection:'row',
+                                justifyContent:'flex-start',
+
+                            }}>
+                                <TouchableOpacity onPress={() => handlePress('https://twitter.com/CrowdFacture')} style={{
+                                    backgroundColor:DayColors.strongLemon,
+                                    width:25,
+                                    marginHorizontal:4,
+                                    height:25,
+                                    borderRadius:100,
+                                    alignItems:'center',
+                                    justifyContent:'center'
+                                }}>
+                                    <Ionicons name="logo-twitter" size={10} color="black" />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => handlePress('https://instagram.com/crowdfacture')} style={{
+                                    backgroundColor:DayColors.strongLemon,
+                                    width:25,
+                                    height:25,
+                                    marginHorizontal:4,
+                                    borderRadius:100,
+                                    alignItems:'center',
+                                    justifyContent:'center'
+                                }}>
+
+                                    <Ionicons name="ios-logo-instagram" size={10} color="black" />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => handlePress('https://www.facebook.com/crowdfacture/')} style={{
+                                    backgroundColor:DayColors.strongLemon,
+                                    width:25,
+                                    height:25,
+                                    marginHorizontal:4,
+                                    borderRadius:100,
+                                    alignItems:'center',
+                                    justifyContent:'center'
+                                }}>
+
+                                    <Ionicons name="ios-logo-facebook" size={10} color="black" />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => handlePress('https://t.me/crowdfacture')} style={{
+                                    backgroundColor:DayColors.strongLemon,
+                                    width:25,
+                                    height:25,
+                                    marginHorizontal:4,
+                                    borderRadius:100,
+                                    alignItems:'center',
+                                    justifyContent:'center'
+                                }}>
+                                    <FontAwesome name="telegram" size={10} color="black" />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => handlePress('https://www.linkedin.com/company/crowdfacture')} style={{
+                                    backgroundColor:DayColors.strongLemon,
+                                    width:25,
+                                    height:25,
+                                    marginHorizontal:4,
+                                    borderRadius:100,
+                                    alignItems:'center',
+                                    justifyContent:'center'
+                                }}>
+                                    <Ionicons name="ios-logo-linkedin" size={10} color="black" />
+                                </TouchableOpacity>
+                            </View>
+
+                        </View>
+                        <View style={styles.actionBtn}>
+
+                        </View>
+
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={()=> navigation.navigate('AddListing')} activeOpacity={0.7} style={[theme === 'Dark' ? {
+
+                        borderColor: DarkColors.primaryDarkTwo,
+                        borderWidth: 1
+                    } : {
+                        backgroundColor: '#fff'
+                    }, styles.boxOne]}>
+
+
+                        <View style={styles.actionIcon}>
+                            <FontAwesome5 name="folder-plus" size={18} color={theme === 'Dark'
+                                ? DayColors.cream : Colors.PrimaryDarkColor} />
+
+                        </View>
+                        <View style={styles.actionName}>
+                            <Text style={[{color: textStyle}, styles.actionTitle]}>
+                                Add listing
+                            </Text>
                             <Text style={[{
                                 color: smTextStyle
                             }, styles.subName]}>
-                                Join other crowdfacture investors and stay informed
+                                Submit projects for listing
                             </Text>
 
                         </View>
                         <View style={styles.actionBtn}>
-                            <FontAwesome name='external-link' size={16} color={theme === 'Dark'
+                            <FontAwesome name='chevron-right' size={14} color={theme === 'Dark'
                                 ? DayColors.cream : Colors.PrimaryDarkColor}/>
                         </View>
 
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.7} style={[theme === 'Dark' ? {
+
+
+                    <TouchableOpacity onPress={()=> handlePress('https://play.google.com/store/apps/details?id=com.crowdfacture.crowdfacture_mobile')} activeOpacity={0.7} style={[theme === 'Dark' ? {
 
                         borderColor: DarkColors.primaryDarkTwo,
                         borderWidth: 1
@@ -361,29 +468,50 @@ const UserProfile = (props) => {
 
                         </View>
                         <View style={styles.actionBtn}>
-                            <FontAwesome name='external-link' size={16} color={theme === 'Dark'
+                            <FontAwesome name='external-link' size={14} color={theme === 'Dark'
                                 ? DayColors.cream : Colors.PrimaryDarkColor}/>
                         </View>
 
                     </TouchableOpacity>
+
+
 
                     <View style={styles.logoutBtnWrap}>
 
                         <TouchableOpacity
 
                             activeOpacity={0.5}
-                            onPress={logoutUser}
+                            onPress={() => dispatch(logoutUser())}
                             style={[theme === 'Dark' ? styles.logoutBtnD : styles.logoutBtnW, styles.logoutBtn]}>
                             <Text style={{
-                                color: theme === 'Dark'
-                                    ? DayColors.cream : Colors.PrimaryDarkColor,
+                                color:  Colors.PrimaryDarkColor,
                                 fontFamily: 'Gordita-medium'
                             }
                             }>
                                 Logout
                             </Text>
 
-                            <Ionicons name="log-out" size={18}  color={theme === 'Dark'
+                            <Ionicons name="log-out" size={14}  color={theme === 'Dark'
+                                ? DayColors.cardDark : Colors.PrimaryDarkColor} />
+
+                        </TouchableOpacity>
+
+
+                        <TouchableOpacity
+
+                            activeOpacity={0.5}
+                            onPress={() => handlePress('https://www.crowdfacture.com/faq')}
+                            style={styles.FAQBtn}>
+                            <Text style={{
+                                color: theme === 'Dark'
+                                    ? '#eed' : Colors.PrimaryDarkColor,
+                                fontFamily: 'Gordita-medium'
+                            }
+                            }>
+                                FAQ
+                            </Text>
+
+                            <Ionicons name="information" size={14}  color={theme === 'Dark'
                                 ? DayColors.cream : Colors.PrimaryDarkColor} />
 
                         </TouchableOpacity>
@@ -397,10 +525,10 @@ const UserProfile = (props) => {
 
 
             {message &&
-            <ToastMessage onHide={() => clearMessage()} message={message} type='message'/>
+            <ToastMessage onHide={() => dispatch(clearMessage())} message={message} type='message'/>
             }
 
-            {error &&  <ToastMessage onHide={() => clearErrors()} message={error} type='error'/>}
+            {error &&  <ToastMessage onHide={() => dispatch(clearErrors())} message={error} type='error'/>}
         </AnimatedScrollView>
 
     );
@@ -436,7 +564,7 @@ textTransform:'capitalize',
         alignItems: 'center',
         textAlign: 'center',
         justifyContent: 'center',
-        fontSize: 20,
+        fontSize: 18,
         fontFamily: 'Gordita-Black',
         width: wp('80%'),
     },
@@ -446,7 +574,7 @@ textTransform:'capitalize',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 40,
-        marginVertical: 4,
+        marginVertical: 20,
         textAlign: 'center',
 
     },
@@ -486,13 +614,15 @@ textTransform:'capitalize',
     },
     actionTitle: {
         fontFamily: 'Gordita-bold',
-        fontSize: 14,
+        fontSize: 12,
 
     },
     subName: {
-        fontSize: 10,
-        fontFamily: 'Gordita-medium',
-        lineHeight: 13
+        fontSize: 8,
+        fontFamily: 'Gordita',
+        lineHeight: 10,
+        flexDirection:'row',
+        justifyContent:'space-evenly'
     },
     actionBtn: {
         width: '10%',
@@ -516,8 +646,8 @@ textTransform:'capitalize',
         backgroundColor: Colors.PrimaryDarkColor,
     },
     logoutBtnD: {
-        borderColor: DayColors.cream,
-        borderWidth: 2,
+        backgroundColor:DayColors.cream,
+
 
     },
     logoutBtnW: {
@@ -526,9 +656,21 @@ textTransform:'capitalize',
     },
     logoutBtn: {
         marginVertical: 4,
-        width: '100%',
+        width: 140,
         height: 50,
-        borderRadius: 10,
+        borderRadius: 15,
+        flexDirection: 'row',
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+    },
+    FAQBtn: {
+        borderColor: DayColors.strongLemon,
+borderWidth: 1,
+        marginVertical: 4,
+        width: 100,
+        height: 50,
+        borderRadius: 15,
         flexDirection: 'row',
         alignContent: 'center',
         alignItems: 'center',
@@ -539,34 +681,12 @@ textTransform:'capitalize',
         flexDirection: 'row',
         alignContent: 'center',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
     }
 
 
 })
 
-UserProfile.propTypes = {
-    data: PropTypes.object.isRequired,
-    logoutUser: PropTypes.func.isRequired,
-    updateUserImage: PropTypes.func.isRequired,
-    clearErrors: PropTypes.func.isRequired,
-    clearMessage: PropTypes.func.isRequired,
-    getUser: PropTypes.func.isRequired,
 
-};
-
-const mapActionsToProps = {
-    logoutUser,
-    updateUserImage,
-    clearErrors,
-    clearMessage,
-    getUser
-}
-const mapStateToProps = (state) => ({
-    data: state.data,
-    user: state.user,
-})
-
-
-export default connect(mapStateToProps,mapActionsToProps)(UserProfile);
+export default UserProfile;
 

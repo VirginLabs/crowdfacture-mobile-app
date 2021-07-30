@@ -1,55 +1,92 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 
-import {Animated, StatusBar, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {ThemeContext} from "../util/ThemeManager";
+import {Animated, Dimensions, StatusBar, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import {Ionicons} from "@expo/vector-icons";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 import SetPin from "../components/Forms/SetPin";
 import UpdatePassword from "../components/payments/PasswordUpdate";
-import {toggleModal, toggleSecurity} from "../redux/actions/data-action";
-import {clearErrors, clearMessage, sendOtp, updatePassword, updateWithdrawalPin} from "../redux/actions/user-action";
-import BottomSheet from "react-native-simple-bottom-sheet";
-import PropTypes from "prop-types";
-import {connect} from "react-redux";
+
+import {clearErrors, clearMessage, updatePassword} from "../redux/actions/user-action";
+
+
+import {connect, useDispatch, useSelector} from "react-redux";
 import ToastMessage from "../components/Toast";
+import {Easing, useSharedValue, withSpring, withTiming} from "react-native-reanimated";
+import ModalSheet from "../components/ModalSheet";
 
 
 let content;
+const height = Dimensions.get('window').height
 
 const SecurityScreen = (props) => {
+    const user = useSelector(state => state.user)
+    const data = useSelector(state => state.data)
+    const dispatch = useDispatch()
+
+
+    const sheetHeight = useSharedValue(height)
+    const opacity = useSharedValue(0)
+    const zIndex = useSharedValue(0)
+    const offset = useSharedValue(600);
+
+
+    const openSheet = useCallback(() => {
+        opacity.value = withSpring(1)
+        zIndex.value = 100
+        sheetHeight.value = withSpring(height / 2.3)
+        offset.value = withTiming(0, {
+            duration: 400,
+            easing: Easing.out(Easing.exp),
+        })
+
+
+    }, []);
 
     const {navigation} = props
-    const {theme} = useContext(ThemeContext);
-    const sheetRef = useRef(null);
-    const {clearMessage,updatePassword,clearErrors,updateWithdrawalPin,sendOtp} = props
-    const {loading,message,error,otpMessage,userData:{member: {ID}}} = props.user
+    const {theme} = data;
+
+
+    const {loading, message, error, otpMessage, userData: {member: {ID}}} = user
 
     //which content is shown in the bottom sheet
     const [contentKey, setContentKey] = useState('');
 
     if (contentKey === '1') {
-        content = <SetPin userId={ID} updateWithdrawalPin={updateWithdrawalPin} loading={loading} theme={theme}/>
+        content = <SetPin/>
 
     }
     if (contentKey === '2') {
-        content = <UpdatePassword userId={ID} loading={loading}  updatePassword={updatePassword} theme={theme}/>
+        content = <UpdatePassword userId={ID} loading={loading} updatePassword={updatePassword} theme={theme}/>
     }
 
 
     const handleOpen = (id) => {
         setContentKey(id)
-        sheetRef.current.togglePanel()
+        openSheet()
 
     }
 
 
-
-
-
     return (
-        <Animated.View style={[styles.container, {
+        <>
+            <ModalSheet zIndex={zIndex} offset={offset} opacity={opacity}>
+                <View style={{
+                    height: '100%',
+                    borderRadius: 20,
+                    width: '100%',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+
+                }}>
+
+                    {content}
+                </View>
+            </ModalSheet>
+
+                <Animated.View style={[styles.container, {
             backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
                 : "#f5f5f5"
         }]}>
@@ -77,7 +114,7 @@ const SecurityScreen = (props) => {
                             },
                             styles.securityButton]} activeOpacity={0.6}
                                           onPress={() => handleOpen(id)}>
-                            <Ionicons name={icon} size={22} color={theme === 'Dark' ?
+                            <Ionicons name={icon} size={18} color={theme === 'Dark' ?
                                 DayColors.cream
                                 : DayColors.dimGreen
                             }/>
@@ -90,7 +127,7 @@ const SecurityScreen = (props) => {
                                 alignItems: 'flex-start'
                             }}>
                                 <Text style={{
-                                    fontSize: 16,
+                                    fontSize: 12,
                                     color: theme === 'Dark' ? '#eee' : '#131313',
                                     fontFamily: 'Gordita-bold'
                                 }}>
@@ -98,7 +135,7 @@ const SecurityScreen = (props) => {
                                 </Text>
                                 <Text style={{
                                     color: theme === 'Dark' ? '#ddd' : '#333',
-                                    fontSize: 10,
+                                    fontSize: 9,
                                     fontFamily: 'Gordita-medium'
                                 }}>
                                     {message}
@@ -111,31 +148,21 @@ const SecurityScreen = (props) => {
 
             </View>
 
-            <BottomSheet wrapperStyle={{
-                width: wp('100%'),
-                backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#fff',
-            }}
-                         sliderMinHeight={0}
-
-                         ref={ref => sheetRef.current = ref}>
-
-                {content}
-
-            </BottomSheet>
 
 
 
             {message &&
-            <ToastMessage onHide={() => clearMessage()} message={message} type='message'/>
+            <ToastMessage onHide={() => dispatch(clearMessage())} message={message} type='message'/>
             }
             {
                 otpMessage &&
-                <ToastMessage onHide={() => clearMessage()} message={otpMessage} type='message'/>
+                <ToastMessage onHide={() => dispatch(clearMessage())} message={otpMessage} type='message'/>
             }
 
-            {error &&  <ToastMessage onHide={() => clearErrors()} message={error} type='error'/>}
+            {error && <ToastMessage onHide={() => dispatch(clearErrors())} message={error} type='error'/>}
 
         </Animated.View>
+            </>
     );
 };
 
@@ -168,7 +195,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: 'Gordita-Black',
-        fontSize: 16,
+        fontSize: 12,
     },
     wrap: {
         padding: 10,
@@ -201,31 +228,5 @@ const styles = StyleSheet.create({
 
 });
 
-SecurityScreen.propTypes = {
-    data: PropTypes.object.isRequired,
-    updatePassword: PropTypes.func.isRequired,
-    updateWithdrawalPin: PropTypes.func.isRequired,
-    clearErrors: PropTypes.func.isRequired,
-    clearMessage: PropTypes.func.isRequired,
-    toggleModal: PropTypes.func.isRequired,
-    sendOtp: PropTypes.func.isRequired,
-};
 
-
-const mapActionToPops = {
-    toggleSecurity,
-    updatePassword,
-    clearErrors,
-    clearMessage,
-    updateWithdrawalPin,
-    toggleModal,
-    sendOtp
-}
-
-
-const mapStateToProps = (state) => ({
-    data: state.data,
-    user: state.user,
-})
-
-export default connect(mapStateToProps, mapActionToPops) (SecurityScreen);
+export default SecurityScreen;

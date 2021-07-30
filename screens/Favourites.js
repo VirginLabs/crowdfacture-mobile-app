@@ -4,9 +4,12 @@ import {Animated, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {Colors, DarkColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import {ThemeContext} from "../util/ThemeManager";
+import {useSelector} from "react-redux";
 
 const FavouriteScreen = ({navigation}) => {
-    const {theme} = useContext(ThemeContext);
+    const user = useSelector(state => state.user)
+    const data = useSelector(state => state.data)
+    const {theme} = data;
 
     return (
         <Animated.View style={[styles.container, {

@@ -10,7 +10,6 @@ const SumotrustLogin = (props) => {
     const [switchSumo, setSwitchSumo] = useState(true);
 
 
-    const dispatch = useDispatch()
 
 
 

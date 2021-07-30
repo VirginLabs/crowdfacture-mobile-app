@@ -1,24 +1,20 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useCallback, useContext, useRef, useState} from 'react';
 import {
     View,
     StyleSheet,
     FlatList,
     Text,
     TouchableOpacity,
-    StatusBar,
+    StatusBar, Dimensions, ScrollView, Image,
 } from 'react-native';
-import {Colors, DarkColors, DayColors} from "../constants/Colors";
-import {ThemeContext} from "../util/ThemeManager";
+import {Colors, DarkColors, DayColors} from "../constants/Colors";;
 import { FontAwesome5} from "@expo/vector-icons";
 
 import BackButton from "../components/BackBtn";
-
-
 import { widthPercentageToDP as wp} from "react-native-responsive-screen";
 import BankAccount from "../components/payments/BankAccount";
 import Sumotrust from "../components/payments/Sumotrust";
 import FlutterWave from "../components/payments/CardPayment";
-import BottomSheet from "react-native-simple-bottom-sheet";
 import PropTypes from "prop-types";
 import {
     clearErrors,
@@ -27,17 +23,20 @@ import {
     getUniqueAccountNumb,
     getUser
 } from "../redux/actions/user-action";
-import {connect} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import ToastMessage from "../components/Toast";
-
+import Animated, {Easing, useSharedValue, withSpring, withTiming} from "react-native-reanimated";
+import {TapGestureHandler} from "react-native-gesture-handler";
+import ModalSheet from "../components/ModalSheet";
 
 const Item = ({name, iconName, moreInfo, theme, action}) => (
-    <TouchableOpacity activeOpacity={0.7} style={[
+    <TapGestureHandler onActivated={action}>
+    <Animated.View activeOpacity={0.7} style={[
         {
             backgroundColor: theme === 'Dark'
                 ? DarkColors.primaryDarkTwo : Colors.White
         },
-        styles.paymentList]} onPress={action}>
+        styles.paymentList]}>
         <View style={[
             name === 'ACCOUNT NUMBER' && {
 
@@ -46,16 +45,22 @@ const Item = ({name, iconName, moreInfo, theme, action}) => (
             },
 
             name === 'USE SUMOTRUST' && {
-                backgroundColor: theme === 'Dark'
-                    ? DayColors.strongLemon : DayColors.cream,
+                backgroundColor:'#EEE'
             },
             name === 'USE DEBIT CARD' && {
                 backgroundColor: theme === 'Dark'
                     ? DarkColors.primaryDarkThree : DayColors.lemon,
             },
             styles.icon]}>
-            <FontAwesome5 name={iconName} size={20} color={theme === 'Dark'
-                ? DayColors.primaryColor : Colors.PrimaryDarkColor}/>
+            {name === 'USE SUMOTRUST' ?
+
+<Image    style={{width: 50, height: 50}}    resizeMode={'contain'}
+          source={require('../assets/sumotrust-logo.png')}/>
+
+                :
+                <FontAwesome5 name={iconName} size={18} color={theme === 'Dark'
+                    ? DayColors.primaryColor : Colors.PrimaryDarkColor}/>
+            }
         </View>
         <View style={
             styles.body}>
@@ -81,17 +86,26 @@ const Item = ({name, iconName, moreInfo, theme, action}) => (
 
             </Text>
         </View>
-    </TouchableOpacity>
+    </Animated.View>
+    </TapGestureHandler>
 )
 
 
+
+const height = Dimensions.get('window').height
 let content;
 
 const AddCashScreen = (props) => {
 
-
+    const user = useSelector(state => state.user)
+    const data = useSelector(state => state.data)
     const {navigation, getUniqueAccountNumb, clearErrors, clearMessage, fundUsingSumotrust} = props
 
+
+    const sheetHeight = useSharedValue(500)
+    const opacity = useSharedValue(0)
+    const zIndex = useSharedValue(0)
+    const offset = useSharedValue(600);
 
     const {
         loading, message, error, userData:
@@ -105,16 +119,16 @@ const AddCashScreen = (props) => {
                 },
                 bankDetails
             }
-    } = props.user
+    } = user
 
 
-    const {theme} = useContext(ThemeContext);
+const {theme} = data
     //which content is shown in the bottom sheet
     const [contentId, setContentId] = useState('');
 
 
     if (contentId === '1') {
-        content = <BankAccount loading={loading} getUniqueAccountNumb={getUniqueAccountNumb} userDetails={{
+        content = <BankAccount navigation={navigation} loading={loading} getUniqueAccountNumb={getUniqueAccountNumb} userDetails={{
             bankDetails,
             MonnifyAccountNumber,
             MonnifyBankName,
@@ -131,16 +145,26 @@ const AddCashScreen = (props) => {
             customerName={LastName}
          theme={theme} />
     }
-    const sheetRef = useRef(null);
+
+
+
+    const openSheet = useCallback(() => {
+        opacity.value = withSpring(1)
+        zIndex.value = 100
+        sheetHeight.value = withSpring(height / 2.3)
+        offset.value = withTiming(0, {
+            duration: 400,
+            easing: Easing.out(Easing.exp),
+        })
+
+
+    }, []);
 
     const handleOpen = (id) => {
         setContentId(id)
-        sheetRef.current.togglePanel()
+        openSheet()
 
     }
-
-
-
 
     const PaymentList = ({item}) => (
         <Item name={item.name} theme={theme} id={item.id} action={() => handleOpen(item.id)} sheetName={item.sheetName}
@@ -149,8 +173,28 @@ const AddCashScreen = (props) => {
     )
 
     return (
+        <>
+            <ModalSheet zIndex={zIndex} offset={offset} opacity={opacity}>
+                <View style={{
+                    height: '100%',
+                    borderRadius: 20,
+                    width: '100%',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
 
-        <View style={[styles.container, {
+                }}>
+
+
+                        {content}
+
+
+                </View>
+            </ModalSheet>
+
+
+
+            <View style={[styles.container, {
             backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
                 : "#f5f5f5"
         }]}>
@@ -163,34 +207,11 @@ const AddCashScreen = (props) => {
                 contentContainerStyle={styles.wrap}
                 data={PaymentChannels} renderItem={PaymentList} keyExtractor={item => item.id}/>
 
-            <BottomSheet wrapperStyle={{
-                width: wp('100%'),
-                backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#fff',
-            }}
-                         sliderMinHeight={0}
 
-                         ref={ref => sheetRef.current = ref}>
-                <Text style={{
-                    width: '100%',
-                    textAlign: 'center',
-                    fontSize: 11,
-                    fontFamily: 'Gordita-medium',
-                    color: theme === 'Dark' ? '#eee' : '#333'
-                }}>
-                    Tap head to close
-                </Text>
-                {content}
-
-            </BottomSheet>
-
-            {message &&
-            <ToastMessage onHide={() => clearMessage()} message={message} type='message'/>
-            }
-
-            {error &&  <ToastMessage onHide={() => clearErrors()} message={error} type='error'/>}
 
 
         </View>
+            </>
     );
 };
 
@@ -219,6 +240,14 @@ const PaymentChannels = [
         sheetName: 'CARD'
 
     },
+ {
+        id: '4',
+        name: 'DEPOSIT CFR',
+        iconName: 'coins',
+        moreInfo: 'Deposit Crowdfacture token',
+        sheetName: 'CFR'
+
+    },
 
 
 ]
@@ -232,6 +261,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column'
     },
     top: {
+        marginTop:10,
         width: '100%',
     },
     wrap: {
@@ -251,8 +281,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     icon: {
-        width: 60,
-        height: 60,
+        width: 50,
+        height: 50,
         borderRadius: 100,
         alignItems: 'center',
         justifyContent: 'center',
@@ -260,12 +290,13 @@ const styles = StyleSheet.create({
 
     },
     cardTitle: {
+        fontSize: 12,
         fontFamily: 'Gordita-Black'
     },
     moreInfo: {
         fontFamily: 'Gordita-medium',
-        lineHeight: 18,
-        fontSize: 12,
+        lineHeight: 15,
+        fontSize: 10,
     },
     body: {
         width: '60%'
