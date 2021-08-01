@@ -10,7 +10,8 @@ import { NavigationContainer,DefaultTheme} from '@react-navigation/native';
 // In theory you don't have to install `react-native-root-siblings` because it's a dep of root-toast
 // But you can install it explicitly if your editor complains about it.
 import { RootSiblingParent } from 'react-native-root-siblings';
-import {connect, Provider} from 'react-redux';
+import { Provider} from 'react-redux';
+import * as Notifications from 'expo-notifications';
 // Add
 import { PersistGate } from 'redux-persist/integration/react';
 
@@ -20,6 +21,16 @@ import PropTypes from "prop-types";
 import mapStateToProps from "react-redux/lib/connect/mapStateToProps";
 import NavManager from "./Naviagtions/NavManager";
 enableScreens()
+
+
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+    }),
+});
 
 const fetchFonts = () => {
     return Font.loadAsync({

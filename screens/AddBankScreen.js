@@ -154,10 +154,11 @@ const AddBank = (props) => {
                         }}>
                     <Text style={{
                         backgroundColor:DayColors.cream,
-                        padding:8,
+                        padding:10,
                         borderRadius:5,
+                        fontSize:12,
                         fontFamily: 'Gordita-bold',
-                        color: theme === 'Dark' ? DayColors.cream : "#131313"
+                        color: "#131313"
                     }}>
                        ADD BANK DETAILS
                     </Text>
@@ -199,7 +200,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: 'Gordita-Black',
-        fontSize: 14,
+        fontSize: 12,
     },
     wrap: {
         padding: 10,

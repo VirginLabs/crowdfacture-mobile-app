@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
     View,
     StatusBar,
@@ -7,7 +7,7 @@ import {
     Dimensions,
     RefreshControl,
     TouchableOpacity,
-    Animated, Easing
+    Animated, AppState
 } from 'react-native';
 import {MaterialIcons, FontAwesome} from '@expo/vector-icons';
 import {ThemeContext} from "../util/ThemeManager";
@@ -15,22 +15,43 @@ import MyText from "./helpers/MyText";
 import {Colors, DarkColors} from "../constants/Colors";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {useSelector} from "react-redux";
+import App from "../App";
 
 
-let offsetY = 0;
+
 
 
 const AnimatedScrollView = ({children,refreshing, onRefresh, routeName, routeMessage, style, navigation, ...restProps}) => {
 
     const data = useSelector(state => state.data)
     const {theme} = data;
+    const appState = useRef(AppState.currentState)
+
+    const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+    useEffect(() =>{
+        AppState.addEventListener("change", _handleAppStateChange)
+        return () =>{
+            AppState.removeEventListener("change", _handleAppStateChange)
+        }
+
+    },[])
+
+
+    const _handleAppStateChange = (nextAppState) =>{
+if(appState.current.match(/inactive|background/) &&
+    nextAppState === "active"){
+    console.log("APP IS NOW ON THE FOREGROUND")
+}
+
+appState.current = nextAppState
+        setAppStateVisible(appState.current)
+        console.log("Appstate:", appState.current)
+    }
 
 
 
 
-
-
-    /*   styles[`container${theme}`]*/
     return (
         <View style={[styles.container,  {backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
             "#f5f5f5"},

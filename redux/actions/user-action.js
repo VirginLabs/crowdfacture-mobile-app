@@ -594,7 +594,7 @@ export const getUserProjects = (userId) => (dispatch) => {
             })
            // console.log(res.investments)
         } else {
-            console.log(res.message)
+           // console.log(res.message)
         }
 
     })
@@ -667,7 +667,7 @@ export const buyUnitAction = (details, Phone) => (dispatch) => {
                 payload: res.message
             })
 
-            console.log(res)
+
            // dispatch(getUser(Phone))
 
         } else {
@@ -684,6 +684,89 @@ export const buyUnitAction = (details, Phone) => (dispatch) => {
     })
 
     unitPromise.catch((err) => console.log(err))
+}
+
+
+export const withdrawToSumotrust = (details) => (dispatch) => {
+
+    dispatch({
+        type: LOADING_DATA
+    })
+
+    const options = {
+        method: 'POST',
+        body: details
+    }
+
+
+    const kickPromise = Promise.race([
+        fetch(`https://crowdfacture.net/api/v0/php/fundkickaccount.php?apiKey=${API_KEY}`, options)
+            .then((res) => res.json())
+    ])
+
+    kickPromise.then(res => {
+        if (res.status === '200') {
+            dispatch({
+                type: SET_MESSAGE,
+                payload: res.message
+            })
+
+
+
+        } else {
+            dispatch({
+                type: SET_ERROR,
+                payload: res.message
+            })
+
+
+
+
+        }
+
+    })
+
+    kickPromise.catch((err) => console.log(err))
+}
+export const withdrawToBank = (details) => (dispatch) => {
+
+    dispatch({
+        type: LOADING_DATA
+    })
+
+    const options = {
+        method: 'POST',
+        body: details
+    }
+
+
+    const bankPromise = Promise.race([
+        fetch(`https://crowdfacture.net/api/v0/php/fundbankaccount.php?apiKey=${API_KEY}`, options)
+            .then((res) => res.json())
+    ])
+
+    bankPromise.then(res => {
+        if (res.status === '200') {
+            dispatch({
+                type: SET_MESSAGE,
+                payload: res.message
+            })
+
+
+        } else {
+            dispatch({
+                type: SET_ERROR,
+                payload: res.message
+            })
+
+
+
+
+        }
+
+    })
+
+    bankPromise.catch((err) => console.log(err))
 }
 
 export const forgotPassword = (userData) => (dispatch) => {

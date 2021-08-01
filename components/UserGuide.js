@@ -1,11 +1,21 @@
 import React, {useState} from 'react';
 import {Ionicons} from "@expo/vector-icons";
-import {Image, ImageBackground, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+    Image,
+    ImageBackground,
+    Linking,
+
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import {useDispatch} from "react-redux";
 import {toggleKnowMore, toggleUserGuide} from "../redux/actions/data-action";
 import {RFPercentage} from "react-native-responsive-fontsize";
-import * as WebBrowser from "expo-web-browser";
+
 
 const UserGuide = ({navigation}) => {
 
@@ -17,7 +27,7 @@ const UserGuide = ({navigation}) => {
     }
 
     function FAQ() {
-        WebBrowser.openBrowserAsync(
+        Linking.openURL(
             'https://crowdfacture.com/faq'
         );
     }

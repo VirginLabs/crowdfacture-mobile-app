@@ -34,10 +34,12 @@
     "android": {
       "versionCode": 1,
       "package": "com.crowdfacture.crowdfacture_mobile",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo/Crowdfacture-ORANGE-PNG.png",
         "backgroundColor": "#00040F"
       },
+
       "playStoreUrl": "https://play.google.com/store/apps/details?id=com.crowdfacture.crowdfacture_mobile",
       "permissions": ["CAMERA","WRITE_EXTERNAL_STORAGE","USE_BIOMETRIC","USE_FINGERPRINT"]
     },

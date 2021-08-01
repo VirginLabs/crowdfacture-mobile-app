@@ -17,10 +17,11 @@ const HistoryScreen = (props) => {
     return (
         <AnimatedScrollView navigation={navigation} routeMessage='Here you see all your investment history'
                             routeName='History'>
-            <TouchableOpacity onPress={() => navigation.navigate('Transactions')} activeOpacity={0.5}
-                              style={styles.container}>
 
-                <View activeOpacity={0.7} style={[{
+
+            <View style={styles.container}>
+
+                 <TouchableOpacity onPress={() => navigation.navigate('Transactions')} activeOpacity={0.5} style={[{
                     backgroundColor: DayColors.cream
                 }, styles.card]}>
 
@@ -28,14 +29,14 @@ const HistoryScreen = (props) => {
                         <Text style={{
                             color: '#131313',
                             fontFamily:'Gordita-bold',
-                            fontSize:25
+                            fontSize:14
                         }}>
                             Investment
                         </Text>
                         <Text  style={{
                             color: '#333',
                             fontFamily:'Gordita-bold',
-                            fontSize:13
+                            fontSize:9
                         }}>
                             {today}
                         </Text>
@@ -44,10 +45,10 @@ const HistoryScreen = (props) => {
 
                     <View style={styles.description}>
                         <Text style={{
-                            fontSize:13,
+                            fontSize:10,
                             color:'#131313',
                             fontFamily:'Gordita-medium',
-                            lineHeight:20
+                            lineHeight:14
                         }}>
                             Proper documentation of the total projects invested
                         </Text>
@@ -61,14 +62,17 @@ const HistoryScreen = (props) => {
         <Text style={{
             color: '#fff',
             fontFamily:'Gordita-bold',
-            fontSize:15
+            fontSize:10
         }}>
             Go
         </Text>
-        <Ionicons name='ios-arrow-forward' size={18} color='#fff'/>
+        <Ionicons name='ios-arrow-forward' size={14} color='#fff'/>
     </TouchableOpacity>
+
 </View>
-                </View>
+
+                </TouchableOpacity>
+
 
 
                 <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate('Dividends')} style={[
@@ -80,14 +84,14 @@ const HistoryScreen = (props) => {
                         <Text style={{
                             color: '#131313',
                             fontFamily:'Gordita-bold',
-                            fontSize:25
+                            fontSize:14
                         }}>
                             Returns
                         </Text>
                         <Text  style={{
                             color: '#333',
                             fontFamily:'Gordita-bold',
-                            fontSize:13
+                            fontSize:9
                         }}>
                             {today}
                         </Text>
@@ -96,10 +100,10 @@ const HistoryScreen = (props) => {
 
                     <View style={styles.description}>
                         <Text style={{
-                            fontSize:13,
+                            fontSize:10,
                             color:'#131313',
                             fontFamily:'Gordita-medium',
-                            lineHeight:20
+                            lineHeight:13
                         }}>
                             Always know how much profit you have generated from your investment
                         </Text>
@@ -113,11 +117,11 @@ const HistoryScreen = (props) => {
                             <Text style={{
                                 color: '#fff',
                                 fontFamily:'Gordita-bold',
-                                fontSize:15
+                                fontSize:10
                             }}>
                                 Go
                             </Text>
-                            <Ionicons name='ios-arrow-forward' size={18} color='#fff'/>
+                            <Ionicons name='ios-arrow-forward' size={14} color='#fff'/>
                         </TouchableOpacity>
                     </View>
                 </TouchableOpacity>
@@ -135,14 +139,14 @@ const HistoryScreen = (props) => {
                         <Text style={{
                             color: '#131313',
                             fontFamily:'Gordita-bold',
-                            fontSize:25
+                            fontSize:14
                         }}>
                             Deposits
                         </Text>
                         <Text  style={{
                             color: '#333',
                             fontFamily:'Gordita-bold',
-                            fontSize:13
+                            fontSize:10
                         }}>
                             {today}
                         </Text>
@@ -151,10 +155,10 @@ const HistoryScreen = (props) => {
 
                     <View style={styles.description}>
                         <Text style={{
-                            fontSize:13,
+                            fontSize:10,
                             color:'#333',
                             fontFamily:'Gordita-medium',
-                            lineHeight:20
+                            lineHeight:13
                         }}>
                             Keep track of the money you have deposited on crowdfacture
                         </Text>
@@ -168,16 +172,16 @@ const HistoryScreen = (props) => {
                             <Text style={{
                                 color: '#fff',
                                 fontFamily:'Gordita-bold',
-                                fontSize:15
+                                fontSize:10
                             }}>
                                 Go
                             </Text>
-                            <Ionicons name='ios-arrow-forward' size={18} color='#fff'/>
+                            <Ionicons name='ios-arrow-forward' size={14} color='#fff'/>
                         </TouchableOpacity>
                     </View>
                 </TouchableOpacity>
 
-            </TouchableOpacity>
+            </View>
         </AnimatedScrollView>
     );
 };
@@ -201,14 +205,14 @@ const styles = StyleSheet.create({
     card: {
         marginTop: 20,
         width: '90%',
-        padding:15,
-        height: 190,
-        borderRadius: 30,
+        padding:5,
+        height: 140,
+        borderRadius: 20,
         flexDirection: 'column',
         alignItems: 'center',
     },
     cardTop:{
-        height: '30%',
+        height: '25%',
         width: '80%',
         flexDirection:'row',
         alignItems:'center',
@@ -216,7 +220,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     description:{
-        height: '50%',
+        height: '40%',
         width: '80%',
         alignItems:'center',
         justifyContent:'center',
@@ -230,9 +234,9 @@ const styles = StyleSheet.create({
         justifyContent:'center'
     },
     goBtn:{
-        borderRadius: 20,
+        borderRadius: 10,
         width:80,
-        height:40,
+        height:35,
         flexDirection:'row',
         alignItems:'center',
         alignContent:'center',

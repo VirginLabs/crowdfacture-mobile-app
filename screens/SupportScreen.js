@@ -1,7 +1,6 @@
-import React, {useCallback, useContext, useState} from 'react';
+import React, { useState} from 'react';
 
-import {Animated, StatusBar, TouchableOpacity, StyleSheet, Linking, Text, View, Alert} from 'react-native';
-import {ThemeContext} from "../util/ThemeManager";
+import {Animated, StatusBar, TouchableOpacity, StyleSheet, Linking, Text, View} from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import { widthPercentageToDP as wp} from "react-native-responsive-screen";

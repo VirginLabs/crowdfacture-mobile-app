@@ -4,28 +4,30 @@ import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
 import {ThemeContext} from "../../util/ThemeManager";
 import PropTypes from "prop-types";
 import {getUserProjects} from "../../redux/actions/user-action";
-import {connect} from "react-redux";
-import {Colors, DarkColors} from "../../constants/Colors";
+import {connect, useDispatch, useSelector} from "react-redux";
+import {Colors, DarkColors, DayColors} from "../../constants/Colors";
 import ProjectCard from "../ProjectCard";
 import {getInvestments} from "../../redux/actions/data-action";
 import UserProjectCard from "../UserProjectCard";
 
 const MyProjects = (props) => {
+    const dispatch = useDispatch()
+    const data = useSelector(state => state.data)
+    const user = useSelector(state => state.user)
 
-
-    const {theme} = useContext(ThemeContext);
-    const {navigation, getUserProjects} = props
-    const {userProjects, userData: {member: {ID}}} = props.user
+    const {navigation} = props
+    const {userProjects, userData: {member: {ID}}} = user
 
 
     const {
+        theme,
         loadingProject,
-    } = props.data
+    } = data
 
     useEffect(() => {
         const formData = new FormData()
         formData.append('userId', ID)
-        getUserProjects(formData)
+        dispatch(getUserProjects(formData))
 
     }, []);
 
@@ -54,11 +56,24 @@ Object.keys(userProjects).length > 0 ?
                     ))) :
 
 
-    <Text style={{
-    color: theme === 'Dark' ? '#eee' : '#131313'
+    <View style={{
+    width:'80%',
+        borderRadius:10,
+        height:50,
+        alignItems:'center',
+        justifyContent:'center',
+        marginTop:10,
+        backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : "#f6e5da"
     }}>
-        NO PROJECT START INVESTING
+
+    <Text style={{
+        fontSize:10,
+        fontFamily:'Gordita-medium',
+    color: theme === 'Dark' ? '#ddd': '#131313'
+    }}>
+      Opps! You don't have any projects, start investing
     </Text>
+    </View>
             }
         </View>
     );
@@ -80,24 +95,7 @@ flex:1,
 })
 
 
-MyProjects.propTypes = {
-    data: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
-    getUserProjects: PropTypes.func.isRequired,
-    getInvestments: PropTypes.func.isRequired,
-};
 
 
-const mapActionToPops = {
-    getUserProjects,
-    getInvestments
-}
 
-
-const mapStateToProps = (state) => ({
-    data: state.data,
-    user: state.user,
-})
-
-
-export default connect(mapStateToProps,mapActionToPops) (MyProjects);
+export default MyProjects

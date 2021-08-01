@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState} from 'react';
-import {ThemeContext} from "../util/ThemeManager";
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
     Pressable,
     Modal,
@@ -13,7 +12,7 @@ import {
     ImageBackground, ActivityIndicator
 } from 'react-native';
 import AnimatedScrollView from "../components/AnimatedScrollView";
-
+import * as Notifications from 'expo-notifications';
 import BalanceCard from "../components/BalanceCard";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
@@ -21,11 +20,14 @@ import MyButton from "../components/MyButton";
 import {FontAwesome} from "@expo/vector-icons";
 import DeckButton from "../components/DeckButton";
 import ProjectCard from "../components/ProjectCard";
-import {connect, useSelector} from "react-redux";
-import PropTypes from 'prop-types'
-import {getAllProject} from "../redux/actions/data-action";
+import { useDispatch, useSelector} from "react-redux";
+import {getAllProject, toggleUserGuide} from "../redux/actions/data-action";
 import {getUser} from "../redux/actions/user-action";
 import ToastMessage from "../components/Toast";
+
+import UserGuide from "../components/UserGuide";
+import KnowMoreScreen from "../components/KnowMore";
+import Constants from "expo-constants";
 
 
 
@@ -40,40 +42,83 @@ const wait = timeout => {
 
 const HomeScreen = (props) => {
     const data = useSelector(state => state.data)
-    const {theme} = data;
+    const user = useSelector(state => state.user)
+    const dispatch = useDispatch()
+    const {theme,userGuide} = data;
 
     const [refreshing, setRefreshing] = React.useState(false);
 
     const [toastVisible, setToastVisible] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
+
+
+
+    const [expoPushToken, setExpoPushToken] = useState('');
+    const [notification, setNotification] = useState(false);
+    const notificationListener = useRef();
+    const responseListener = useRef();
+
+
     const toggleModal = () => {
         setIsModalVisible(prevState => !prevState);
     }
+
+
     const {route: {name}} = props;
 
 
-    const {
-        getUser,
-        getAllProject,
-    } = props
 
-
-
-    const {userData: {member: {Amount,Phone, InvestedAmount, ReferralID, LastName}}} = props.user
+    const {userData: {member: {Amount,Phone, InvestedAmount, ReferralID, LastName}, bankDetails}} = user
     const {
         allProjects,
         loadingProject
-    } = props.data
-    useEffect(() =>
-            getAllProject(),
-        []);
+    } = data
+    useEffect(() => {
+        dispatch(getAllProject())
+    },[]);
 
+
+
+    useEffect(() =>{
+       dispatch(toggleUserGuide())
+    },[])
+
+    useEffect(() => {
+        registerForPushNotificationsAsync().then(token => {
+
+                setExpoPushToken(token)
+                console.log(token)
+            }
+        );
+
+        // This listener is fired whenever a notification is received while the app is foregrounded
+        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+            setNotification(notification);
+
+
+        });
+
+        // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+
+            const {notification: {request: {content: {data: {screen}}}}} = response
+//when the user taps on the notification, this line checks if they //are suppose to be taken to a particular screen
+            if (screen) {
+                props.navigation.navigate(screen)
+            }
+        });
+
+        return () => {
+            Notifications.removeNotificationSubscription(notificationListener.current);
+            Notifications.removeNotificationSubscription(responseListener.current);
+        };
+    }, []);
 
 
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-        getUser(Phone)
+        dispatch(getUser(Phone))
         wait(2000).then(() => setRefreshing(false));
     }, []);
 
@@ -100,8 +145,26 @@ const HomeScreen = (props) => {
 
 
     return (
-        <AnimatedScrollView onRefresh={onRefresh} refreshing={refreshing} navigation={props.navigation}
-                            routeMessage={`${LastName} Welcome Home`} routeName='Dashboard'>
+
+        <>
+            {Object.keys(bankDetails).length < 1 &&
+        <Modal
+                animated={true}
+                animationType="slide"
+                transparent={true}
+                visible={userGuide}
+
+            >
+
+
+            <UserGuide navigation={props.navigation}/>
+
+
+            </Modal>
+}
+            <KnowMoreScreen/>
+
+                <AnimatedScrollView onRefresh={onRefresh} refreshing={refreshing} navigation={props.navigation} routeMessage={`${LastName} Welcome Home`} routeName='Dashboard'>
             <View style={styles.container}>
 
 
@@ -305,9 +368,45 @@ const HomeScreen = (props) => {
             </View>
         </AnimatedScrollView>
 
+            </>
 
     );
 };
+
+
+
+async function registerForPushNotificationsAsync() {
+    let token;
+    if (Constants.isDevice) {
+        const {status: existingStatus} = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== 'granted') {
+            const {status} = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
+            console.log("existingStatus",existingStatus)
+        }
+        if (finalStatus !== 'granted') {
+            alert('Failed to get push token for push notification!');
+            console.log("finalStatus",finalStatus)
+            return;
+        }
+        token = (await Notifications.getExpoPushTokenAsync()).data;
+    } else {
+        alert('Must use physical device for Push Notifications');
+    }
+
+    if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync('default', {
+            name: 'default',
+            showBadge: true,
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#FE9018',
+        });
+    }
+
+    return token;
+}
 
 
 const DeckBtnObj = [
@@ -606,26 +705,4 @@ const styles = StyleSheet.create({
 
 
 
-HomeScreen.propTypes = {
-    data: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
-    getAllProject: PropTypes.func.isRequired,
-    getUser: PropTypes.func.isRequired,
-};
-
-
-const mapActionToPops = {
-    getAllProject,
-    getUser
-
-}
-
-
-const mapStateToProps = (state) => ({
-    data: state.data,
-    user: state.user,
-})
-
-
-
-export default connect(mapStateToProps, mapActionToPops)(React.memo(HomeScreen));
+export default HomeScreen

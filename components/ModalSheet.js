@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
 
-import {TouchableOpacity, View} from 'react-native';
+import {TouchableOpacity, Keyboard} from 'react-native';
 import Animated, {Easing, useAnimatedStyle, withSpring, withTiming} from "react-native-reanimated";
 import {TapGestureHandler} from "react-native-gesture-handler";
 
@@ -13,13 +13,13 @@ import {clearErrors, clearMessage} from "../redux/actions/user-action";
 
 
 
-const ModalSheet = ({opacity,offset,zIndex,children}) => {
+const ModalSheet = ({opacity,offset,zIndex,children,height}) => {
 const dispatch = useDispatch()
     const data = useSelector(state => state.data)
     const user = useSelector(state => state.user)
     const {theme} = data
     const {
-        loading, message, error,
+         message, error,
 
     } = user
 
@@ -48,7 +48,7 @@ const dispatch = useDispatch()
             duration: 300,
             easing: Easing.out(Easing.exp),
         })
-
+Keyboard.dismiss()
         //dispatch(toggleBottomTab())
     }, []);
 
@@ -94,7 +94,7 @@ const dispatch = useDispatch()
 
             <Animated.View style={[sheetStyle, {
                     width: '100%',
-                    height: 500,
+                    height: height? height : 500,
                 paddingTop:20,
                     backgroundColor:theme === 'Dark'? DarkColors.primaryDarkThree :  '#fff',
                     justifyContent:'center',

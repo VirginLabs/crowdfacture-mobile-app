@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, { useEffect} from 'react';
 
 import {
     Text,
@@ -15,7 +15,7 @@ import {clearErrors, clearMessage} from "../redux/actions/user-action";
 import {getDeposits, getInvestments, getWithdrawals} from "../redux/actions/data-action";
 import {connect, useSelector} from "react-redux";
 import PropTypes from "prop-types";
-import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
+import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {Ionicons} from "@expo/vector-icons";
 
 
@@ -25,7 +25,7 @@ const DepositItem = ({ TransactionReference,
     (
         <View style={{
             backgroundColor:theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
-            height:130,
+            height:100,
             margin:5,
             padding:10,
             borderRadius:20,
@@ -35,25 +35,26 @@ const DepositItem = ({ TransactionReference,
             flexDirection: 'row'
         }}>
             <View style={{
-                width:50,
+                width:45,
                 borderRadius:100,
-                height:50,
+                height:45,
                 backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkOne :'#dde',
                 alignItems:'center',
                 justifyContent:'center'
             }}>
-                <Ionicons name='arrow-down-sharp' size={20} color={DayColors.primaryColor} />
+                <Ionicons name='arrow-down-sharp' size={18} color={DayColors.primaryColor} />
             </View>
 
             <View style={{
                 height:'100%',
-                width:'50%',
+                width:'60%',
                 alignItems:'center',
                 justifyContent:'space-evenly',
                 alignContent:'center',
                 flexDirection:'column'
             }}>
                 <Text style={{
+                    fontSize:12,
                     fontFamily:'Gordita-Black',
                     color: theme === 'Dark' ? '#fff' : '#131313'
                 }}>
@@ -61,21 +62,21 @@ const DepositItem = ({ TransactionReference,
                 </Text>
                 <Text style={{
                     fontFamily:'Gordita-medium',
-                    fontSize:10,
+                    fontSize:9,
                     color: '#555'
                 }}>
                     {DateCreated}
                 </Text>
                 <Text style={{
-                    fontFamily:'Gordita-medium',
-                    fontSize:9,
-                    color: theme === 'Dark' ? '#555' : '#797979'
+                    fontFamily:'Gordita',
+                    fontSize:8,
+                    color: theme === 'Dark' ? '#ddd' : '#797979'
                 }}>
                     {Source}
                 </Text>
                 <Text style={{
                     fontFamily:'Gordita-medium',
-                    color: theme === 'Dark' ? '#ddd' : '#c3c2c2',
+                    color: theme === 'Dark' ? DayColors.cream : '#c3c2c2',
                     fontSize:8
                 }}>
                     {TransactionReference}
@@ -83,7 +84,7 @@ const DepositItem = ({ TransactionReference,
             </View>
 
             <View style={{
-                width:'30%',
+                width:'20%',
                 height:'100%',
                 alignItems:'center',
                 justifyContent:'center',
@@ -92,7 +93,7 @@ const DepositItem = ({ TransactionReference,
                 <Text style={{
                     fontFamily:'Gordita-bold',
                     color:DayColors.primaryColor,
-                    fontSize:13
+                    fontSize:10
                 }}>
                     +₦{Amount}
                 </Text>
@@ -106,17 +107,15 @@ const Deposits = (props) => {
     const user = useSelector(state => state.user)
     const data = useSelector(state => state.data)
 
-    const {getWithdrawals, getDeposits, getInvestments,route,navigation} = props
+    const { getDeposits,navigation} = props
 
     const {
         loading,
-        investments,
         deposits,
-        returns
     } = props.data
     const {
         userData: {
-            member: {ID, LastName},
+            member: {ID},
         }
     } = user
 

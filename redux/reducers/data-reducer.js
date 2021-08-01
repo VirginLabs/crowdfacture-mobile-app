@@ -8,7 +8,7 @@ import {
     SET_PROJECT, SET_PROJECTS, LOADING_PROJECT,
     SET_VERIFIED, LOADING, SET_VERIFY_MSG,
     SET_PASS_MESSAGE, CLEAR_PASS_MESSAGE, SET_REFERRED_USER,
-    SET_INVESTMENTS, SET_RETURNS, SET_DEPOSITS
+    SET_INVESTMENTS, SET_RETURNS, SET_DEPOSITS, TOGGLE_USER_GUIDE, TOGGLE_KNOW_MORE
 
 } from "../types";
 import {StatusBar} from "react-native";
@@ -30,6 +30,8 @@ const initialState = {
     verified: false,
     loading: false,
     theme: 'Dark',
+    userGuide: false,
+    knowMore: false,
     referredUser: {},
     investments: {},
     deposits: {},
@@ -45,20 +47,32 @@ const dataReducer = (state = initialState, action) => {
                 loadingProject: true
             }
         case TOGGLE_THEME:
-            let themValue ;
+            let themValue;
 
-                if (state.theme === "Light") {
-                   themValue = 'Dark'
-                    StatusBar.setBarStyle("light-content");
-                } else {
-                    themValue = "Light";
-                    StatusBar.setBarStyle("dark-content");
-                }
+            if (state.theme === "Light") {
+                themValue = 'Dark'
+                StatusBar.setBarStyle("light-content");
+            } else {
+                themValue = "Light";
+                StatusBar.setBarStyle("dark-content");
+            }
 
             return {
                 ...state,
                 theme: themValue
             }
+        case TOGGLE_USER_GUIDE:
+            return {
+                ...state,
+                userGuide: !state.userGuide
+            }
+
+        case TOGGLE_KNOW_MORE:
+            return {
+                ...state,
+                knowMore: !state.knowMore
+            }
+
         case LOADING:
             return {
                 ...state,

@@ -1,6 +1,5 @@
 import React from 'react';
-
-import {Text, View, StyleSheet, ActivityIndicator} from 'react-native';
+import {Text, View, StyleSheet, ActivityIndicator, TouchableOpacity} from 'react-native';
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {Colors, DayColors} from "../constants/Colors";
 import * as Yup from "yup";
@@ -23,16 +22,21 @@ const schema = Yup.object().shape({
 });
 
 
-const WithdrawToBank = ({theme}) => {
+
+const WithdrawToBank = () => {
 const dispatch = useDispatch()
 
     const user = useSelector(state => state.user)
+    const data = useSelector(state => state.data)
     const {error, message,loading,userData:
         { member: {
             ID}}} = user
+
+    const {theme} = data
+
     const {
         handleChange, handleSubmit, handleBlur,
-        values,
+        isValid,
         errors,
         touched
     } = useFormik({
@@ -93,15 +97,33 @@ dispatch(withdrawToBank(details))
                 loading && <ActivityIndicator size="large" color={Colors.Primary}/>
             }
 
-              <MyButton action={() => handleSubmit()} title='WITHDRAW'
-                      buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
+            {
+                isValid ?
+                    <MyButton action={() => handleSubmit()} title='WITHDRAW'
+                              buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
+                    :
 
+                    <TouchableOpacity activeOpacity={1} style={{
+                        backgroundColor: '#ddd',
+                        height: 50,
+                        marginHorizontal: 20,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginVertical: 5,
+                        width: 160,
+                        borderRadius: 10,
+                    }}>
+                        <Text style={{
+                            fontSize: 12,
+                            fontFamily: 'Gordita-bold'
+                        }}>
+                            WITHDRAW
+                        </Text>
 
-            {message &&
-            <ToastMessage onHide={() => dispatch(clearMessage())} message={message} type='message'/>
+                    </TouchableOpacity>
             }
 
-            {error &&  <ToastMessage onHide={() => dispatch(clearErrors())} message={error} type='error'/>}
+
         </View>
     );
 };
@@ -118,9 +140,6 @@ const styles = StyleSheet.create({
     infoAlert: {
         borderRadius: 15,
         width: wp('90%'),
-        borderWidth: 1,
-        borderStyle: 'dashed',
-        borderColor: DayColors.cream,
         alignItems: 'center',
         justifyContent: 'center',
         padding: 8
@@ -129,10 +148,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
+
     },
     infoHeadText: {
         fontSize: 12,
         fontFamily: 'Gordita-Black',
+        textTransform:'capitalize'
     },
     submitBtn:{
         height: 50,
@@ -148,6 +169,13 @@ const styles = StyleSheet.create({
         fontFamily: 'Gordita-bold',
         fontSize: 13
     },
+    errorText: {
+        fontSize: 10,
+        flexDirection: 'row',
+        alignItems: "flex-start", width: '95%',
+        color: '#FF5A5F', padding: 3
+    }
+
 });
 
 export default WithdrawToBank;

@@ -1,31 +1,31 @@
 import React, {useContext, useEffect, useMemo} from 'react';
 
 import {Text, View, StyleSheet, ActivityIndicator} from 'react-native';
-import {ThemeContext} from "../../util/ThemeManager";
+
 import {Colors, DarkColors} from "../../constants/Colors";
 import ProjectCard from "../ProjectCard";
-import PropTypes from "prop-types";
+
+import { useDispatch, useSelector} from "react-redux";
 import {getAllProject} from "../../redux/actions/data-action";
-import {getUserProjects} from "../../redux/actions/user-action";
-import {connect} from "react-redux";
 
 const AllProjects = (props) => {
 
+    const dispatch = useDispatch()
+    const data = useSelector(state => state.data)
+    const {navigation} = props
 
-    const {getAllProject,navigation, getUserProjects} = props
-    const {userProjects, userData: {member: {ID}}} = props.user
 
-    const {
-        allProjects,
-        loadingProject
-    } = props.data
+
 
   useEffect(() => {
-        getAllProject()
+      dispatch(getAllProject())
     }, []);
+    const {
+        allProjects,
+        loadingProject,
+        theme
+    } = data
 
-
-    const {theme} = useContext(ThemeContext);
     return (
         <View style={[styles.container, {
             backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
@@ -67,22 +67,6 @@ paddingTop:15
 
 })
 
-AllProjects.propTypes = {
-    data: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
-    getAllProject: PropTypes.func.isRequired,
-};
 
 
-const mapActionToPops = {
-    getAllProject,
-}
-
-
-const mapStateToProps = (state) => ({
-    data: state.data,
-    user: state.user,
-})
-
-
-export default connect(mapStateToProps,mapActionToPops)(AllProjects);
+export default AllProjects;

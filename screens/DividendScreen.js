@@ -24,7 +24,7 @@ const DividendScreen = ({navigation}) => {
                     color:theme === 'Dark' ?  Colors.White : '#333',
                 },
                 styles.title]}>
-                DIVIDEND SCREEN
+                YOUR DIVIDENDS
 
             </Text>
 

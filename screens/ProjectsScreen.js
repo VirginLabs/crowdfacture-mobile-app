@@ -58,7 +58,10 @@ const Projects = (props) => {
 
                 },
             }}>
-                <Tab.Screen name="All Project" component={AllProjects}/>
+                <Tab.Screen
+
+
+                    name="All Project" component={AllProjects}/>
 
                 <Tab.Screen name="My projects" component={MyProjects}/>
 

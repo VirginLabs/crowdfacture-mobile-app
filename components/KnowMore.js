@@ -9,12 +9,13 @@ import { widthPercentageToDP as wp} from "react-native-responsive-screen";
 const KnowMoreScreen = () => {
     const dispatch = useDispatch()
     const data = useSelector(state => state.data)
+    const {knowMore} = data
     return (
         <Modal
             animated={true}
             animationType="slide"
             transparent={true}
-            visible={data.knowMore}>
+            visible={knowMore}>
             <View style={{
                 flex:1,
                 backgroundColor: DarkColors.secondaryDark

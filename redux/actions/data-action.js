@@ -20,12 +20,26 @@ import {
     SET_PASS_MESSAGE,
     CLEAR_PASS_MESSAGE,
     SET_REFERRED_USER,
-    SET_INVESTMENTS, SET_DEPOSITS, SET_RETURNS, TOGGLE_THEME
+    SET_INVESTMENTS, SET_DEPOSITS, SET_RETURNS, TOGGLE_THEME,
+    TOGGLE_KNOW_MORE,
+    TOGGLE_USER_GUIDE
 } from "../types";
 
 import React from "react";
 import API_KEY from '../../constants/PRIVATE'
 
+
+export const toggleUserGuide = () => (dispatch) => {
+    dispatch({
+        type: TOGGLE_USER_GUIDE
+    })
+}
+
+export const toggleKnowMore = () => (dispatch) => {
+    dispatch({
+        type: TOGGLE_KNOW_MORE
+    })
+}
 
 export const toggleTheme = () => (dispatch) => {
     dispatch({

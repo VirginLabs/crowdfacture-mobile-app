@@ -1,23 +1,20 @@
-import React, {useContext, useEffect} from 'react';
+import React, { useEffect} from 'react';
 
 import {
     Text,
     View,
     StyleSheet,
     StatusBar,
-    ScrollView,
     ActivityIndicator,
     FlatList,
     TouchableOpacity
 } from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
-import {ThemeContext} from "../util/ThemeManager";
-import {clearErrors, clearMessage} from "../redux/actions/user-action";
-import {getDeposits, getInvestments, getWithdrawals} from "../redux/actions/data-action";
-import {connect} from "react-redux";
-import PropTypes from "prop-types";
-import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
+
+import { getInvestments} from "../redux/actions/data-action";
+import { useDispatch, useSelector} from "react-redux";
+import { widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {Ionicons} from "@expo/vector-icons";
 
 
@@ -25,7 +22,7 @@ const InvestmentItem = ({DateCreated, NumberOfUnit, TotalAmount, theme}) =>
 (
    <View style={{
 backgroundColor:theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
-       height:130,
+       height:100,
        margin:5,
        padding:10,
        borderRadius:20,
@@ -35,14 +32,14 @@ backgroundColor:theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
        flexDirection: 'row'
    }}>
 <View style={{
-    width:60,
+    width:45,
     borderRadius:100,
-    height:60,
+    height:45,
     backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkOne :'#dde',
     alignItems:'center',
     justifyContent:'center'
 }}>
-<Ionicons name='arrow-up-sharp' size={20} color={DayColors.green} />
+<Ionicons name='arrow-up-sharp' size={18} color={DayColors.green} />
 </View>
 
        <View style={{
@@ -53,6 +50,7 @@ backgroundColor:theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
            flexDirection:'column'
        }}>
            <Text style={{
+               fontSize:12,
                fontFamily:'Gordita-Black',
                color: theme === 'Dark' ? '#fff' : '#131313'
            }}>
@@ -60,7 +58,7 @@ backgroundColor:theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
            </Text>
            <Text style={{
                fontFamily:'Gordita-medium',
-               fontSize:10,
+               fontSize:9,
                color: theme === 'Dark' ? '#555' : '#ccc'
            }}>
                {DateCreated}
@@ -78,14 +76,14 @@ backgroundColor:theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
            <Text style={{
                fontFamily:'Gordita-bold',
                color:DayColors.green,
-               fontSize:13
+               fontSize:10
            }}>
                +₦{TotalAmount}
            </Text>
            <Text style={{
                fontFamily:'Gordita-medium',
                color: theme === 'Dark' ? '#ddd' : '#ccc',
-               fontSize:11
+               fontSize:9
            }}>
                Units: {NumberOfUnit}
            </Text>
@@ -96,26 +94,28 @@ backgroundColor:theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
 
 const Transactions = (props) => {
 
-    const {getWithdrawals, getDeposits, getInvestments,route,navigation} = props
+    const data = useSelector(state => state.data)
+    const user = useSelector(state => state.user)
+    const dispatch = useDispatch()
+    const {navigation} = props
     const {
         loading,
         investments,
-        deposits,
-        returns
-    } = props.data
+
+    } = data
     const {
         userData: {
-            member: {ID, LastName},
+            member: {ID},
         }
-    } = props.user
+    } = user
 
-    const {theme} = useContext(ThemeContext);
+    const {theme} = data;
 
     useEffect(() => {
         const formdata = new FormData();
         formdata.append("userId", ID);
 
-            getInvestments(formdata)
+        dispatch(getInvestments(formdata))
 
     }, []);
 
@@ -201,32 +201,7 @@ const styles = StyleSheet.create({
 },
 })
 
-Transactions.propTypes = {
-    data: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
-    clearErrors: PropTypes.func.isRequired,
-    clearMessage: PropTypes.func.isRequired,
-    getInvestments: PropTypes.func.isRequired,
-    getDeposits: PropTypes.func.isRequired,
-    getWithdrawals: PropTypes.func.isRequired,
-
-};
-
-
-const mapActionToPops = {
-    getDeposits,
-    getInvestments,
-    getWithdrawals,
-    clearErrors,
-    clearMessage
-}
-
-
-const mapStateToProps = (state) => ({
-    data: state.data,
-    user: state.user,
-})
 
 
 
-export default connect(mapStateToProps, mapActionToPops) (React.memo(Transactions));
+export default Transactions;
