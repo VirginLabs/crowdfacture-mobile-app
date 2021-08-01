@@ -1,15 +1,12 @@
-import React, {useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import BottomSheet from 'react-native-simple-bottom-sheet';
 import {
-    Animated,
-    ImageBackground,
-    Keyboard,
+    ImageBackground, Keyboard,
     ScrollView,
-    TouchableWithoutFeedback,
     StyleSheet,
     Text,
     TouchableOpacity,
-    View, Button, StatusBar, Modal, Alert, ActivityIndicator, TextInput as RNTextInput, Easing
+    View, StatusBar, ActivityIndicator, Dimensions, TextInput as RNTextInput
 } from 'react-native';
 
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
@@ -21,30 +18,39 @@ import * as Yup from "yup";
 import TextInput from "../components/TextInput";
 import MyButton from "../components/MyButton";
 import {getProject} from "../redux/actions/data-action";
-import {buyUnitAction, clearErrors, clearMessage, saveProject, unSaveProject} from "../redux/actions/user-action";
+import {buyUnitAction} from "../redux/actions/user-action";
 import {connect, useDispatch, useSelector} from "react-redux";
-import PropTypes from "prop-types";
-import ToastMessage from "../components/Toast";
+
+import Animated, {useSharedValue,Easing, withSpring, withTiming} from "react-native-reanimated";
+import ModalSheet from "../components/ModalSheet";
+import {TapGestureHandler} from "react-native-gesture-handler";
 
 
 const phoneRegExp = /^[+]?\d*$/
 const schema = Yup.object().shape({
     number: Yup.string()
+        .min(1, "Please enter a number")
         .matches(phoneRegExp, 'Wrong input')
         .required("Amount is Required"),
 });
 
+const height = Dimensions.get('window').height
 
 const ProjectScreen = (props) => {
 
 
 const {route, navigation} = props
-    const [total, setTotal] = useState(0)
+    const [total, setTotal] = useState('0.00')
     const user = useSelector(state => state.user)
     const data = useSelector(state => state.data)
     const dispatch = useDispatch()
     const [sheetOpen, setSheetOpen] = useState(false);
 
+
+    const sheetHeight = useSharedValue(height)
+    const opacity = useSharedValue(0)
+    const zIndex = useSharedValue(0)
+    const offset = useSharedValue(600);
     const {projectId} = route.params;
 
 
@@ -61,6 +67,17 @@ const {route, navigation} = props
     } = data
 
 
+    const openSheet = useCallback(() => {
+        opacity.value = withSpring(1)
+        zIndex.value = 100
+        sheetHeight.value = withSpring(height / 2.3)
+        offset.value = withTiming(0, {
+            duration: 400,
+            easing: Easing.out(Easing.exp),
+        })
+
+
+    }, []);
 
 
      useEffect(() => {
@@ -80,11 +97,12 @@ const {route, navigation} = props
         handleChange, handleSubmit, handleBlur,
         values,
         errors,
+        isValid,
         touched
     } = useFormik({
         validationSchema: schema,
         initialValues: {
-            number: 0,
+            number: '',
         },
         onSubmit: (values) => {
             const {number} = values;
@@ -95,7 +113,7 @@ const {route, navigation} = props
             buyData.append('numberOfUnit', number)
             buyData.append('projectId', projectId)
             buyData.append('totalPercentageReturn', '30')
-            dispatch(buyUnitAction(buyData,Phone))
+           dispatch(buyUnitAction(buyData,Phone))
         }
     });
 
@@ -109,6 +127,98 @@ const {route, navigation} = props
 
 
     return (
+        <>
+
+            <ModalSheet height={300} zIndex={zIndex} offset={offset} opacity={opacity}>
+
+                <View style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    padding: 5,
+                    width: '100%'
+                }}>
+
+
+
+                    <Text style={{
+                        paddingVertical: 5,
+                        fontSize: 14,
+                        color: theme === 'Dark' ? '#eee' : "#131313", fontFamily: 'Gordita-Black'
+                    }}>
+                        Buy Unit
+                    </Text>
+                </View>
+
+
+                <View style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'column',
+                    padding: 5,
+                    width: '100%',
+                }}>
+
+                    <View style={{paddingHorizontal: 32, marginTop: 5, width: '100%',}}>
+                        <TextInput
+                            color={theme === 'Dark' ? '#eee' : '#131313'}
+                            icon='money'
+                            keyboardType="number-pad"
+
+                            placeholder='Enter number'
+                            autoCapitalize='none'
+                            keyboardAppearance='dark'
+                            returnKeyType='go'
+                            returnKeyLabel='go'
+                            onChangeText={handleChange('number')}
+                            onBlur={handleBlur('number')}
+                            error={errors.number}
+                            touched={touched.number}
+                        />
+                    </View>
+                    <Text style={styles.errorText} numberOfLines={1}>
+                        {errors.number}
+                    </Text>
+
+                    <Text style={{fontSize: 14, color: theme === 'Dark' ? '#eee' : '#131313', padding: 5, fontFamily:'Gordita-bold'}}>
+                   Total:     ₦{total}
+
+
+                    </Text>
+
+                    {
+                        loading && <ActivityIndicator size="large" color={Colors.Primary}/>
+                    }
+
+                    {
+                        isValid ?
+                        <MyButton action={() => handleSubmit()} title='BUY NOW'
+                                  buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
+                                  :
+                        <TouchableOpacity activeOpacity={1} style={{
+                        backgroundColor: '#ddd',
+                        height: 50,
+                        marginHorizontal: 20,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginVertical: 5,
+                        width: 160,
+                        borderRadius: 10,
+                    }}>
+                        <Text style={{
+                        fontSize: 12,
+                        fontFamily: 'Gordita-bold'
+                    }}>
+                        SUBMIT
+                        </Text>
+
+                        </TouchableOpacity>
+                    }
+
+
+                </View>
+
+            </ModalSheet>
         <ScrollView
             scrollEnabled={true}
             showsVerticalScrollIndicator={false}
@@ -117,12 +227,6 @@ const {route, navigation} = props
                 backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
                     : "#f5f5f5"
             }]}>
-
-
-
-
-
-
 
             <ImageBackground style={{
                 width: wp('100%'),
@@ -384,8 +488,10 @@ const {route, navigation} = props
                             justifyContent: 'space-evenly',
                         }}>
 
+                            {project.Active === '1' &&
+                            <TapGestureHandler onActivated={openSheet}>
 
-                         {/*   <TouchableOpacity onPress={() => panelRef.current.togglePanel()} style={{
+                            <Animated.View style={{
                                 width: '50%',
                                 height: 60,
                                 flexDirection: 'row',
@@ -402,8 +508,9 @@ const {route, navigation} = props
                                 }}>
                                     Buy Units
                                 </Text>
-                            </TouchableOpacity>*/}
-
+                            </Animated.View>
+                            </TapGestureHandler>
+                            }
 
 
                             <TouchableOpacity style={{
@@ -425,111 +532,15 @@ const {route, navigation} = props
                     </>
             }
 
-            {project.Active === '1' &&
-            <View style={{
-                width: '100%',
-                flexDirection: 'row',
-                alignItems: 'center',
-                padding: 5,
-                justifyContent: 'center',
-                marginBottom:45,
-            }}>
-            <Text style={{
-                padding:5,
-                fontFamily: 'Gordita-bold',
-                color: theme === 'Dark' ? DayColors.cream : "#131313"
-            }}>
-                TAP BELOW TO BUY UNIT
-            </Text>
-            </View>
-            }
-
-            {project.Active === '1' &&
-            <BottomSheet wrapperStyle={{
-                width: wp('100%'),
-                backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#eee',
-            }}
-                         isOpen={sheetOpen} sliderMaxHeight={600} sliderMinHeight={50}
-                         animation={Easing.ease}
-                         onOpen={() => setSheetOpen(true)}
-            >
 
 
-                <View style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    padding: 10,
-                    width: '100%'
-                }}>
 
-
-                    {message &&
-                    <ToastMessage onHide={() => dispatch(clearMessage())} message={message} type='message'/>
-                    }
-
-                    {error && <ToastMessage onHide={() => dispatch(clearErrors())} message={error} type='error'/>}
-                    <Text style={{
-                        paddingVertical: 20,
-                        fontSize: 25,
-                        color: theme === 'Dark' ? '#eee' : "#131313", fontFamily: 'Gordita-bold'
-                    }}>
-                        Buy Unit
-                    </Text>
-                </View>
-
-
-                <View style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexDirection: 'column',
-                    padding: 10,
-                    width: '100%',
-                }}>
-
-                    <View style={{paddingHorizontal: 32, marginTop: 15, width: '100%',}}>
-                        <TextInput
-                            color={theme === 'Dark' ? '#eee' : '#131313'}
-                            icon='money'
-                            keyboardType='numeric'
-                            placeholder='Enter number'
-                            autoCapitalize='none'
-                            keyboardAppearance='dark'
-                            returnKeyType='go'
-                            returnKeyLabel='go'
-                            onChangeText={handleChange('number')}
-                            onBlur={handleBlur('number')}
-                            error={errors.number}
-                            touched={touched.number}
-                        />
-                    </View>
-                    <Text style={styles.errorText} numberOfLines={1}>
-                        {errors.number}
-                    </Text>
-
-                    <Text style={{fontSize: 16, color: theme === 'Dark' ? '#eee' : '#131313', padding: 5}}
-                          numberOfLines={1}>
-                        ₦{total}
-                    </Text>
-
-                    {
-                        loading && <ActivityIndicator size="large" color={Colors.Primary}/>
-                    }
-
-                    {
-                        <MyButton action={() => handleSubmit()} title='BUY'
-                                  buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>
-                    }
-
-
-                </View>
-            </BottomSheet>
-            }
 
 
 
 
         </ScrollView>
+        </>
     );
 };
 
@@ -580,12 +591,12 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.Primary,
         borderRadius: 10,
     },
-    errorText: {fontSize: 14,
+    errorText: {fontSize: 10,
         alignItems: "flex-start", width: '75%',
-        color: '#FF5A5F', padding: 8},
+        color: '#FF5A5F', padding: 2},
     buttonText: {
         fontFamily: 'Gordita-bold',
-        fontSize: 16
+        fontSize: 12
     },
 });
 

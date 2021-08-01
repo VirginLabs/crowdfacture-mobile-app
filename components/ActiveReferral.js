@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 
 import {ActivityIndicator, Text, View} from 'react-native';
-import {Colors, DayColors} from "../constants/Colors";
+import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import {useDispatch, useSelector} from "react-redux";
 import {getReferredUsers} from "../redux/actions/data-action";
 
@@ -16,40 +16,45 @@ const ActiveReferral = () => {
 
     useEffect(() => {
         const formdata = new FormData();
-        formdata.append("userId", 2);
+        formdata.append("userId", ID);
         dispatch(getReferredUsers(formdata))
-
 
 
     }, []);
 
-    useEffect(() =>{
+    useEffect(() => {
+        if(Object.keys(referredUser).length > 0) {
+            const activeRef = referredUser.filter(users => users.Amount !== null)
 
-        //const activeRef = referredUser.filter(user => users.)
+            setActiveReferrals(activeRef)
+        }
 
-       // setActiveReferrals(activeRef)
-
-    },[])
+    }, [referredUser])
 
 
     return (
-        <View style={{
+        <View style={[{
             width: '100%',
-            minHeight: 500,
+            flex: 1,
+            minHeight:500,
             marginBottom: 10,
             alignItems: 'center',
-            justifyContent: 'flex-start'
-        }}>
+            justifyContent: 'flex-start',
+            backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
+                "#f5f5f5"
+        },
+        ]}>
 
 
             {
 
                 loading ? <ActivityIndicator size="large" color={Colors.Primary}/>
                     :
-                    Object.keys(referredUser).length > 0 && referredUser.map((({FirstName, LastName, DateCreated, ActiveReferralAmount, InvestedAmount}, index) => (
+                     activeReferrals !== null &&
+                    activeReferrals.map((({FirstName, LastName, DateCreated, Amount, InvestedAmount, ID}) => (
 
 
-                        <View key={index} style={{
+                        <View key={ID} style={{
                             height: 90,
                             borderRadius: 15,
                             width: '90%',
@@ -124,7 +129,7 @@ const ActiveReferral = () => {
                                     fontSize: 10,
                                     fontFamily: 'Gordita-bold'
                                 }}>
-                                    ₦{ActiveReferralAmount === null ? '0' : ActiveReferralAmount}
+                                    ₦{Amount === null ? '0' : Amount}
                                 </Text>
 
                             </View>
@@ -134,6 +139,28 @@ const ActiveReferral = () => {
 
 
                     )))
+            }
+
+            {
+                Object.keys(referredUser).length < 1 &&
+                <View style={{
+                    width:'80%',
+                    borderRadius:10,
+                    height:50,
+                    alignItems:'center',
+                    justifyContent:'center',
+                    marginTop:10,
+                    backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : "#f6e5da"
+                }}>
+
+                    <Text style={{
+                        fontSize:10,
+                        fontFamily:'Gordita-medium',
+                        color: theme === 'Dark' ? '#ddd': '#131313'
+                    }}>
+                        Opps! You don't have any Referrals yet
+                    </Text>
+                </View>
             }
 
         </View>

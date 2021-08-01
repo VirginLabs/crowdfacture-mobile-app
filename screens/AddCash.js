@@ -1,13 +1,12 @@
-import React, {useCallback, useContext, useRef, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
     View,
     StyleSheet,
     FlatList,
     Text,
-    TouchableOpacity,
-    StatusBar, Dimensions, ScrollView, Image,
+    StatusBar, Dimensions, Image,
 } from 'react-native';
-import {Colors, DarkColors, DayColors} from "../constants/Colors";;
+import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import { FontAwesome5} from "@expo/vector-icons";
 
 import BackButton from "../components/BackBtn";
@@ -24,7 +23,7 @@ import {
     getUser
 } from "../redux/actions/user-action";
 import {connect, useSelector} from "react-redux";
-import ToastMessage from "../components/Toast";
+
 import Animated, {Easing, useSharedValue, withSpring, withTiming} from "react-native-reanimated";
 import {TapGestureHandler} from "react-native-gesture-handler";
 import ModalSheet from "../components/ModalSheet";
@@ -174,7 +173,7 @@ const {theme} = data
 
     return (
         <>
-            <ModalSheet zIndex={zIndex} offset={offset} opacity={opacity}>
+            <ModalSheet height={400} zIndex={zIndex} offset={offset} opacity={opacity}>
                 <View style={{
                     height: '100%',
                     borderRadius: 20,

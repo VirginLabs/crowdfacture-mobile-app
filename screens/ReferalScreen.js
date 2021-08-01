@@ -1,12 +1,81 @@
 import React, {useContext, useEffect} from "react";
-import {StyleSheet, Text, Animated, View, StatusBar, TouchableOpacity, Share} from "react-native";
-import {DarkColors, DayColors} from "../constants/Colors";
+import {StyleSheet, Text, View, StatusBar, TouchableOpacity, Share, ScrollView} from "react-native";
+import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 
 import {FontAwesome5} from "@expo/vector-icons";
 import {getReferredUsers} from "../redux/actions/data-action";
 import {connect, useSelector} from "react-redux";
 import PropTypes from "prop-types";
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
+const Tab = createMaterialTopTabNavigator();
+
+import Animated from 'react-native-reanimated';
+import PendingReferral from "../components/PendingReferral";
+import PendingRefs from "../components/Pending";
+
+import {SafeAreaView} from "react-native-safe-area-context";
+import ActiveReferral from "../components/ActiveReferral";
+
+function MyTabBar({ state, descriptors, navigation, position }) {
+    return (
+        <View style={{ flexDirection: 'row' }}>
+            {state.routes.map((route, index) => {
+                const { options } = descriptors[route.key];
+                const label =
+                    options.tabBarLabel !== undefined
+                        ? options.tabBarLabel
+                        : options.title !== undefined
+                        ? options.title
+                        : route.name;
+
+                const isFocused = state.index === index;
+
+                const onPress = () => {
+                    const event = navigation.emit({
+                        type: 'tabPress',
+                        target: route.key,
+                        canPreventDefault: true,
+                    });
+
+                    if (!isFocused && !event.defaultPrevented) {
+                        navigation.navigate(route.name);
+                    }
+                };
+
+                const onLongPress = () => {
+                    navigation.emit({
+                        type: 'tabLongPress',
+                        target: route.key,
+                    });
+                };
+
+                const inputRange = state.routes.map((_, i) => i);
+                const opacity = Animated.interpolateNode(position, {
+                    inputRange,
+                    outputRange: inputRange.map(i => (i === index ? 1 : 0)),
+                });
+
+                return (
+                    <TouchableOpacity
+                        accessibilityRole="button"
+                        accessibilityState={isFocused ? { selected: true } : {}}
+                        accessibilityLabel={options.tabBarAccessibilityLabel}
+                        testID={options.tabBarTestID}
+                        onPress={onPress}
+                        onLongPress={onLongPress}
+                        style={{ flex: 1 }}
+                    >
+                        <Animated.Text style={{ opacity }}>
+                            {label}
+                        </Animated.Text>
+                    </TouchableOpacity>
+                );
+            })}
+        </View>
+    );
+}
 
 
 const ReferralScreen = (props) => {
@@ -47,11 +116,26 @@ const ReferralScreen = (props) => {
 
 
     return (
-        <Animated.View style={[styles.container, {
-            backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
-                : "#f5f5f5"
-        }]}>
-            <View style={styles.top}>
+
+
+     <>
+
+
+<SafeAreaView style={{
+    flex:1
+}}>
+    <ScrollView
+        contentContainerStyle={
+            [styles.container,  {backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
+            "#f5f5f5"},
+            ]
+        }
+        scrollEnabled
+    showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
+    >
+
+         <View style={styles.top}>
                 <BackButton theme={theme} navigation={navigation}/>
             </View>
 
@@ -69,7 +153,7 @@ const ReferralScreen = (props) => {
                 }}>
 
                     {
-                        ReferralBalance ? '₦0.00' :
+                        ReferralBalance === 0 ? '₦0.00' :
                            '₦'+ReferralBalance
                     }
 
@@ -143,18 +227,39 @@ const ReferralScreen = (props) => {
 
             </View>
 
-        </Animated.View>
+
+
+            <Tab.Navigator  tabBarPosition='top'
+                            tabBarOptions={{
+                                activeTintColor: 'yellow',
+                                indicatorStyle: {
+                                    backgroundColor: Colors.Primary
+                                },
+                                labelStyle: {fontSize: 12, fontFamily: 'Gordita-medium', color: theme === 'Dark' ? '#fff' : '#131313'},
+
+                                style: {
+                                    backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : '#f5f5f5',
+                                    color: 'red',
+
+                                },
+                            }}
+                           >
+
+                <Tab.Screen name="Active" component={ActiveReferral} />
+                <Tab.Screen name="Pending" component={PendingReferral} />
+            </Tab.Navigator>
+    </ScrollView>
+</SafeAreaView>
+   </>
+
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: StatusBar.currentHeight,
         paddingLeft: 10,
         paddingRight: 10,
-        flex: 1,
-        alignItems: 'center', justifyContent: 'flex-start',
-        flexDirection: 'column'
+
     },
     top: {
         width: '100%',

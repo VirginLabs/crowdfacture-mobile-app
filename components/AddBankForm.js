@@ -54,7 +54,6 @@ const AddBankForm = () => {
         values,
         setFieldValue,
         errors,
-
         isValid,
         touched
     } = useFormik({

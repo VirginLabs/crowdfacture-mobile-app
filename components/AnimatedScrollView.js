@@ -15,8 +15,8 @@ import MyText from "./helpers/MyText";
 import {Colors, DarkColors} from "../constants/Colors";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {useSelector} from "react-redux";
-import App from "../App";
 
+import {SafeAreaView} from "react-native-safe-area-context";
 
 
 
@@ -53,10 +53,13 @@ appState.current = nextAppState
 
 
     return (
-        <View style={[styles.container,  {backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
-            "#f5f5f5"},
+        <SafeAreaView style={[styles.container,  {backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
+                "#f5f5f5"},
         ]
         }>
+
+
+
             <ScrollView
                         keyboardShouldPersistTaps='handled'
                 showsHorizontalScrollIndicator={false}
@@ -86,13 +89,14 @@ appState.current = nextAppState
                     {children}
 
             </ScrollView>
-        </View>
+
+        </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: StatusBar.currentHeight,
+
 flex:1
 
     },

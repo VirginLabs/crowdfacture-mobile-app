@@ -1,7 +1,7 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {ActivityIndicator, Text, View} from 'react-native';
-import {Colors, DayColors} from "../constants/Colors";
+import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import {useDispatch, useSelector} from "react-redux";
 import {getReferredUsers} from "../redux/actions/data-action";
 
@@ -10,21 +10,35 @@ const PendingReferral = () => {
     const user = useSelector(state => state.user)
     const dispatch = useDispatch()
     const {theme, referredUser} = data
-    const {loading, userData: {member: {ReferralBalance, ReferralID, ID}}} = user
+    const [pendingReferrals, setPendingReferrals] = useState(null);
+    const {loading, userData: {member: {ID}}} = user
 
     useEffect(() => {
         const formdata = new FormData();
-        formdata.append("userId", 2);
+        formdata.append("userId", ID);
         dispatch(getReferredUsers(formdata))
     }, []);
+
+
+    useEffect(() => {
+        if(Object.keys(referredUser).length > 0) {
+            const pendingRef = referredUser.filter(users => users.Amount === null)
+
+            setPendingReferrals(pendingRef)
+        }
+
+    }, [referredUser])
 
     return (
         <View style={{
             width: '100%',
-            minHeight: 500,
+            flex:1,
+            minHeight:500,
             marginBottom: 10,
             alignItems: 'center',
-            justifyContent: 'flex-start'
+            justifyContent: 'flex-start',
+            backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
+                "#f5f5f5"
         }}>
 
 
@@ -32,7 +46,8 @@ const PendingReferral = () => {
 
                 loading ? <ActivityIndicator size="large" color={Colors.Primary}/>
                     :
-                    Object.keys(referredUser).length > 0 && referredUser.map((({FirstName, LastName, DateCreated, ActiveReferralAmount, InvestedAmount}, index) => (
+                    Object.keys(referredUser).length > 0 && pendingReferrals !== null &&
+                    pendingReferrals.map((({FirstName, LastName, DateCreated, ActiveReferralAmount,Amount, InvestedAmount}, index) => (
 
 
                         <View key={index} style={{
@@ -121,6 +136,29 @@ const PendingReferral = () => {
 
                     )))
             }
+
+            {
+                Object.keys(referredUser).length < 1 &&
+                <View style={{
+                    width:'80%',
+                    borderRadius:10,
+                    height:50,
+                    alignItems:'center',
+                    justifyContent:'center',
+                    marginTop:10,
+                    backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : "#f6e5da"
+                }}>
+
+                    <Text style={{
+                        fontSize:10,
+                        fontFamily:'Gordita-medium',
+                        color: theme === 'Dark' ? '#ddd': '#131313'
+                    }}>
+                        Opps! You don't have any Referrals yet
+                    </Text>
+                </View>
+            }
+
 
         </View>
     );

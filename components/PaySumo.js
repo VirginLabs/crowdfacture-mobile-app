@@ -1,12 +1,10 @@
 import React from 'react';
 
-import {ActivityIndicator, Pressable, StyleSheet, Text, View} from 'react-native';
-import {Colors, DarkColors, DayColors} from "../constants/Colors";
-import {FontAwesome} from "@expo/vector-icons";
+import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Colors} from "../constants/Colors";
 import TextInput from "./TextInput";
 import MyButton from "./MyButton";
-import ToastMessage from "./Toast";
-import {clearErrors, clearMessage, sumotrustLogin} from "../redux/actions/user-action";
+import { sumotrustLogin} from "../redux/actions/user-action";
 import {useDispatch, useSelector} from "react-redux";
 import {useFormik} from "formik";
 import * as Yup from "yup";
@@ -26,16 +24,18 @@ const LoginSchema = Yup.object().shape({
 });
 
 
-const PaySumo = ({toggleModal, theme}) => {
+const PaySumo = ({toggleModal}) => {
 
     const dispatch = useDispatch()
     const user = useSelector(state => state.user)
+    const data = useSelector(state => state.data)
 
     const {error, message, loading} = user
+    const {theme} = data
 
     const {
         handleChange, handleSubmit, handleBlur,
-        values,
+        isValid,
         errors,
         touched
     } = useFormik({
@@ -53,117 +53,98 @@ const PaySumo = ({toggleModal, theme}) => {
     });
 
     return (
-        <View style={styles.centeredBox}>
-            <View style={[{
-                backgroundColor: theme === 'Dark' ? DarkColors.primaryDark :
-                    "#eee",
-            }
-                , styles.modalView]}>
-
-                <Pressable
-                    style={[{
-                        backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
-                            "#ddd",
-                    }
-                        ,
-                        styles.buttonClose]}
-                    onPress={() => toggleModal()}
-                >
-                    <FontAwesome name='close' size={20}
-                                 color={theme === 'Dark'
-                                     ? DayColors.primaryColor : Colors.PrimaryDarkColor}/>
-
-                </Pressable>
-                <View style={styles.modalContent}>
-
-                    <View style={{paddingHorizontal: 32, marginBottom: 1, width: '100%',}}>
-                        <TextInput
-                            icon='phone'
-                            placeholder='Enter your phone number'
-                            autoCapitalize='none'
-                            keyboardType='numeric'
-                            keyboardAppearance='dark'
-                            returnKeyType='next'
-                            returnKeyLabel='next'
-                            onChangeText={handleChange('phone')}
-                            onBlur={handleBlur('phone')}
-                            error={errors.phone}
-                            touched={touched.phone}
-                        />
-                    </View>
-                    <Text style={styles.errorText} numberOfLines={1}>
-                        {errors.phone}
-                    </Text>
-
-                    <View style={{paddingHorizontal: 32, width: '100%'}}>
-                        <TextInput
-                            required
-                            icon='key'
-                            placeholder='Enter your password'
-                            secureTextEntry
-                            autoCompleteType='password'
-                            autoCapitalize='none'
-                            keyboardAppearance='dark'
-                            returnKeyType='go'
-                            returnKeyLabel='go'
-                            onChangeText={handleChange('password')}
-                            onBlur={handleBlur('password')}
-                            error={errors.password}
-                            touched={touched.password}
-                            onSubmitEditing={() => handleSubmit()}
-                        />
-                    </View>
-                    <Text style={styles.errorText} numberOfLines={1}>
-                        {errors.password}
-                    </Text>
 
 
-                    <MyButton action={() => handleSubmit()} title='LOGIN WITH SUMOTRSUT'
-                              buttonStyle={styles.loginButton} textStyle={styles.buttonText}/>
+        <View style={styles.modalContent}>
 
-                    <View style={{
-                        padding: 8, width: '75%', alignItems: 'center'
-                    }}>
+            <View style={{paddingHorizontal: 32, marginBottom: 1, width: '100%',}}>
+                <TextInput
+                    icon='phone'
+                    placeholder='Enter your phone number'
+                    autoCapitalize='none'
+                    keyboardType='numeric'
+                    keyboardAppearance='dark'
+                    returnKeyType='next'
+                    returnKeyLabel='next'
+                    onChangeText={handleChange('phone')}
+                    onBlur={handleBlur('phone')}
+                    error={errors.phone}
+                    touched={touched.phone}
+                />
+            </View>
+            <Text style={styles.errorText} numberOfLines={1}>
+                {errors.phone}
+            </Text>
 
-                        {
-                            loading && <ActivityIndicator size="large" color={Colors.Primary}/>
-                        }
+            <View style={{paddingHorizontal: 32, width: '100%'}}>
+                <TextInput
+                    required
+                    icon='key'
+                    placeholder='Enter your password'
+                    secureTextEntry
+                    autoCompleteType='password'
+                    autoCapitalize='none'
+                    keyboardAppearance='dark'
+                    returnKeyType='go'
+                    returnKeyLabel='go'
+                    onChangeText={handleChange('password')}
+                    onBlur={handleBlur('password')}
+                    error={errors.password}
+                    touched={touched.password}
+                    onSubmitEditing={() => handleSubmit()}
+                />
+            </View>
+            <Text style={styles.errorText} numberOfLines={1}>
+                {errors.password}
+            </Text>
 
+            <View style={{
+                padding: 8, width: '75%', alignItems: 'center'
+            }}>
 
+                {
+                    loading && <ActivityIndicator size="large" color={Colors.Primary}/>
+                }
 
-
-                    </View>
-
-
-
-                    {message &&
-                    <ToastMessage message={message} onHide={() => dispatch(clearMessage())} type='message'/>
-                    }
-
-                    {error &&  <ToastMessage message={error} onHide={() => dispatch(clearErrors())} type='error'/>}
-
-
-
-
-                </View>
             </View>
 
+            {
+                isValid ?
+
+                    <MyButton action={() => handleSubmit()} title='LOGIN WITH SUMOTRUST'
+                              buttonStyle={styles.loginButton} textStyle={styles.buttonText}/>
+                    :
+                    <TouchableOpacity activeOpacity={1} style={{
+                        backgroundColor: '#ddd',
+                        height: 50,
+                        marginHorizontal: 20,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginVertical: 5,
+                        width: '70%',
+                        borderRadius: 10,
+                    }}>
+                        <Text style={{
+                            fontSize: 12,
+                            fontFamily: 'Gordita-bold'
+                        }}>
+                            LOGIN WITH SUMOTRUST
+                        </Text>
+
+                    </TouchableOpacity>
+            }
+
+
         </View>
+
+
     );
 };
-
 
 
 const styles = StyleSheet.create({
 
 
-    centeredBox: {
-        backgroundColor: 'rgba(10,10,10,0.8)',
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 22
-    },
     modalView: {
         width: wp('90%'),
         height: hp('50%'),
@@ -173,18 +154,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flexDirection: 'column',
         justifyContent: 'space-evenly',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5
     },
     modalContent: {
-        width: '100%',
-        height: '85%',
+        width: wp('90%'),
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'space-evenly'
@@ -202,15 +174,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginVertical: 5,
-        width: '80%',
-        backgroundColor: DayColors.strongLemon,
+        width: '70%',
+        backgroundColor: '#4058f6',
         borderRadius: 10,
     },
     buttonText: {
         fontFamily: 'Gordita-bold',
-        fontSize: 14,
-        color: "#131313"
+        fontSize: 12,
+        color: "#EEE"
     },
+    errorText: {
+        fontSize: 10,
+        alignItems: "flex-start", width: '75%',
+        color: '#FF5A5F', padding: 2
+    }
 })
 
 export default PaySumo;
