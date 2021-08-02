@@ -1,6 +1,5 @@
 import React, { useContext, useEffect} from "react";
 import {View, Text, StatusBar, StyleSheet, ScrollView, ActivityIndicator} from "react-native";
-import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import {getNotifications} from "../redux/actions/data-action";
@@ -13,14 +12,11 @@ const NotificationScreen = (props) => {
 
 let noti = [];
 
-    const {notificationState,notificationLoading,notifications} = props.data
+    const {notificationLoading,notifications} = props.data
     const { userData: { member: { ID}}} = props.user
     const {navigation,getNotifications} = props
-    const getNotified = () =>{
 
-    }
 
-    const {theme} = useContext(ThemeContext);
 
 
     useEffect(() =>{

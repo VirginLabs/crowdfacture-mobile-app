@@ -1,13 +1,9 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useEffect} from 'react';
 
 import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
-import {ThemeContext} from "../../util/ThemeManager";
-import PropTypes from "prop-types";
 import {getUserProjects} from "../../redux/actions/user-action";
-import {connect, useDispatch, useSelector} from "react-redux";
-import {Colors, DarkColors, DayColors} from "../../constants/Colors";
-import ProjectCard from "../ProjectCard";
-import {getInvestments} from "../../redux/actions/data-action";
+import {useDispatch, useSelector} from "react-redux";
+import {Colors, DarkColors} from "../../constants/Colors";
 import UserProjectCard from "../UserProjectCard";
 
 const MyProjects = (props) => {
@@ -32,7 +28,6 @@ const MyProjects = (props) => {
     }, []);
 
 
-
     return (
         <View style={[styles.container, {
             backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
@@ -43,37 +38,37 @@ const MyProjects = (props) => {
                 loadingProject ?
                     <ActivityIndicator size="large" color={Colors.Primary}/>
                     :
-Object.keys(userProjects).length > 0 ?
-    userProjects.map((({AddNoUnit, AddAmount,ID,Project}) => (
-                        <UserProjectCard action={() =>  navigation.navigate('Project', {
-                            projectId: Project.ID,
-                        })
+                    Object.keys(userProjects).length > 0 ?
+                        userProjects.map((({AddNoUnit, AddAmount, ID, Project}) => (
+                            <UserProjectCard action={() => navigation.navigate('Project', {
+                                projectId: Project.ID,
+                            })
 
-                        } key={ID} theme={theme} imageName={Project.ProjectImage} projectName={Project.ProjectTitle}
-                                         totalAmount={AddAmount}
-                 target={Project.Target}
-                                         totalUnits={AddNoUnit}/>
-                    ))) :
+                            } key={ID} theme={theme} imageName={Project.ProjectImage} projectName={Project.ProjectTitle}
+                                             totalAmount={AddAmount}
+                                             target={Project.Target}
+                                             totalUnits={AddNoUnit}/>
+                        ))) :
 
 
-    <View style={{
-    width:'80%',
-        borderRadius:10,
-        height:50,
-        alignItems:'center',
-        justifyContent:'center',
-        marginTop:10,
-        backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : "#f6e5da"
-    }}>
+                        <View style={{
+                            width: '80%',
+                            borderRadius: 10,
+                            height: 50,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginTop: 10,
+                            backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkTwo : "#f6e5da"
+                        }}>
 
-    <Text style={{
-        fontSize:10,
-        fontFamily:'Gordita-medium',
-    color: theme === 'Dark' ? '#ddd': '#131313'
-    }}>
-      Opps! You don't have any projects, start investing
-    </Text>
-    </View>
+                            <Text style={{
+                                fontSize: 10,
+                                fontFamily: 'Gordita-medium',
+                                color: theme === 'Dark' ? '#ddd' : '#131313'
+                            }}>
+                                Opps! You don't have any projects, start investing
+                            </Text>
+                        </View>
             }
         </View>
     );
@@ -81,21 +76,18 @@ Object.keys(userProjects).length > 0 ?
 
 
 const styles = StyleSheet.create({
-    container:{
-flex:1,
+    container: {
+        flex: 1,
         flexDirection: 'row',
         alignContent: 'flex-start',
         alignItems: 'flex-start',
         flexWrap: 'wrap',
         justifyContent: 'space-evenly',
 
-        paddingTop:15
+        paddingTop: 15
     }
 
 })
-
-
-
 
 
 export default MyProjects

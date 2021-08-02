@@ -20,7 +20,7 @@ import MyButton from "../components/MyButton";
 import {FontAwesome} from "@expo/vector-icons";
 import DeckButton from "../components/DeckButton";
 import ProjectCard from "../components/ProjectCard";
-import { useDispatch, useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {getAllProject, toggleUserGuide} from "../redux/actions/data-action";
 import {getUser} from "../redux/actions/user-action";
 import ToastMessage from "../components/Toast";
@@ -28,9 +28,6 @@ import ToastMessage from "../components/Toast";
 import UserGuide from "../components/UserGuide";
 import KnowMoreScreen from "../components/KnowMore";
 import Constants from "expo-constants";
-
-
-
 
 
 const wait = timeout => {
@@ -44,13 +41,12 @@ const HomeScreen = (props) => {
     const data = useSelector(state => state.data)
     const user = useSelector(state => state.user)
     const dispatch = useDispatch()
-    const {theme,userGuide} = data;
+    const {theme, userGuide} = data;
 
     const [refreshing, setRefreshing] = React.useState(false);
 
     const [toastVisible, setToastVisible] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
-
 
 
     const [expoPushToken, setExpoPushToken] = useState('');
@@ -67,21 +63,19 @@ const HomeScreen = (props) => {
     const {route: {name}} = props;
 
 
-
-    const {userData: {member: {Amount,Phone, InvestedAmount, ReferralID, LastName}, bankDetails}} = user
+    const {userData: {member: {Amount, Phone, InvestedAmount, ReferralID, LastName}, bankDetails}} = user
     const {
         allProjects,
         loadingProject
     } = data
     useEffect(() => {
         dispatch(getAllProject())
-    },[]);
+    }, []);
 
 
-
-    useEffect(() =>{
-       dispatch(toggleUserGuide())
-    },[])
+    useEffect(() => {
+        dispatch(toggleUserGuide())
+    }, [])
 
     useEffect(() => {
         registerForPushNotificationsAsync().then(token => {
@@ -115,13 +109,11 @@ const HomeScreen = (props) => {
     }, []);
 
 
-
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         dispatch(getUser(Phone))
         wait(2000).then(() => setRefreshing(false));
     }, []);
-
 
 
     const onShare = async () => {
@@ -148,7 +140,7 @@ const HomeScreen = (props) => {
 
         <>
             {Object.keys(bankDetails).length < 1 &&
-        <Modal
+            <Modal
                 animated={true}
                 animationType="slide"
                 transparent={true}
@@ -157,222 +149,221 @@ const HomeScreen = (props) => {
             >
 
 
-            <UserGuide navigation={props.navigation}/>
+                <UserGuide navigation={props.navigation}/>
 
 
             </Modal>
-}
+            }
             <KnowMoreScreen/>
 
-                <AnimatedScrollView onRefresh={onRefresh} refreshing={refreshing} navigation={props.navigation} routeMessage={`${LastName} Welcome Home`} routeName='Dashboard'>
-            <View style={styles.container}>
+            <AnimatedScrollView onRefresh={onRefresh} refreshing={refreshing} navigation={props.navigation}
+                                routeMessage={`${LastName} Welcome Home`} routeName='Dashboard'>
+                <View style={styles.container}>
 
 
-                <Modal
-                    animated={true}
-                    animationType="slide"
-                    transparent={true}
-                    visible={isModalVisible}
-                    onRequestClose={() => {
-                        Alert.alert("Modal has been closed.");
-                        setIsModalVisible(!isModalVisible);
-                    }}
-                >
+                    <Modal
+                        animated={true}
+                        animationType="slide"
+                        transparent={true}
+                        visible={isModalVisible}
+                        onRequestClose={() => {
+                            Alert.alert("Modal has been closed.");
+                            setIsModalVisible(!isModalVisible);
+                        }}
+                    >
 
 
+                        <View style={styles.centeredView}>
+                            {
+                                toastVisible &&
 
-                    <View style={styles.centeredView}>
-                        {
-                            toastVisible &&
+                                <ToastMessage onHide={() => setToastVisible(false)} message='COPIED' type='message'/>
+                            }
+                            <View style={[{
+                                backgroundColor: theme === 'Dark' ? DarkColors.primaryDark :
+                                    "#eee",
+                            }
+                                , styles.modalView]}>
 
-                            <ToastMessage onHide={() => setToastVisible(false)} message='COPIED' type='message'/>
-                        }
-                        <View style={[{
-                            backgroundColor: theme === 'Dark' ? DarkColors.primaryDark :
-                                "#eee",
-                        }
-                            , styles.modalView]}>
+                                <Pressable
+                                    style={[{
+                                        backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
+                                            "#ddd",
+                                    }
+                                        ,
+                                        styles.buttonClose]}
+                                    onPress={() => setIsModalVisible(!isModalVisible)}
+                                >
+                                    <FontAwesome name='close' size={20}
+                                                 color={theme === 'Dark'
+                                                     ? DayColors.primaryColor : Colors.PrimaryDarkColor}/>
 
-                            <Pressable
-                                style={[{
-                                    backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
-                                        "#ddd",
-                                }
-                                    ,
-                                    styles.buttonClose]}
-                                onPress={() => setIsModalVisible(!isModalVisible)}
-                            >
-                                <FontAwesome name='close' size={20}
-                                             color={theme === 'Dark'
-                                                 ? DayColors.primaryColor : Colors.PrimaryDarkColor}/>
+                                </Pressable>
+                                <View style={styles.modalContent}>
+                                    <Text style={[
+                                        {
+                                            color: theme === 'Dark' ? Colors.White :
+                                                DarkColors.primaryDarkThree
+                                        },
+                                        styles.refModalTitle
+                                    ]}>
+                                        Refer & Earn
+                                    </Text>
 
-                            </Pressable>
-                            <View style={styles.modalContent}>
-                                <Text style={[
-                                    {
-                                        color: theme === 'Dark' ? Colors.White :
-                                            DarkColors.primaryDarkThree
-                                    },
-                                    styles.refModalTitle
-                                ]}>
-                                    Refer & Earn
-                                </Text>
+                                    <Text style={[
+                                        {
+                                            color: theme === 'Dark' ? Colors.White :
+                                                DarkColors.primaryDarkThree
+                                        },
+                                        styles.refMsg]}>
+                                        Get ₦1,000 when you refer a friend to invest and another N1500 when the person
+                                        you
+                                        referred refers another person to invest, copy and share your referral link.
 
-                                <Text style={[
-                                    {
-                                        color: theme === 'Dark' ? Colors.White :
-                                            DarkColors.primaryDarkThree
-                                    },
-                                    styles.refMsg]}>
-                                    Get ₦1,000 when you refer a friend to invest and another N1500 when the person
-                                    you
-                                    referred refers another person to invest, copy and share your referral link.
-
-                                </Text>
-
+                                    </Text>
 
 
+                                    <MyButton title='SHARE LINK'
+                                              action={onShare} textStyle={{
+                                        color: "#131313",
+                                        fontFamily: 'Gordita-bold',
+                                    }} buttonStyle={styles.buttonShare}>
+                                        <FontAwesome name='share-alt' size={18} color={"#333"}/>
+                                    </MyButton>
+                                </View>
 
 
-                                <MyButton title='SHARE LINK'
-                                          action={onShare} textStyle={{
-                                    color: "#131313",
-                                    fontFamily: 'Gordita-bold',
-                                }} buttonStyle={styles.buttonShare}>
-                                    <FontAwesome name='share-alt' size={18} color={"#333"}/>
-                                </MyButton>
                             </View>
-
-
                         </View>
+                    </Modal>
+
+                    <BalanceCard theme={theme} balance={Amount} investment={InvestedAmount}/>
+                    <View style={styles.buttonWrap}>
+                        <TouchableOpacity activeOpacity={0.7} style={styles.addBalanceBtn}
+                                          onPress={() => props.navigation.navigate('AddCash')}>
+
+                            <Text style={{
+                                fontSize: 12,
+                                fontFamily: "Gordita-Black",
+                                color: Colors.PrimaryDarkColor
+                            }}
+                                  numberOfLines={1}>
+                                Add cash
+                            </Text>
+
+                            <Text style={{
+                                fontSize: 9,
+                                fontFamily: "Gordita-medium",
+                                color: DarkColors.primaryDarkThree
+                            }}
+                                  numberOfLines={1}>
+                                Fund your account
+                            </Text>
+
+                        </TouchableOpacity>
+
+
+                        <TouchableOpacity onPress={() => props.navigation.navigate('Projects')} activeOpacity={0.7}
+                                          style={styles.investBtn}>
+
+                            <Text style={{
+                                fontSize: 12,
+                                fontFamily: "Gordita-Black",
+                                color: theme === 'Dark' ? Colors.White :
+                                    DarkColors.primaryDarkThree
+                            }}
+                                  numberOfLines={1}>
+                                Invest
+                            </Text>
+
+                            <Text style={{
+                                fontSize: 9,
+                                fontFamily: "Gordita-medium",
+                                color: theme === 'Dark' ? Colors.White :
+                                    DarkColors.primaryDarkThree
+                            }}
+                                  numberOfLines={1}>
+                                Buy units now
+                            </Text>
+
+                        </TouchableOpacity>
                     </View>
-                </Modal>
 
-                <BalanceCard theme={theme} balance={Amount} investment={InvestedAmount}/>
-                <View style={styles.buttonWrap}>
-                    <TouchableOpacity activeOpacity={0.7} style={styles.addBalanceBtn}
-                                      onPress={() => props.navigation.navigate('AddCash')}>
 
-                        <Text style={{
-                            fontSize: 12,
-                            fontFamily: "Gordita-Black",
-                            color: Colors.PrimaryDarkColor
-                        }}
-                              numberOfLines={1}>
-                            Add cash
-                        </Text>
-
-                        <Text style={{
-                            fontSize: 9,
-                            fontFamily: "Gordita-medium",
-                            color: DarkColors.primaryDarkThree
-                        }}
-                              numberOfLines={1}>
-                            Fund your account
-                        </Text>
-
+                    <TouchableOpacity onPress={toggleModal}
+                                      style={[theme === 'Dark' ? styles.referBoxB : styles.referBoxW]}>
+                        <View style={styles.refTextWrap}>
+                            <Text style={styles.refTitle}>
+                                Refer and earn
+                            </Text>
+                            <Text style={styles.refMessage}>
+                                Refer a friend and get up to ₦2,500 and more
+                            </Text>
+                        </View>
+                        <View style={styles.refBtnWrap}>
+                            <MyButton action={toggleModal} buttonStyle={styles.refBtn}>
+                                <FontAwesome name={'user-plus'} size={18} color='#131313'/>
+                            </MyButton>
+                        </View>
                     </TouchableOpacity>
 
 
-                    <TouchableOpacity onPress={() => props.navigation.navigate('Projects')} activeOpacity={0.7} style={styles.investBtn}>
-
-                        <Text style={{
-                            fontSize: 12,
-                            fontFamily: "Gordita-Black",
-                            color: theme === 'Dark' ? Colors.White :
-                                DarkColors.primaryDarkThree
-                        }}
-                              numberOfLines={1}>
-                            Invest
-                        </Text>
-
-                        <Text style={{
-                            fontSize: 9,
-                            fontFamily: "Gordita-medium",
-                            color: theme === 'Dark' ? Colors.White :
-                                DarkColors.primaryDarkThree
-                        }}
-                              numberOfLines={1}>
-                            Buy units now
-                        </Text>
-
-                    </TouchableOpacity>
-                </View>
+                    <View style={[theme === 'Dark' ? styles.buttonDeckD : styles.buttonDeckW]}>
+                        <ImageBackground style={{
+                            width: '100%',
+                            height: "100%",
+                            flexDirection: 'row',
+                            flexWrap: 'wrap',
+                            resizeMode: 'cover',
+                            alignContent: 'center',
+                            justifyContent: 'space-evenly',
+                            alignItems: 'center',
+                        }} source={require('../assets/topology.png')}>
 
 
-
-                <TouchableOpacity onPress={toggleModal}
-                                  style={[theme === 'Dark' ? styles.referBoxB : styles.referBoxW]}>
-                    <View style={styles.refTextWrap}>
-                        <Text style={styles.refTitle}>
-                            Refer and earn
-                        </Text>
-                        <Text style={styles.refMessage}>
-                            Refer a friend and get up to ₦2,500 and more
-                        </Text>
+                            {
+                                DeckBtnObj.map((({btnTitle, id, screen, icon}) => (
+                                    <DeckButton btnTitle={btnTitle} key={id}
+                                                btnAction={() => props.navigation.navigate(`${screen}`)}
+                                                screen={btnTitle} theme={theme}
+                                                icon={icon} btnStyle={styles.deckBtn}/>
+                                )))
+                            }
+                        </ImageBackground>
                     </View>
-                    <View style={styles.refBtnWrap}>
-                        <MyButton action={toggleModal} buttonStyle={styles.refBtn}>
-                            <FontAwesome name={'user-plus'} size={18} color='#131313'/>
-                        </MyButton>
-                    </View>
-                </TouchableOpacity>
+
+                    <View style={styles.projectWrap}>
+
+                        <Text style={[{
+                            color: theme === 'Dark' ? "#eee" : Colors.PrimaryDarkColor
+                        }, styles.title]}>
+                            All projects
+                        </Text>
+                        <View style={styles.projectContainer}>
 
 
-                <View style={[theme === 'Dark' ? styles.buttonDeckD : styles.buttonDeckW]}>
-                    <ImageBackground style={{
-                        width: '100%',
-                        height: "100%",
-                        flexDirection: 'row',
-                        flexWrap: 'wrap',
-                        resizeMode: 'cover',
-                        alignContent: 'center',
-                        justifyContent: 'space-evenly',
-                        alignItems: 'center',
-                    }} source={require('../assets/topology.png')}>
-
-
-                        {
-                            DeckBtnObj.map((({btnTitle, id, screen, icon}) => (
-                                <DeckButton btnTitle={btnTitle} key={id} btnAction={() => props.navigation.navigate(`${screen}`)} screen={btnTitle} theme={theme}
-                                            icon={icon} btnStyle={styles.deckBtn}/>
-                            )))
-                        }
-                    </ImageBackground>
-                </View>
-
-                <View style={styles.projectWrap}>
-
-                    <Text style={[{
-                        color: theme === 'Dark' ? "#eee" : Colors.PrimaryDarkColor
-                    }, styles.title]}>
-                        All projects
-                    </Text>
-                    <View style={styles.projectContainer}>
-
-
-                        {
+                            {
 
                                 loadingProject ? <ActivityIndicator size="large" color={Colors.Primary}/> :
                                     Object.keys(allProjects).length > 0 && allProjects.map((({ProjectTitle, ProjectImage, PricePerUnit, Target, ID, SoldOut, UpComing, Active}) => (
-                                <ProjectCard action={() =>  props.navigation.navigate('Project', {
-                                        projectId: ID,
-                                    })} key={ID} theme={theme} image={ProjectImage} projectTitle={ProjectTitle} Active={Active} SoldOut={SoldOut}
-                                             UpComing={UpComing} target={Target}
-                                             pricePerUnit={PricePerUnit}/>
-                            )))
-                        }
+                                        <ProjectCard action={() => props.navigation.navigate('Project', {
+                                            projectId: ID,
+                                        })} key={ID} theme={theme} image={ProjectImage} projectTitle={ProjectTitle}
+                                                     Active={Active} SoldOut={SoldOut}
+                                                     UpComing={UpComing} target={Target}
+                                                     pricePerUnit={PricePerUnit}/>
+                                    )))
+                            }
+                        </View>
                     </View>
+
                 </View>
+            </AnimatedScrollView>
 
-            </View>
-        </AnimatedScrollView>
-
-            </>
+        </>
 
     );
 };
-
 
 
 async function registerForPushNotificationsAsync() {
@@ -383,11 +374,11 @@ async function registerForPushNotificationsAsync() {
         if (existingStatus !== 'granted') {
             const {status} = await Notifications.requestPermissionsAsync();
             finalStatus = status;
-            console.log("existingStatus",existingStatus)
+            console.log("existingStatus", existingStatus)
         }
         if (finalStatus !== 'granted') {
             alert('Failed to get push token for push notification!');
-            console.log("finalStatus",finalStatus)
+            console.log("finalStatus", finalStatus)
             return;
         }
         token = (await Notifications.getExpoPushTokenAsync()).data;
@@ -413,13 +404,13 @@ const DeckBtnObj = [
     {
         id: '1',
         icon: 'heart-outline',
-        screen:'Favourites',
+        screen: 'Favourites',
         btnTitle: 'Favourites',
 
     },
     {
         id: '2',
-        screen:'Liquidate',
+        screen: 'Liquidate',
         icon: 'ios-water',
         btnTitle: 'Liquidate',
 
@@ -532,7 +523,7 @@ const styles = StyleSheet.create({
         height: 55,
         backgroundColor: DarkColors.primaryDarkTwo
     },
-    buttonShare:{
+    buttonShare: {
         justifyContent: 'space-evenly',
         alignItems: 'center',
         width: '60%',
@@ -615,7 +606,7 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     refTitle: {
-        fontSize:12,
+        fontSize: 12,
         fontFamily: "Gordita-bold",
         color: Colors.White
     },
@@ -702,7 +693,6 @@ const styles = StyleSheet.create({
 
 
 })
-
 
 
 export default HomeScreen

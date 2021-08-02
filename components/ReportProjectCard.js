@@ -3,11 +3,13 @@ import { RFValue } from "react-native-responsive-fontsize";
 import {Text, View, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp} from "react-native-responsive-screen";
-import MyButton from "./MyButton";
-
+import {TapGestureHandler} from "react-native-gesture-handler";
+import Animated from "react-native-reanimated";
 const ReportProjectCard = ({image,theme, projectTitle, action, target, pricePerUnit}) => {
     return (
-        <TouchableOpacity onPress={action} style={[
+        <TapGestureHandler onActivated={action}>
+
+        <Animated.View style={[
             {
                 backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkFour : '#fff',
             },
@@ -55,7 +57,9 @@ const ReportProjectCard = ({image,theme, projectTitle, action, target, pricePerU
 
 
             </View>
-        </TouchableOpacity>
+        </Animated.View>
+
+        </TapGestureHandler>
     );
 };
 

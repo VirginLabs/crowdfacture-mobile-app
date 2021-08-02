@@ -1,7 +1,6 @@
 import React, {useContext, useState} from 'react';
 import { widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {Animated, StatusBar, StyleSheet, Text, View} from 'react-native';
-import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import TextInput from "../components/TextInput";

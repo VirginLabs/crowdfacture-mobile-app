@@ -14,15 +14,8 @@ import { widthPercentageToDP as wp} from "react-native-responsive-screen";
 import BankAccount from "../components/payments/BankAccount";
 import Sumotrust from "../components/payments/Sumotrust";
 import FlutterWave from "../components/payments/CardPayment";
-import PropTypes from "prop-types";
-import {
-    clearErrors,
-    clearMessage,
-    fundUsingSumotrust,
-    getUniqueAccountNumb,
-    getUser
-} from "../redux/actions/user-action";
-import {connect, useSelector} from "react-redux";
+
+import { useSelector} from "react-redux";
 
 import Animated, {Easing, useSharedValue, withSpring, withTiming} from "react-native-reanimated";
 import {TapGestureHandler} from "react-native-gesture-handler";
@@ -98,7 +91,7 @@ const AddCashScreen = (props) => {
 
     const user = useSelector(state => state.user)
     const data = useSelector(state => state.data)
-    const {navigation, getUniqueAccountNumb, clearErrors, clearMessage, fundUsingSumotrust} = props
+    const {navigation} = props
 
 
     const sheetHeight = useSharedValue(500)
@@ -107,16 +100,14 @@ const AddCashScreen = (props) => {
     const offset = useSharedValue(600);
 
     const {
-        loading, message, error, userData:
+        loading, userData:
             {
                 member: {EmailAddress,
-                    ID, Phone, MonnifyAccountNumber,
-                    MonnifyBankName,
-                    BVNVerified,
+                     Phone,
                     LastName,
                     SumoTrustID
                 },
-                bankDetails
+
             }
     } = user
 
@@ -127,12 +118,7 @@ const {theme} = data
 
 
     if (contentId === '1') {
-        content = <BankAccount navigation={navigation} loading={loading} getUniqueAccountNumb={getUniqueAccountNumb} userDetails={{
-            bankDetails,
-            MonnifyAccountNumber,
-            MonnifyBankName,
-            BVNVerified
-        }} ID={ID} Phone={Phone} theme={theme}/>
+        content = <BankAccount navigation={navigation} loading={loading}/>
     }
     if (contentId === '2') {
         content = <Sumotrust SumoTrustID={SumoTrustID} user='JOSEPH ASI' theme={theme}/>
@@ -304,29 +290,6 @@ const styles = StyleSheet.create({
 
 })
 
-AddCashScreen.propTypes = {
-    data: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
-    getUser: PropTypes.func.isRequired,
-    getUniqueAccountNumb: PropTypes.func.isRequired,
-    fundUsingSumotrust: PropTypes.func.isRequired,
-};
 
 
-const mapActionToPops = {
-    getUser,
-    getUniqueAccountNumb,
-    fundUsingSumotrust,
-    clearErrors,
-    clearMessage,
-
-
-}
-
-
-const mapStateToProps = (state) => ({
-    data: state.data,
-    user: state.user,
-})
-
-export default connect(mapStateToProps, mapActionToPops)(AddCashScreen);
+export default AddCashScreen;

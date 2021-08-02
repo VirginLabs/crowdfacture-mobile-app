@@ -1,11 +1,10 @@
-import React, {useContext} from 'react';
+import React from 'react';
 
 import {StyleSheet, View} from 'react-native';
 import AnimatedScrollView from "../components/AnimatedScrollView";
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import MyProjects from "../components/Tabs/MyProjects";
 import AllProjects from "../components/Tabs/AllProjects";
-import {ThemeContext} from "../util/ThemeManager";
 import {Colors, DarkColors} from "../constants/Colors";
 import {connect, useSelector} from "react-redux";
 import PropTypes from "prop-types";

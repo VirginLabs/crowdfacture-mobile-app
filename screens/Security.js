@@ -134,9 +134,10 @@ const SecurityScreen = (props) => {
                                     {title}
                                 </Text>
                                 <Text style={{
-                                    color: theme === 'Dark' ? '#ddd' : '#333',
+                                    marginTop:4,
+                                    color: theme === 'Dark' ? '#aeaeae' : '#333333',
                                     fontSize: 9,
-                                    fontFamily: 'Gordita-medium'
+                                    fontFamily: 'Gordita'
                                 }}>
                                     {message}
                                 </Text>
@@ -171,7 +172,7 @@ const SecButtons = [
     {
         id: '1',
         title: 'Withdrawal pin',
-        message: 'Secure your funds anytime',
+        message: 'Secure your funds, Update your pin',
         icon: 'key'
     },
     {

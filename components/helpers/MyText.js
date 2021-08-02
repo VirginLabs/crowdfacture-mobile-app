@@ -1,7 +1,6 @@
-import React, {useContext} from 'react';
+import React from 'react';
 
-import {Text, View, StyleSheet} from 'react-native';
-import {ThemeContext} from "../../util/ThemeManager";
+import {Text, StyleSheet} from 'react-native';
 import {useSelector} from "react-redux";
 
 const MyText = ({children, myStyles}) => {

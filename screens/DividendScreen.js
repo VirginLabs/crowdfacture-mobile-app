@@ -1,11 +1,10 @@
-import React, {useContext} from 'react';
+import React from 'react';
 
-import {Animated, StatusBar, StyleSheet, Text, View} from 'react-native';
-import {ThemeContext} from "../util/ThemeManager";
+import {Animated, StatusBar, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import {useSelector} from "react-redux";
-
+import {FontAwesome5} from '@expo/vector-icons';
 
 const DividendScreen = ({navigation}) => {
     const user = useSelector(state => state.user)
@@ -21,7 +20,7 @@ const DividendScreen = ({navigation}) => {
             </View>
             <Text style={[
                 {
-                    color:theme === 'Dark' ?  Colors.White : '#333',
+                    color: theme === 'Dark' ? Colors.White : '#333',
                 },
                 styles.title]}>
                 YOUR DIVIDENDS
@@ -29,18 +28,44 @@ const DividendScreen = ({navigation}) => {
             </Text>
 
             <View style={{
-                width:'90%',
-                alignItems:'center',  padding:8,
-                backgroundColor: DayColors.lemon,
-borderRadius:10,
-                margin:10,
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+
+                height: 500,
             }}>
+
+
+                <FontAwesome5 name="money-bill-alt" size={54} color={
+                    theme === 'Dark' ? '#282828'
+                        : '#333'
+                }/>
+
                 <Text style={{
-fontFamily:'Gordita-medium',
-                    color :'#131313'
+                    fontSize: 12,
+                    marginVertical: 12,
+                    fontFamily: 'Gordita-medium',
+                    color: theme === 'Dark' ? '#eee' : '#333'
                 }}>
-                    Comming soon
+                    Sorry you haven't earned any dividend yet.
                 </Text>
+
+                <TouchableOpacity style={{
+                    width: 140,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: 45,
+                    backgroundColor: DayColors.lemon,
+                    borderRadius: 10,
+                    marginTop: 20,
+                }}>
+
+                    <Text style={{
+                        fontFamily: 'Gordita-bold',
+                        color: '#131313'
+                    }}>
+                        Start investing
+                    </Text>
+                </TouchableOpacity>
             </View>
 
         </Animated.View>
@@ -59,7 +84,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: 'Gordita-Black',
-        fontSize: 16,
+        fontSize: 14,
     },
     wrap: {
         padding: 10,
@@ -69,7 +94,6 @@ const styles = StyleSheet.create({
     },
 
 });
-
 
 
 export default DividendScreen;

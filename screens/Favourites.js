@@ -1,15 +1,22 @@
 import React, {useContext} from 'react';
 
-import {Animated, StatusBar, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, Animated, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {Colors, DarkColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
-import {ThemeContext} from "../util/ThemeManager";
 import {useSelector} from "react-redux";
+import ProjectCard from "../components/ProjectCard";
+import {TapGestureHandler} from "react-native-gesture-handler";
 
 const FavouriteScreen = ({navigation}) => {
     const user = useSelector(state => state.user)
     const data = useSelector(state => state.data)
     const {theme} = data;
+
+
+
+    const {loading, message, error,
+        userData: {member: {ID, Phone},
+            savedProjects} } = user
 
     return (
         <Animated.View style={[styles.container, {
@@ -26,6 +33,25 @@ const FavouriteScreen = ({navigation}) => {
                 styles.title]}>
                 YOUR SAVED PROJECTS
             </Text>
+
+            <View style={styles.projectContainer}>
+
+
+                {
+
+                    loading ? <ActivityIndicator size="large" color={Colors.Primary}/> :
+                        Object.keys(savedProjects).length > 0 && savedProjects.map((({ProjectID,Project}) => (
+
+                            <ProjectCard action={() => props.navigation.navigate('Project', {
+                                projectId: ID,
+                            })} key={ProjectID} theme={theme} image={Project.ProjectImage} projectTitle={Project.ProjectTitle}
+                                         Active={Project.Active} SoldOut={Project.SoldOut}
+                                         UpComing={Project.UpComing} target={Project.Target}
+                                         pricePerUnit={Project.PricePerUnit}/>
+
+                        )))
+                }
+            </View>
 
         </Animated.View>
 
@@ -53,6 +79,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-start',
         flexDirection: 'column'
+    },
+    projectContainer: {
+        marginTop:20,
+        width: "100%",
+        flexDirection: 'row',
+        alignContent: 'center',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        justifyContent: 'center'
     },
 
 });

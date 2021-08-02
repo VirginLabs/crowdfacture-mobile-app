@@ -1,12 +1,11 @@
 import React from 'react';
 
-import {Text, View, StyleSheet, KeyboardAvoidingView} from 'react-native';
+import {Text, View, StyleSheet} from 'react-native';
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
-import {Colors, DayColors} from "../../constants/Colors";
+import {Colors} from "../../constants/Colors";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 import TextInput from "../TextInput";
-import MyButton from "../MyButton";
 
 
 import {PayWithFlutterwave} from 'flutterwave-react-native';
@@ -95,8 +94,7 @@ const FlutterWave = ({theme, userEmail,phoneNumber}) => {
                 {errors.Amount}
             </Text>
 
-          {/*  <MyButton action={() => handleSubmit()} title='SUBMIT'
-                      buttonStyle={styles.submitBtn} textStyle={styles.buttonText}/>*/}
+
 
 
             <PayWithFlutterwave

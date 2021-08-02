@@ -59,7 +59,9 @@ const PaySumo = ({toggleModal}) => {
 
             <View style={{paddingHorizontal: 32, marginBottom: 1, width: '100%',}}>
                 <TextInput
+                     color={theme === 'Dark' ? '#ddd' : '#333'}
                     icon='phone'
+                     required
                     placeholder='Enter your phone number'
                     autoCapitalize='none'
                     keyboardType='numeric'
@@ -78,6 +80,7 @@ const PaySumo = ({toggleModal}) => {
 
             <View style={{paddingHorizontal: 32, width: '100%'}}>
                 <TextInput
+                    color={theme === 'Dark' ? '#ddd' : '#333'}
                     required
                     icon='key'
                     placeholder='Enter your password'
@@ -156,7 +159,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
     },
     modalContent: {
-        width: wp('90%'),
+        width: wp('100%'),
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'space-evenly'

@@ -8,6 +8,7 @@ import {
     CLEAR_MESSAGE, SET_MESSAGE, SET_OTP, PIN_LOADING,
     SET_USER_PROJECTS,
     BUY_UNIT,
+    SAVE_PROJECTS,
     SUMO_AUTH
 } from '../types'
 
@@ -20,6 +21,7 @@ const initialState = {
     authenticated: false,
     bankDetails: {},
     userProjects:{},
+    savedProjects:{},
     otpMessage: null,
     userData: {}
 }

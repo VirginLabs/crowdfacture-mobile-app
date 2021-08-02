@@ -1,16 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
     View,
-    StatusBar,
     StyleSheet,
     ScrollView,
-    Dimensions,
     RefreshControl,
     TouchableOpacity,
-    Animated, AppState
+     AppState
 } from 'react-native';
 import {MaterialIcons, FontAwesome} from '@expo/vector-icons';
-import {ThemeContext} from "../util/ThemeManager";
 import MyText from "./helpers/MyText";
 import {Colors, DarkColors} from "../constants/Colors";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";

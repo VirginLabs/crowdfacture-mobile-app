@@ -18,6 +18,8 @@ import * as Yup from "yup";
 import {Ionicons} from "@expo/vector-icons";
 import Clipboard from 'expo-clipboard';
 import ToastMessage from "../Toast";
+import {useDispatch, useSelector} from "react-redux";
+import {getUniqueAccountNumb} from "../../redux/actions/user-action";
 
 
 
@@ -31,11 +33,30 @@ const schema = Yup.object().shape({
 });
 
 
-const BankAccount = ({theme, getUniqueAccountNumb, ID, navigation, userDetails, loading,}) => {
+const BankAccount = ({navigation}) => {
 
-    const {MonnifyAccountNumber, MonnifyBankName, BVNVerified, bankDetails} = userDetails
+    const dispatch = useDispatch()
+
+    const user = useSelector(state => state.user)
+    const data = useSelector(state => state.data)
+
+
 
     const [toastVisible, setToastVisible] = useState(false);
+
+    const {theme} = data
+    const {
+        loading,userData:
+            {
+                member: {
+                    ID, MonnifyAccountNumber,
+                    MonnifyBankName,
+                    BVNVerified,
+                },
+                bankDetails
+            }
+    } = user
+
 
     const copyToClipboard = () => {
         setToastVisible(prevState => !prevState)
@@ -43,7 +64,6 @@ const BankAccount = ({theme, getUniqueAccountNumb, ID, navigation, userDetails, 
     };
     const {
         handleChange, handleSubmit, handleBlur,
-        values,
         isValid,
         errors,
         touched
@@ -57,8 +77,7 @@ const BankAccount = ({theme, getUniqueAccountNumb, ID, navigation, userDetails, 
             const bvnData = new FormData()
             bvnData.append('BVN', BVN)
             bvnData.append('userId', ID)
-
-            getUniqueAccountNumb(bvnData)
+            dispatch(getUniqueAccountNumb(bvnData))
         }
     });
 

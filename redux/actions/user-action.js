@@ -116,7 +116,7 @@ export const signUpUser = (userData,history) => (dispatch) => {
 
 
 //Login user
-export const loginUser = (user,navigation) => (dispatch) => {
+export const loginUser = (user) => (dispatch) => {
     dispatch({
         type: LOADING_DATA,
     })
@@ -534,7 +534,17 @@ export const saveProject = (data) => (dispatch) => {
     ])
 
     saveProjectPromise.then((res) => {
-
+if(res.status === '200'){
+    dispatch({
+        type: SET_MESSAGE,
+        payload: "Project saved"
+    })
+}else{
+    dispatch({
+        type: SET_ERROR,
+        payload: res.message
+    })
+        }
     })
 
     saveProjectPromise.catch(err => console.log(err))
@@ -558,7 +568,17 @@ export const unSaveProject = (data) => (dispatch) => {
     ])
 
     unSaveProjectPromise.then((res) => {
-
+        if(res.status === '200'){
+            dispatch({
+                type: SET_MESSAGE,
+                payload: "Project unsaved"
+            })
+        }else{
+            dispatch({
+                type: SET_ERROR,
+                payload: res.message
+            })
+        }
     })
 
     unSaveProjectPromise.catch(err => console.log(err))

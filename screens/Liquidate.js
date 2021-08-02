@@ -1,14 +1,13 @@
 import React, {useCallback, useContext, useState} from 'react';
 
-import { Dimensions, Image, StatusBar, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { Dimensions, Image, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
-import {ThemeContext} from "../util/ThemeManager";
 import {useSelector} from "react-redux";
 import {MaterialCommunityIcons} from '@expo/vector-icons'
 import Animated, {Easing, useSharedValue, withSpring, withTiming} from "react-native-reanimated";
 import ModalSheet from "../components/ModalSheet";
-import AddBankForm from "../components/AddBankForm";
+
 import WithdrawToBank from "../components/WithdrawToBank";
 import WithdrawToSumotrust from "../components/WithdrawToSumotrust";
 import {TapGestureHandler} from "react-native-gesture-handler";

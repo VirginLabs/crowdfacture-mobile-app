@@ -3,7 +3,6 @@ import React, {useContext} from 'react';
 import {Animated, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
-import {ThemeContext} from "../util/ThemeManager";
 import {useSelector} from "react-redux";
 
 const ExchangeScreen = ({navigation}) => {

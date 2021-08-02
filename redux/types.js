@@ -47,3 +47,4 @@ export const SET_RETURNS = "SET_RETURNS";
 export const TOGGLE_THEME = "TOGGLE_THEME";
 export const TOGGLE_USER_GUIDE = "TOGGLE_USER_GUIDE";
 export const TOGGLE_KNOW_MORE = "TOGGLE_KNOW_MORE";
+export const SAVE_PROJECTS = "SAVE_PROJECTS";
