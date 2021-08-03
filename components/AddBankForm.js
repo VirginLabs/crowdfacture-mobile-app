@@ -1,16 +1,19 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, Switch} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View, Platform, ActivityIndicator, Switch} from 'react-native';
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import TextInput from "./TextInput";
 import MyButton from "./MyButton";
-import {Picker} from '@react-native-picker/picker';
+import {Picker, PickerIOS} from '@react-native-picker/picker';
 import AllBanks from "../constants/AllBanks";
 import {useDispatch, useSelector} from "react-redux";
 import {addBank} from "../redux/actions/user-action";
-import Animated from "react-native-reanimated";
+
+import { Picker as MyPicker} from 'react-native-woodpicker'
+
+
 
 
 const SWITCH_TRACK_COLOR = {
@@ -35,6 +38,8 @@ const schema = Yup.object().shape({
 
 
 const AddBankForm = () => {
+
+
     const dispatch = useDispatch()
     const user = useSelector(state => state.user)
     const data = useSelector(state => state.data)
@@ -73,7 +78,7 @@ const AddBankForm = () => {
         }
     });
 
-
+  
     return (
 
 
@@ -117,6 +122,8 @@ const AddBankForm = () => {
                 {errors.accountName}
             </Text>
 
+            {
+    Platform.OS === 'android' ?
             <View
                 style={{
                     width: wp('85%'),
@@ -132,6 +139,8 @@ const AddBankForm = () => {
                 }}
             >
 
+
+
                 <Picker
                     label='Bank name'
                     onBlur={handleBlur('bankName')}
@@ -141,7 +150,9 @@ const AddBankForm = () => {
                         height: 45,
                         flexDirection: 'row',
                         alignItems: 'flex-start',
-                        justifyContent: 'flex-start'
+                        justifyContent: 'flex-start',
+                          borderColor: "#ddd",
+                    borderWidth: 2,
                     }}
                     mode='modal'
                     selectedValue={values.bankName}
@@ -150,14 +161,75 @@ const AddBankForm = () => {
                     }>
                     {
                         AllBanks.map((bank, index) => (
-                            <Picker.Item label={bank.title} value={bank.value} key={index}/>
+                            <Picker.Item style={{
+                                color:'#eee'
+                            }} label={bank.lable} value={bank.value} key={index}/>
                         ))
                     }
 
 
-                </Picker>
+                </Picker> 
+            
+           
+                
 
+            
             </View>
+            :
+            <MyPicker
+            style={{
+                
+                
+            }}
+            textInputStyle={{
+                fontFamily:'Gordita-medium',
+                fontSize:12,
+                color:theme === 'Dark' ? '#eee' : '#333',
+            
+            }}
+            containerStyle={{
+                width: wp('85%'),
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    height: 60,
+                    borderRadius: 15,
+                padding:8,
+                marginTop: 10,
+                borderColor: "#ddd",
+                borderWidth: 2,
+                backgroundColor:theme == 'Dark' ? DarkColors.primaryDark : '#eee', 
+            }}
+            item={values.bankName}
+            items={AllBanks}
+            onItemChange={(item, index)=>
+                setFieldValue('bankName', item.value)
+            }
+
+            title="Select Bank name"
+            placeholder={`Bank name: ${values.bankName}`}
+            //isNullable
+          backdropAnimation={{ opactity: 0 }}
+          //mode="dropdown"
+          //isNullable
+          //disable
+        />
+                }
+
+            <Text>
+                {values.bankName}
+            </Text>
+                
+            
+            
+
+
+
+
+
+
+
+
             <Text style={styles.errorText} numberOfLines={1}>
                 {errors.bankName}
             </Text>
@@ -256,8 +328,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: "flex-start", width: '95%',
         color: '#FF5A5F', padding: 3
-    }
-
+    },
+    item: {
+        fontSize: 25,
+        color: 'red',
+        textAlign: 'left',
+        fontWeight: 'bold',
+      },
 
 })
 

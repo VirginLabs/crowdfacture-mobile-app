@@ -18,6 +18,7 @@ import {getUserProjects} from "../redux/actions/user-action";
 import ReportProjectCard from "../components/ReportProjectCard";
 import ModalSheet from "../components/ModalSheet";
 import {Easing, useSharedValue, withSpring, withTiming} from "react-native-reanimated";
+import {SafeAreaView} from "react-native-safe-area-context";
 
 
 const height = Dimensions.get('window').height
@@ -54,7 +55,7 @@ const ReportsScreen = (props) => {
 
     }, []);
     return (
-        <>
+        <SafeAreaView style={{flex:1}}>
             <ModalSheet zIndex={zIndex} height={650} offset={offset} opacity={opacity}>
                 <View style={{
                     height: '100%',
@@ -161,7 +162,7 @@ const ReportsScreen = (props) => {
                 </View>
             }
         </View>
-         </>
+         </SafeAreaView>
     );
 };
 const styles = StyleSheet.create({

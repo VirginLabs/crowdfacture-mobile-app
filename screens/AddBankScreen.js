@@ -20,7 +20,7 @@ import ModalSheet from "../components/ModalSheet";
 import Animated, {Easing, useSharedValue, withSpring, withTiming} from "react-native-reanimated";
 import {TapGestureHandler} from "react-native-gesture-handler";
 import AddBankForm from "../components/AddBankForm";
-
+import {SafeAreaView} from "react-native-safe-area-context";
 
 
 const AccountList = ({bankName, bankAccount, theme}) => (
@@ -96,7 +96,10 @@ const AddBank = (props) => {
 
 
     return (
-        <>
+        <SafeAreaView style={{
+            flex:1
+        }}>
+        
             <ModalSheet zIndex={zIndex} offset={offset} opacity={opacity}>
                 <View style={{
                     height: '100%',
@@ -181,14 +184,13 @@ const AddBank = (props) => {
 
 
         </View>
-        </>
+        </SafeAreaView>
     );
 };
 
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: StatusBar.currentHeight,
         paddingLeft: 10,
         paddingRight: 10,
         flex: 1, alignItems: 'center', justifyContent: 'flex-start',

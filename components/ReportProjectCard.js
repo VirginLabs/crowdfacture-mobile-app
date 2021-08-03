@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     projectCard: {
         width: wp('42%'),
         marginHorizontal:5,
-        height:200,
+        height:210,
         marginVertical:10,
         borderRadius: 20,
     },

@@ -113,7 +113,7 @@ const Sumotrust = () => {
                         {
                             isValid ?
 
-                                <MyButton action={() => handleSubmit()} title='LOGIN WITH SUMOTRUST'
+                                <MyButton action={() => handleSubmit()} title='FUND NOW'
                                           buttonStyle={styles.loginButton} textStyle={styles.buttonText}/>
                                 :
                                 <TouchableOpacity activeOpacity={1} style={{

@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import {RFPercentage} from "react-native-responsive-fontsize";
 import {Asset} from 'expo-asset';
-import AppLoading from "expo-app-loading";
 import {Colors, DayColors} from "../constants/Colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import AsyncStorage from "@react-native-async-storage/async-storage";

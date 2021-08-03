@@ -3,12 +3,14 @@ import {View, Text, StatusBar, StyleSheet, ScrollView, ActivityIndicator} from "
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import {getNotifications} from "../redux/actions/data-action";
-import {connect} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import PropTypes from "prop-types";
-
+import {SafeAreaView} from "react-native-safe-area-context";
 
 
 const NotificationScreen = (props) => {
+    const data = useSelector(state => state.data)
+    const {theme} = data
 
 let noti = [];
 
@@ -30,15 +32,28 @@ let noti = [];
     }, [ID])
 
     return (
+        <SafeAreaView 
+        style={[styles.container, {
+            backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
+                : "#f5f5f5"
+        }]}>
+
+        
         <ScrollView
             keyboardShouldPersistTaps='handled'
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             scrollEnabled
-            contentContainerStyle={[styles.container, {
-            backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
-                : "#f5f5f5"
-        }]}>
+        contentContainerStyle={
+            {
+                paddingTop: StatusBar.currentHeight,
+                paddingLeft: 10,
+                paddingRight: 10,
+                alignItems: 'center', justifyContent: 'flex-start',
+                flexDirection: 'column'
+            }
+        }
+            >
             <View style={styles.top}>
                 <BackButton theme={theme} navigation={navigation}/>
             </View>
@@ -90,6 +105,7 @@ let noti = [];
                 }
             </View>
         </ScrollView>
+        </SafeAreaView>
     );
 }
 
@@ -97,11 +113,7 @@ let noti = [];
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: StatusBar.currentHeight,
-        paddingLeft: 10,
-        paddingRight: 10,
-        alignItems: 'center', justifyContent: 'flex-start',
-        flexDirection: 'column'
+       
     },
     top: {
         top:30,

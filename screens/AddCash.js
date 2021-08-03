@@ -20,9 +20,12 @@ import { useSelector} from "react-redux";
 import Animated, {Easing, useSharedValue, withSpring, withTiming} from "react-native-reanimated";
 import {TapGestureHandler} from "react-native-gesture-handler";
 import ModalSheet from "../components/ModalSheet";
+import {SafeAreaView} from "react-native-safe-area-context";
 
-const Item = ({name, iconName, moreInfo, theme, action}) => (
-    <TapGestureHandler onActivated={action}>
+
+
+const Item = ({name, iconName, sheetName, moreInfo, theme, action}) => (
+    <TapGestureHandler onActivated={sheetName === 'CFR' ? '' : action}>
     <Animated.View activeOpacity={0.7} style={[
         {
             backgroundColor: theme === 'Dark'
@@ -121,7 +124,7 @@ const {theme} = data
         content = <BankAccount navigation={navigation} loading={loading}/>
     }
     if (contentId === '2') {
-        content = <Sumotrust SumoTrustID={SumoTrustID} user='JOSEPH ASI' theme={theme}/>
+        content = <Sumotrust/>
     }
     if (contentId === '3') {
         content = <FlutterWave
@@ -158,7 +161,7 @@ const {theme} = data
     )
 
     return (
-        <>
+        <SafeAreaView style={{flex:1}}>
             <ModalSheet height={400} zIndex={zIndex} offset={offset} opacity={opacity}>
                 <View style={{
                     height: '100%',
@@ -196,7 +199,7 @@ const {theme} = data
 
 
         </View>
-            </>
+            </SafeAreaView>
     );
 };
 
@@ -206,7 +209,8 @@ const PaymentChannels = [
         name: 'ACCOUNT NUMBER',
         iconName: 'key',
         moreInfo: 'Deposit using your Crowdfacture virtual account number',
-        sheetName: 'ACCOUNT'
+        sheetName: 'ACCOUNT',
+        disable:false
 
     },
     {
@@ -214,7 +218,8 @@ const PaymentChannels = [
         name: 'USE SUMOTRUST',
         iconName: 'piggy-bank',
         moreInfo: 'Deposit from your Sumotrust kick account',
-        sheetName: 'SUMOTRUST'
+        sheetName: 'SUMOTRUST',
+        disable:false
 
     },
     {
@@ -222,7 +227,8 @@ const PaymentChannels = [
         name: 'USE DEBIT CARD',
         iconName: 'credit-card',
         moreInfo: 'Secure deposit using your debit card',
-        sheetName: 'CARD'
+        sheetName: 'CARD',
+        disable:false
 
     },
  {
@@ -230,7 +236,8 @@ const PaymentChannels = [
         name: 'DEPOSIT CFR',
         iconName: 'coins',
         moreInfo: 'Deposit Crowdfacture token',
-        sheetName: 'CFR'
+        sheetName: 'CFR',
+        disable:true
 
     },
 

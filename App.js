@@ -1,12 +1,12 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import * as Font from 'expo-font';
-import AppLoading from 'expo-app-loading';
+import { useFonts } from 'expo-font';
 import {enableScreens} from 'react-native-screens';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {MyNavigation, MyStartNavigation} from "./Naviagtions/MyNavigation";
 import TabBarProvider from "./context/TabBarProvider";
 
-import { NavigationContainer,DefaultTheme} from '@react-navigation/native';
+import { NavigationContainer} from '@react-navigation/native';
 // In theory you don't have to install `react-native-root-siblings` because it's a dep of root-toast
 // But you can install it explicitly if your editor complains about it.
 import { RootSiblingParent } from 'react-native-root-siblings';
@@ -14,13 +14,10 @@ import { Provider} from 'react-redux';
 import * as Notifications from 'expo-notifications';
 // Add
 import { PersistGate } from 'redux-persist/integration/react';
-
+import { Entypo } from '@expo/vector-icons';
+import * as SplashScreen from 'expo-splash-screen';
 import {persistor, store} from "./redux/store";
-import {Colors, DarkColors} from "./constants/Colors";
-import PropTypes from "prop-types";
-import mapStateToProps from "react-redux/lib/connect/mapStateToProps";
-import NavManager from "./Naviagtions/NavManager";
-import {StatusBar} from "react-native";
+import {StatusBar, View} from "react-native";
 enableScreens()
 
 
@@ -32,6 +29,8 @@ Notifications.setNotificationHandler({
         shouldSetBadge: true,
     }),
 });
+
+
 
 const fetchFonts = () => {
     return Font.loadAsync({
@@ -54,7 +53,56 @@ const App = (props)  =>{
     const [fontLoaded, setFontLoaded] = useState(false);
 
     const [firstLaunch, setFirstLaunch] = useState(null);
+  
+    const [appIsReady, setAppIsReady] = useState(false);
 
+    const [loaded] = useFonts({
+        'Gordita-Black': require('./assets/fonts/Gordita-Black.otf'),
+        'Poppins': require('./assets/fonts/Poppins-Regular.ttf'),
+        'Poppins-bold': require('./assets/fonts/Poppins-Bold.ttf'),
+        'Poppins-medium': require('./assets/fonts/Poppins-Medium.ttf'),
+        'Gordita-bold': require('./assets/fonts/Gordita-Bold.otf'),
+        'Gordita': require('./assets/fonts/Gordita-Regular.otf'),
+        'Gordita-medium': require('./assets/fonts/Gordita-Medium.otf'),
+        'Gordita-ultra': require('./assets/fonts/Gordita-Ultra.otf'),
+      });
+
+    useEffect(() => {
+      async function prepare() {
+        try {
+          // Keep the splash screen visible while we fetch resources
+          await SplashScreen.preventAutoHideAsync();
+          // Pre-load fonts, make any API calls you need to do here
+          await Font.loadAsync(Entypo.font);
+          await fetchFonts()
+          // Artificially delay for two seconds to simulate a slow loading
+          // experience. Please remove this if you copy and paste the code!
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        } catch (e) {
+          console.warn(e);
+        } finally {
+          // Tell the application to render
+          setAppIsReady(true);
+        }
+      }
+  
+      prepare();
+    }, []);
+  
+    const onLayoutRootView = useCallback(async () => {
+      if (appIsReady) {
+        // This tells the splash screen to hide immediately! If we call this after
+        // `setAppIsReady`, then we may see a blank screen while the app is
+        // loading its initial state and rendering its first pixels. So instead,
+        // we hide the splash screen once we know the root view has already
+        // performed layout.
+        await SplashScreen.hideAsync();
+      }
+    }, [appIsReady]);
+  
+   
+
+  
 
 
     useEffect(() => {
@@ -73,29 +121,21 @@ const App = (props)  =>{
         })
     }, []);
 
-
-
-    if (!fontLoaded) {
-        return (
-            <AppLoading
-                startAsync={fetchFonts}
-                onError={console.warn}
-                onFinish={() => {
-                    setFontLoaded(true);
-                }}
-            />
-        );
-    }
-
+    if (!loaded) {
+        return null;
+      }
+  
+   
+ 
 
 
 
 
     return (
-
+    
 <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-        <NavigationContainer>
+        <NavigationContainer onLayout={onLayoutRootView}>
             {
                 firstLaunch ?
 
@@ -117,6 +157,7 @@ const App = (props)  =>{
         </NavigationContainer>
     </PersistGate>
 </Provider>
+
     );
 }
 
