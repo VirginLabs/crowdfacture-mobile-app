@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 
-import {Animated, Modal, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { Modal, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useSelector} from "react-redux";
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import Listing from "../components/ListingComponent";
-
+import {SafeAreaView} from "react-native-safe-area-context";
 
 const ListingScreen = (props) => {
 
@@ -20,6 +20,11 @@ const ListingScreen = (props) => {
     }
 
     return (
+        <SafeAreaView style={{
+            flex:1
+        }}>
+            
+       
         <ScrollView scrollEnabled
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
@@ -96,7 +101,9 @@ const ListingScreen = (props) => {
                 <Listing action={() => toggleShowListing()} theme={theme}/>
             </Modal>
         </ScrollView>
-    );
+        </SafeAreaView>
+    )
+;
 };
 
 

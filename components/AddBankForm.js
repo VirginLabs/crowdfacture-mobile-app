@@ -177,10 +177,6 @@ const AddBankForm = () => {
             </View>
             :
             <MyPicker
-            style={{
-                
-                
-            }}
             textInputStyle={{
                 fontFamily:'Gordita-medium',
                 fontSize:12,

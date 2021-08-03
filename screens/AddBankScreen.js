@@ -153,12 +153,12 @@ const AddBank = (props) => {
                             alignItems: 'center',
                             justifyContent: 'center',
                             marginBottom: 90,
-
+                            borderRadius:10,
                         }}>
                     <Text style={{
                         backgroundColor:DayColors.cream,
                         padding:10,
-                        borderRadius:5,
+                    
                         fontSize:12,
                         fontFamily: 'Gordita-bold',
                         color: "#131313"
