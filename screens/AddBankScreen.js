@@ -193,11 +193,12 @@ const styles = StyleSheet.create({
     container: {
         paddingLeft: 10,
         paddingRight: 10,
-        flex: 1, alignItems: 'center', justifyContent: 'flex-start',
+        flex: 1, alignItems: 'center', 
+        justifyContent: 'flex-start',
         flexDirection: 'column'
     },
     top: {
-        marginTop: 10,
+    
         width: '100%',
     },
     title: {

@@ -246,7 +246,7 @@ const PaymentChannels = [
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: StatusBar.currentHeight,
+       
         paddingLeft: 10,
         paddingRight: 10,
         flex: 1, alignItems: 'center', justifyContent: 'flex-start',

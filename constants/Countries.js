@@ -1,221 +1,221 @@
 const Countries =
     [
         {
-            title: "Please select country",
+            label: "Please select country",
             value: " "
         },
         {
-            title: "Nigeria",
+            label: "Nigeria",
             value: "Nigeria"
         },
         {
 
-            title: "Algeria",
+            label: "Algeria",
             value: "Algeria"
         },
         {
-            title: "Angola",
+            label: "Angola",
             value: "Angola"
         },
         {
-            title: "Benin",
+            label: "Benin",
             value: "Benin"
         },
         {
-            title: "Botswana",
+            label: "Botswana",
             value: "Botswana"
         },
         {
-            title: "Burkina Faso",
+            label: "Burkina Faso",
             value: "Burkina Faso"
         },
         {
-            title: "Burundi",
+            label: "Burundi",
             value: "Burundi",
         },
         {
-            title: "Cabo Verdec",
+            label: "Cabo Verdec",
             value: "Cabo Verdec",
         },
         {
-            title: "Central African Republic",
+            label: "Central African Republic",
             value: "Central African Republic",
         },
         {
-            title: "Chad",
+            label: "Chad",
             value: "Chad",
         },
         {
-            title: "Comoros",
+            label: "Comoros",
             value: "Comoros",
         },
         {
-            title: "Congo",
+            label: "Congo",
             value: "Congo",
         },
         {
-            title: "Côte d'Ivoire",
+            label: "Côte d'Ivoire",
             value: "Côte d'Ivoire",
         },
         {
-            title: "Djibouti",
+            label: "Djibouti",
             value: "Djibouti",
         },
         {
-            title: "DR Congo",
+            label: "DR Congo",
             value: "DR Congo",
         },
         {
-            title: "Egypt",
+            label: "Egypt",
             value: "Egypt",
         },
         {
-            title: "Equatorial Guinea",
+            label: "Equatorial Guinea",
             value: "Equatorial Guinea",
         },
         {
-            title: "Eritrea",
+            label: "Eritrea",
             value: "Eritrea",
         },
         {
-            title: "Eswatini",
+            label: "Eswatini",
             value: "Eswatini",
         },
         {
-            title: "Ethiopia",
+            label: "Ethiopia",
             value: "Ethiopia"
         },
 
         {
-            title: "Gabon",
+            label: "Gabon",
             value: "Gabon"
         },
 
         {
-            title: "Gambia",
+            label: "Gambia",
             value: "Gambia"
         },
 
         {
-            title: "Ghana",
+            label: "Ghana",
             value: "Ghana"
         },
         {
-            title: "Guinea",
+            label: "Guinea",
             value: "Guinea"
         },
         {
-            title: "Guinea-Bissau",
+            label: "Guinea-Bissau",
             value: "Guinea-Bissau"
         },
         {
-            title: "Kenya",
+            label: "Kenya",
             value: "Kenya"
         },
         {
-            title: "Lesotho",
+            label: "Lesotho",
             value: "Lesotho"
         },
         {
-            title: "Liberia",
+            label: "Liberia",
             value: "Liberia"
         },
         {
-            title: "Libya",
+            label: "Libya",
             value: "Libya"
         },
         {
-            title: "Madagascar",
+            label: "Madagascar",
             value: "Madagascar"
         },
         {
-            title: "Malawi",
+            label: "Malawi",
             value: "Malawi"
         },
         {
-            title: "Mali",
+            label: "Mali",
             value: "Mali"
         },
         {
-            title: "Mauritania",
+            label: "Mauritania",
             value: "Mauritania"
         },
         {
-            title: "Mauritius",
+            label: "Mauritius",
             value: "Mauritius"
         },
         {
-            title: "Morocco",
+            label: "Morocco",
             value: "Morocco"
         },
         {
-            title: "Mozambique",
+            label: "Mozambique",
             value: "Mozambique"
         },
         {
-            title: "Namibia",
+            label: "Namibia",
             value: "Namibia"
         },
         {
-            title: "Niger",
+            label: "Niger",
             value: "Niger"
         },
         {
-            title: "Rwanda",
+            label: "Rwanda",
             value: "Rwanda"
         },
         {
-            title: "Sao Tome & Principe",
+            label: "Sao Tome & Principe",
             value: "Sao Tome & Principe"
         },
         {
-            title: "Senegal",
+            label: "Senegal",
             value: "Senegal"
         },
         {
-            title: "Seychelles",
+            label: "Seychelles",
             value: "Seychelles"
         },
         {
-            title: "Sierra Leone",
+            label: "Sierra Leone",
             value: "Sierra Leone"
         },
         {
-            title: "Somalia",
+            label: "Somalia",
             value: "Somalia"
         },
         {
-            title: "South Africa",
+            label: "South Africa",
             value: "South Africa"
         },
         {
-            title: "South Sudan",
+            label: "South Sudan",
             value: "South Sudan"
         },
         {
-            title: "Sudan",
+            label: "Sudan",
             value: "Sudan"
         },
         {
-            title: "Tanzania",
+            label: "Tanzania",
             value: "Tanzania"
         },
         {
-            title: "Togo",
+            label: "Togo",
             value: "Togo"
         },
         {
-            title: "Tunisia",
+            label: "Tunisia",
             value: "Tunisia"
         }, {
-        title: "Uganda",
+        label: "Uganda",
         value: "Uganda"
     },
         {
-            title: "Zambia",
+            label: "Zambia",
             value: "Zambia"
         }, {
-        title: "Zimbabwe",
+        label: "Zimbabwe",
         value: "Zimbabwe"
     },
 

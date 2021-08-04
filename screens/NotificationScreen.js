@@ -46,7 +46,7 @@ let noti = [];
             scrollEnabled
         contentContainerStyle={
             {
-                paddingTop: StatusBar.currentHeight,
+            
                 paddingLeft: 10,
                 paddingRight: 10,
                 alignItems: 'center', justifyContent: 'flex-start',
