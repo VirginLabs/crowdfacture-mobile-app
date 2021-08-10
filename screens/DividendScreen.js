@@ -5,12 +5,19 @@ import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import {useSelector} from "react-redux";
 import {FontAwesome5} from '@expo/vector-icons';
+import {SafeAreaView} from "react-native-safe-area-context";
+
 
 const DividendScreen = ({navigation}) => {
     const user = useSelector(state => state.user)
     const data = useSelector(state => state.data)
     const {theme} = data;
     return (
+        <SafeAreaView style={{
+            flex:1
+        }}>
+
+      
         <Animated.View style={[styles.container, {
             backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
                 : "#f5f5f5"
@@ -31,7 +38,7 @@ const DividendScreen = ({navigation}) => {
                 alignItems: 'center',
                 justifyContent: 'flex-end',
 
-                height: 500,
+                height: 400,
             }}>
 
 
@@ -69,6 +76,7 @@ const DividendScreen = ({navigation}) => {
             </View>
 
         </Animated.View>
+        </SafeAreaView>
     );
 };
 const styles = StyleSheet.create({

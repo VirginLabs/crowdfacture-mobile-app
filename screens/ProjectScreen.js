@@ -25,6 +25,10 @@ import Animated, {useSharedValue, Easing, withSpring, withTiming} from "react-na
 import ModalSheet from "../components/ModalSheet";
 import {TapGestureHandler} from "react-native-gesture-handler";
 import ToastMessage from "../components/Toast";
+import SuccessModal from "../components/SuccessModal";
+
+import {SafeAreaView} from "react-native-safe-area-context";
+
 
 
 const phoneRegExp = /^[+]?\d*$/
@@ -44,6 +48,7 @@ const ProjectScreen = (props) => {
     const [total, setTotal] = useState('0.00')
     const user = useSelector(state => state.user)
     const data = useSelector(state => state.data)
+    const [isSuccessful, setIsSuccessful] = useState(true)
     const [saved, setSaved] = useState(false);
 
     const {
@@ -52,7 +57,10 @@ const ProjectScreen = (props) => {
         loadingProject
     } = data
 
+const toggleSuccessModal = () =>{
+        setIsSuccessful(!isSuccessful)
 
+}
     const textColor = theme === 'Dark' ? '#eee' : '#333'
 
     const dispatch = useDispatch()
@@ -151,7 +159,8 @@ const ProjectScreen = (props) => {
 
 
     return (
-        <>
+
+     <>
 
             <ModalSheet height={300} zIndex={zIndex} offset={offset} opacity={opacity}>
 
@@ -592,8 +601,11 @@ const ProjectScreen = (props) => {
                 <ToastMessage onHide={() => dispatch(clearMessage())} message={message} type='message'/>
                 }
 
+                {
+                    message && <SuccessModal theme={theme} isSuccessful={isSuccessful} toggle={() => toggleSuccessModal()}/>
+                }
 
-                {error && <ToastMessage onHide={() => dispatch(clearErrors())} message={error} type='error'/>}
+
 
 
 
@@ -607,7 +619,7 @@ const styles = StyleSheet.create({
     container: {
         paddingLeft: 10,
         paddingRight: 10,
-        paddingTop: StatusBar.currentHeight,
+        paddingTop: StatusBar.currentHeight + 20,
         alignItems: 'center',
         justifyContent: 'flex-start',
         flexDirection: 'column',

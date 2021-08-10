@@ -11,6 +11,7 @@ import ModalSheet from "../components/ModalSheet";
 import WithdrawToBank from "../components/WithdrawToBank";
 import WithdrawToSumotrust from "../components/WithdrawToSumotrust";
 import {TapGestureHandler} from "react-native-gesture-handler";
+import {SafeAreaView} from "react-native-safe-area-context";
 
 
 const height = Dimensions.get('window').height
@@ -52,7 +53,9 @@ const LiquidateScreen = ({navigation}) => {
     }, []);
     return (
 
-        <>
+        <SafeAreaView style={{
+            flex:1
+        }}>
             <ModalSheet height={300} zIndex={zIndex} offset={offset} opacity={opacity}>
                 <View style={{
                     height: '100%',
@@ -174,7 +177,7 @@ justifyContent:'space-evenly'
                 </TapGestureHandler>
             </View>
         </Animated.View>
-            </>
+            </SafeAreaView>
     );
 };
 const styles = StyleSheet.create({

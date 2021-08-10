@@ -9,6 +9,7 @@ import {toggleUserGuide} from "../redux/actions/data-action";
 const SuccessModal = ({theme,isSuccessful,toggle}) => {
 
 
+
     const onShare = async () => {
         try {
             const result = await Share.share({
@@ -52,18 +53,18 @@ const SuccessModal = ({theme,isSuccessful,toggle}) => {
                         borderRadius:100,
                         marginVertical:10,
                         alignItems:'center',
+                        flexDirection:'row',
                         justifyContent:'center'
                     }}>
-
-                        <Ionicons name="checkmark-circle" size={64} color="#444" />
+                        <Ionicons name="checkmark" size={64} color="#444" />
                     </View>
 
                     <View style={{
                         marginVertical:10,
                     }}>
                         <Text style={{
-                            fontFamily:'Gordita-Black',
-                            fontSize:20,
+                            fontFamily:'Gordita-bold',
+                            fontSize:18,
                             color: theme === 'Dark' ? '#fff' : '#555'
                         }}>
 Successful

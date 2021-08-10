@@ -15,6 +15,7 @@ import {connect, useDispatch, useSelector} from "react-redux";
 import ToastMessage from "../components/Toast";
 import {Easing, useSharedValue, withSpring, withTiming} from "react-native-reanimated";
 import ModalSheet from "../components/ModalSheet";
+import {SafeAreaView} from "react-native-safe-area-context";
 
 
 let content;
@@ -70,7 +71,7 @@ const SecurityScreen = (props) => {
 
 
     return (
-        <>
+        <SafeAreaView style={{flex:1}}>
             <ModalSheet zIndex={zIndex} offset={offset} opacity={opacity}>
                 <View style={{
                     height: '100%',
@@ -163,7 +164,7 @@ const SecurityScreen = (props) => {
             {error && <ToastMessage onHide={() => dispatch(clearErrors())} message={error} type='error'/>}
 
         </Animated.View>
-            </>
+            </SafeAreaView>
     );
 };
 

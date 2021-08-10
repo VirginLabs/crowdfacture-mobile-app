@@ -9,7 +9,7 @@ import Clipboard from "expo-clipboard";
 import ToastMessage from "../components/Toast";
 import call from 'react-native-phone-call';
 import {useSelector} from "react-redux";
-
+import {SafeAreaView} from "react-native-safe-area-context";
 
 const handlePress =  (url) => {
         // Opening the link with some app, if the URL scheme is "http" the web link should be opened
@@ -47,6 +47,13 @@ const SupportScreen = ({navigation}) => {
 
 
     return (
+        <SafeAreaView style={
+            {
+                flex:1
+            }
+        }>
+
+     
         <Animated.View style={[styles.container, {
             backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree
                 : "#f5f5f5"
@@ -152,6 +159,7 @@ const SupportScreen = ({navigation}) => {
             </View>
 
         </Animated.View>
+        </SafeAreaView>
     );
 };
 

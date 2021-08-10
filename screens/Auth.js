@@ -33,6 +33,8 @@ function cacheImages(images) {
 }
 
 
+
+
 const Auth = (props) => {
     const [loadAssets, setLoadAssets] = useState(false);
     // wherever the useState is located
