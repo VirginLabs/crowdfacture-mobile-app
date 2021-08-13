@@ -1,18 +1,20 @@
 import React, {useEffect, useRef, useState} from 'react';
 
-import {ActivityIndicator, Linking, StatusBar, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, Linking, Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import TextInput from "./TextInput";
 import MyButton from "./MyButton";
 import {Colors, DarkColors} from "../constants/Colors";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import PropTypes from "prop-types";
 import PhoneInput from "react-native-phone-number-input";
-import {clearErrors, clearMessage, loginUser, signUpUser} from "../redux/actions/user-action";
-import {connect, useDispatch, useSelector} from "react-redux";
+import {clearErrors, clearMessage, signUpUser} from "../redux/actions/user-action";
+import { useDispatch, useSelector} from "react-redux";
 
 import ToastMessage from "./Toast";
+import {Picker} from "@react-native-picker/picker";
+import Countries from "../constants/Countries";
+import {Picker as MyPicker} from "react-native-woodpicker";
 
 
 const phoneRegExp = /^[+]?\d*$/
@@ -29,6 +31,7 @@ const LoginSchema = Yup.object().shape({
         .min(2, "Last Name is Too short")
         .max(50, "Last Name is Too long")
         .required("Last Name is Required"),
+    Country: Yup.string().required("Your country is required"),
     phone: Yup.string()
         .matches(phoneRegExp, 'Wrong input')
         .min(2, "Phone number is Too short")
@@ -39,7 +42,7 @@ const LoginSchema = Yup.object().shape({
 });
 
 
-let countryPickerRef = undefined;
+
 
 const handlePress = (url) => {
     // Opening the link with some app, if the URL scheme is "http" the web link should be opened
@@ -60,9 +63,6 @@ const SignUp = (props) => {
     const {error, message, loading} = user
 
 
-    const [value, setValue] = useState("");
-    const [valid, setValid] = useState(false);
-    const [showMessage, setShowMessage] = useState(false);
     const phoneInput = useRef(null);
 
     const {
@@ -70,18 +70,20 @@ const SignUp = (props) => {
         setFieldValue,
         values,
         errors,
-        touched
+        touched,
+        isValid
     } = useFormik({
         validationSchema: LoginSchema,
         initialValues: {
-            firstName: '', lastName: '', phone: '', referral: '', email: '', password: '',
+            firstName: '', lastName: '', phone: '', Country: "", referral: '', email: '', password: '',
         },
         onSubmit: (values) => {
-            const {firstName, lastName, phone, referral, email, password} = values;
+            const {firstName, lastName, phone, referral,Country, email, password} = values;
             const userData = new FormData();
             userData.append("firstName", firstName);
             userData.append("lastName", lastName);
             userData.append("email", email);
+            userData.append("country", Country);
             userData.append("phoneNumber", phone);
             userData.append("referralCode", referral);
             userData.append("password", password);
@@ -225,6 +227,101 @@ const SignUp = (props) => {
             {/*<Text style={styles.errorText} numberOfLines={1}>*/}
             {/*    {errors.phone}*/}
             {/*</Text>*/}
+
+
+
+
+            <View
+                style={{
+                    paddingHorizontal: 32,
+                    marginBottom: 1,
+                    width: "100%",
+                }}
+            >
+                {Platform.OS === "android" ? (
+                    <View
+                        style={{
+                            width: wp("80%"),
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            height: 60,
+                            borderRadius: 15,
+                            borderColor: "#ddd",
+                            borderWidth: 2,
+                            padding: 8,
+                        }}
+                    >
+                        <Picker
+                            label="Country"
+                            onBlur={handleBlur("country")}
+                            style={{
+                                color: "#eee",
+                                width: "100%",
+                                height: 45,
+                                flexDirection: "row",
+                                alignItems: "flex-start",
+                                justifyContent: "flex-start",
+                            }}
+                            mode="dialog"
+                            selectedValue={values.country}
+                            onValueChange={
+                                (itemValue, itemIndex) =>
+                                    setFieldValue("Country", itemValue)
+                                //setCountry(itemValue)
+                            }
+                        >
+                            {Countries.map((country, index) => (
+                                <Picker.Item
+                                    label={country.label}
+                                    value={country.value}
+                                    key={index}
+                                />
+                            ))}
+                        </Picker>
+                    </View>
+                ) : (
+                    <MyPicker
+                        textInputStyle={{
+                            fontFamily: "Gordita-medium",
+                            fontSize: 10,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color:  "#eee",
+                        }}
+                        containerStyle={{
+                            width: wp("85%"),
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            height: 60,
+                            borderRadius: 15,
+                            padding: 8,
+                            marginTop: 10,
+                            borderColor: "#ddd",
+                            borderWidth: 2,
+                            backgroundColor:DarkColors.primaryDark,
+                        }}
+                        item={values.Country}
+                        items={Countries}
+                        onItemChange={(item, index) =>
+                            setFieldValue("Country", item.value)
+                        }
+                        title="Select Country"
+                        placeholder={`Your country: ${values.Country}`}
+                        //isNullable
+                        backdropAnimation={{ opactity: 0 }}
+                        //mode="dropdown"
+                        //isNullable
+                        //disable
+                    />
+                )}
+            </View>
+
+            <Text style={styles.errorText} numberOfLines={1}>
+                {errors.Country}
+            </Text>
+
             <View style={{paddingHorizontal: 32, marginBottom: 1, width: '100%',}}>
                 <TextInput
                     icon='mail'
@@ -318,8 +415,34 @@ const SignUp = (props) => {
                 </Text>
             </View>
 
-            <MyButton action={() => handleSubmit()} title='SIGN UP'
-                      buttonStyle={styles.loginButton} textStyle={styles.buttonText}/>
+            {
+                isValid ?   <MyButton action={() => handleSubmit()} title='SIGN UP'
+                                      buttonStyle={styles.loginButton} textStyle={styles.buttonText}/>
+                    :
+                    <TouchableOpacity
+                        activeOpacity={1}
+                        style={{
+                            backgroundColor: "#ddd",
+                            height: 50,
+                            marginHorizontal: 20,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            marginVertical: 5,
+                            width: 200,
+                            borderRadius: 10,
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontSize: 12,
+                                fontFamily: "Gordita-bold",
+                            }}
+                        >
+                            SIGN UP
+                        </Text>
+                    </TouchableOpacity>
+            }
+
 
 
             {

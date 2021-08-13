@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React from 'react';
 
 import {Animated, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
@@ -6,7 +6,6 @@ import BackButton from "../components/BackBtn";
 import {useSelector} from "react-redux";
 
 const ExchangeScreen = ({navigation}) => {
-    const user = useSelector(state => state.user)
     const data = useSelector(state => state.data)
     const {theme} = data
     return (

@@ -3,8 +3,7 @@ import {
     View,
     StyleSheet,
     FlatList,
-    Text,
-    StatusBar, Dimensions, Image,
+    Text, Dimensions, Image,
 } from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import { FontAwesome5} from "@expo/vector-icons";
@@ -108,7 +107,7 @@ const AddCashScreen = (props) => {
                 member: {EmailAddress,
                      Phone,
                     LastName,
-                    SumoTrustID
+
                 },
 
             }

@@ -22,7 +22,7 @@ import {
     SET_REFERRED_USER,
     SET_INVESTMENTS, SET_DEPOSITS, SET_RETURNS, TOGGLE_THEME,
     TOGGLE_KNOW_MORE,
-    TOGGLE_USER_GUIDE
+    TOGGLE_USER_GUIDE, SET_MESSAGE
 } from "../types";
 
 import React from "react";
@@ -202,6 +202,59 @@ export const getAllProject = () => (dispatch) => {
     getAllProjectPromise.catch((err) => console.log(err))
 }
 
+
+export const addListing = (listing) => (dispatch) =>{
+    dispatch({
+        type: LOADING
+    })
+
+/*  var formdata = new FormData();
+    formdata.append("fullName", "Nicholas Idoko");
+    formdata.append("company", "The Nickzom Empire");
+    formdata.append("country", "Nigeria");
+    formdata.append("email", "cidokonicholas@gmail.com");
+    formdata.append("date", "2021-07-24");
+    formdata.append("RCNumbers", "BN45321");
+    formdata.append("pitch", "A calculator");
+    formdata.append("officeAddress", "Abeokuta");
+    formdata.append("industry", "Software");
+    formdata.append("NIN", "1203900293893");
+    formdata.append("website", "https://nickzom.org");
+    formdata.append("target", "1000000");
+    formdata.append("description", "A calculator encyclopedia");
+    formdata.append("socialMedia", "https://facebook.com/cidokonicholas");
+    formdata.append("phone", "+2347039247359");
+    formdata.append("documentation", fileInput.files[0], "idoko-logo-transparent-icon.png");
+    formdata.append("identification", fileInput.files[0], "idoko-logo-transparent-icon.png");*/
+
+    const requestOptions = {
+        method: 'POST',
+        body: listing,
+    };
+
+
+    const listingPromise = Promise.race([
+    fetch(`https://crowdfacture.net/api/v0/php/listing.php?apiKey=${API_KEY}`, requestOptions)
+        .then(response => response.json())
+        ])
+
+    listingPromise.then(result =>{
+        if(result.status === '200'){
+            dispatch({
+                type: SET_MESSAGE,
+                payload: "Listing added successfully, please wait for approval"
+            })
+        }else{
+            dispatch({
+                type: SET_ERROR,
+                payload: result.message
+            })
+        }
+    })
+
+
+    listingPromise.catch(error => console.log('error', error))
+}
 
 export const verifyUserAction = (details) => (dispatch) => {
     dispatch({

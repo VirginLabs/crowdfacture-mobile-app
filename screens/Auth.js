@@ -11,38 +11,27 @@ import {
     TouchableOpacity, ActivityIndicator
 } from "react-native";
 import {RFPercentage} from "react-native-responsive-fontsize";
-import {Asset} from 'expo-asset';
+
 import {Colors, DayColors} from "../constants/Colors";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from '@expo/vector-icons';
 
 import MyButton from "../components/MyButton";
-import PropTypes from "prop-types";
 import {getUser} from "../redux/actions/user-action";
-import {connect} from "react-redux";
-
-function cacheImages(images) {
-    return images.map(image => {
-        if (typeof image === 'string') {
-            return Image.prefetch(image);
-        } else {
-            return Asset.fromModule(image).downloadAsync();
-        }
-    });
-}
+import { useDispatch, useSelector} from "react-redux";
 
 
 
 
 const Auth = (props) => {
-    const [loadAssets, setLoadAssets] = useState(false);
+
     // wherever the useState is located
     const [isBiometricSupported, setIsBiometricSupported] = useState(false);
     // wherever the useState is located
-    const {getUser, clearMessage, clearError} = props
-    const {loading} = props.user
-
+    const user = useSelector(state => state.user)
+    const {loading} = user
+const dispatch = useDispatch()
 
     const [isBioMetric, setIsBioMetric] = useState(true);
 
@@ -91,7 +80,7 @@ const Auth = (props) => {
             if(auth.success){
 
                 AsyncStorage.getItem('crowdFactureUser').then(value =>{
-                    getUser(value)
+                    dispatch(getUser(value))
                     //Alert.alert('Authenticated', `Welcome back ! ${value}`)
                 })
             }else{
@@ -279,23 +268,10 @@ const styles = StyleSheet.create({
 
 })
 
-Auth.propTypes = {
-    data: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
-    getUser: PropTypes.func.isRequired,
-}
-const mapActionToPops = {
-    getUser,
-
-}
 
 
-const mapStateToProps = (state) => ({
-    data: state.data,
-    user: state.user,
-})
 
 
-export default connect(mapStateToProps, mapActionToPops) (Auth);
+export default Auth;
 
 

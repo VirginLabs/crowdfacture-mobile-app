@@ -1,11 +1,10 @@
-import React, {useContext} from 'react';
+import React from 'react';
 
 import {ActivityIndicator, Animated, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {Colors, DarkColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import {useSelector} from "react-redux";
 import ProjectCard from "../components/ProjectCard";
-import {TapGestureHandler} from "react-native-gesture-handler";
 
 const FavouriteScreen = ({navigation}) => {
     const user = useSelector(state => state.user)
@@ -14,8 +13,8 @@ const FavouriteScreen = ({navigation}) => {
 
 
 
-    const {loading, message, error,
-        userData: {member: {ID, Phone},
+    const {loading,
+        userData: {member: {ID},
             savedProjects} } = user
 
     return (

@@ -1,21 +1,20 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
-import {ActivityIndicator, Animated, Dimensions, Linking, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, Linking, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import TextInput from "./TextInput";
 import MyButton from "./MyButton";
-import {Colors, DayColors} from "../constants/Colors";
+import {Colors} from "../constants/Colors";
 import {heightPercentageToDP as hp} from "react-native-responsive-screen";
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import PropTypes from "prop-types";
 import {clearErrors, clearMessage, loginUser} from "../redux/actions/user-action";
-import {connect, useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector} from "react-redux";
 
 import ToastMessage from "../components/Toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
-const handlePress =  (url) => {
+const handlePress = (url) => {
     // Opening the link with some app, if the URL scheme is "http" the web link should be opened
     // by some browser in the mobile
     Linking.openURL(url);
@@ -23,28 +22,24 @@ const handlePress =  (url) => {
 };
 
 
-const phoneRegExp = /^[+]?\d*$/
 const LoginSchema = Yup.object().shape({
     password: Yup.string()
         .min(2, "Password is Too short")
         .max(50, "Password is Too long")
         .required("Password is Required"),
     phone: Yup.string()
-        .matches(phoneRegExp, 'Wrong input')
+      /*  .matches(phoneRegExp, 'Wrong input')*/
         .min(2, "Phone number is Too short")
         .required("Phone number is required"),
 });
-
-
-
 
 
 const SignIn = (props) => {
     const user = useSelector(state => state.user)
 
     const dispatch = useDispatch()
-    const {navigation,toggleForm} = props
-    const [phone, setPhone] = useState('');
+    const {navigation, toggleForm} = props
+
 
     const {error, message, loading} = user
 
@@ -56,18 +51,19 @@ const SignIn = (props) => {
         values,
         errors,
         touched,
-        setFieldValue
+        setFieldValue,
+        isValid
     } = useFormik({
         validationSchema: LoginSchema,
         initialValues: {
-            phone:'', password: '',
+            phone: '', password: '',
         },
         onSubmit: (values) => {
             const {phone, password} = values;
             const user = new FormData();
             user.append("phoneNumber", phone);
             user.append("password", password);
-            dispatch(loginUser(user,navigation))
+            dispatch(loginUser(user, navigation))
         }
     });
 
@@ -98,11 +94,11 @@ const SignIn = (props) => {
     }, [message])
 
     useEffect(() => {
-        AsyncStorage.getItem('crowdFactureUser').then(value =>{
-            setFieldValue('phone',value)
+        AsyncStorage.getItem('crowdFactureUser').then(value => {
+            setFieldValue('phone', value)
             //Alert.alert('Authenticated', `Welcome back ! ${value}`)
         })
-    },[])
+    }, [])
 
     return (
 
@@ -119,11 +115,10 @@ const SignIn = (props) => {
 
             <View style={{paddingHorizontal: 32, marginBottom: 1, width: '100%',}}>
                 <TextInput
-                    icon='phone'
+                    icon='user'
                     value={values.phone}
-                    placeholder='Enter your phone number'
+                    placeholder='Enter your email or phone'
                     autoCapitalize='none'
-                    keyboardType='numeric'
                     keyboardAppearance='dark'
                     returnKeyType='next'
                     returnKeyLabel='next'
@@ -161,22 +156,46 @@ const SignIn = (props) => {
 
             <View
                 style={{
-                width: '70%',
-                marginBottom:10,
-                alignItems:'center',
-            }}>
+                    width: '70%',
+                    marginBottom: 10,
+                    alignItems: 'center',
+                }}>
 
                 <Text onPress={() => handlePress('https://www.crowdfacture.com/resetpassword')} style={{
-                    color:'#ccc',
-                    fontSize:12,
-                    fontFamily:'Gordita-bold'
+                    color: '#ccc',
+                    fontSize: 12,
+                    fontFamily: 'Gordita-bold'
                 }}>
                     Forgot password?
                 </Text>
             </View>
 
-            <MyButton action={() => handleSubmit()} title='LOGIN'
-                      buttonStyle={styles.loginButton} textStyle={styles.buttonText}/>
+            {
+                isValid ?  <MyButton action={() => handleSubmit()} title='LOGIN'
+                                     buttonStyle={styles.loginButton} textStyle={styles.buttonText}/>  :  <TouchableOpacity
+                    activeOpacity={1}
+                    style={{
+                        backgroundColor: "#ddd",
+                        height: 50,
+                        marginHorizontal: 20,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginVertical: 5,
+                        width: 200,
+                        borderRadius: 10,
+                    }}
+                >
+                    <Text
+                        style={{
+                            fontSize: 12,
+                            fontFamily: "Gordita-bold",
+                        }}
+                    >
+                        LOGIN
+                    </Text>
+                </TouchableOpacity>
+            }
+
 
             <View style={{
                 padding: 8, width: '75%', alignItems: 'center'
@@ -186,24 +205,22 @@ const SignIn = (props) => {
                     loading && <ActivityIndicator size="large" color={Colors.Primary}/>
                 }
 
-                <Text onPress={toggleForm} style={{color: '#fff',
-marginVertical:8,
-                    fontSize:12,
-                    fontFamily: 'Gordita-medium'}}>
+                <Text onPress={toggleForm} style={{
+                    color: '#fff',
+                    marginVertical: 8,
+                    fontSize: 12,
+                    fontFamily: 'Gordita-medium'
+                }}>
                     Create new account
                 </Text>
             </View>
 
 
-                {message &&
-                <ToastMessage message={message} onHide={()=> dispatch(clearMessage())} type='message'/>
-                }
+            {message &&
+            <ToastMessage message={message} onHide={() => dispatch(clearMessage())} type='message'/>
+            }
 
-                {error &&  <ToastMessage message={error} onHide={() => dispatch(clearErrors())} type='error'/>}
-
-
-
-
+            {error && <ToastMessage message={error} onHide={() => dispatch(clearErrors())} type='error'/>}
 
 
             {/* comment  */}
@@ -232,8 +249,6 @@ const styles = StyleSheet.create({
     errorText: {fontSize: 10, alignItems: "flex-start", width: '75%', color: '#FF5A5F', padding: 2}
 
 })
-
-
 
 
 export default SignIn;

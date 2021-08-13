@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, { useState} from 'react';
 import { widthPercentageToDP as wp} from "react-native-responsive-screen";
 import {Animated, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {Colors, DarkColors, DayColors} from "../constants/Colors";
@@ -32,7 +32,7 @@ const CalculatorScreen = ({navigation}) => {
     const pricePerUnit = 50000
     const availableUnit = 10000
 
-    const [projectTarget, setProjectTarget] = useState(500000000);
+    //const [projectTarget, setProjectTarget] = useState(500000000);
     const [unitsPurchased, setUnitsPurchased] = useState(1);
     const [target, setTarget] = useState(500000000);
     const [estimatedProfit, setEstimatedProfit] = useState(null);
@@ -43,7 +43,7 @@ const CalculatorScreen = ({navigation}) => {
 
     function Calculator(units, quarterly_profit, target_amount, amount_per_unit) {
 
-        let roi = 0;
+        let roi;
         if (parseFloat(quarterly_profit) < (0.3 * parseFloat(target_amount))) {
             roi = -1;
         } else if (parseFloat(quarterly_profit) > (0.6 * parseFloat(target_amount))) {

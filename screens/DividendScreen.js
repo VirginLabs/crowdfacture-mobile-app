@@ -9,7 +9,6 @@ import {SafeAreaView} from "react-native-safe-area-context";
 
 
 const DividendScreen = ({navigation}) => {
-    const user = useSelector(state => state.user)
     const data = useSelector(state => state.data)
     const {theme} = data;
     return (

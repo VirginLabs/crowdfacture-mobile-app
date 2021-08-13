@@ -51,12 +51,12 @@ const AddBankForm = () => {
     loading,
     userData: {
       member: { ID, Phone },
-      bankDetails,
+
     },
   } = user;
 
   const { theme } = data;
-  const [bankName, setBankName] = useState("");
+ // const [bankName, setBankName] = useState("");
   const {
     handleChange,
     handleSubmit,
@@ -188,7 +188,7 @@ const AddBankForm = () => {
             marginTop: 10,
             borderColor: "#ddd",
             borderWidth: 2,
-            backgroundColor: theme == "Dark" ? DarkColors.primaryDark : "#eee",
+            backgroundColor: theme === "Dark" ? DarkColors.primaryDark : "#eee",
           }}
           item={values.bankName}
           items={AllBanks}
@@ -196,7 +196,7 @@ const AddBankForm = () => {
           title="Select Bank name"
           placeholder={`Bank name: ${values.bankName}`}
           //isNullable
-          backdropAnimation={{ opactity: 0 }}
+          backdropAnimation={{ opacity: 0 }}
           //mode="dropdown"
           //isNullable
           //disable
@@ -246,6 +246,7 @@ const AddBankForm = () => {
       {loading && <ActivityIndicator size="large" color={Colors.Primary} />}
       {isValid ? (
         <MyButton
+            action={handleSubmit}
           title="SUBMIT"
           buttonStyle={styles.submitBtn}
           textStyle={styles.buttonText}

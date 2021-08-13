@@ -1,14 +1,12 @@
-import React, {useCallback, useContext, useState} from 'react';
+import React, {useCallback} from 'react';
 import {FontAwesome} from "@expo/vector-icons";
 import {
     Dimensions,
     FlatList,
-    StatusBar,
     StyleSheet,
     Text,
     View
 } from 'react-native';
-import {Colors, DarkColors, DayColors} from "../constants/Colors";
 import BackButton from "../components/BackBtn";
 import {widthPercentageToDP as wp} from "react-native-responsive-screen";
 
@@ -21,6 +19,7 @@ import Animated, {Easing, useSharedValue, withSpring, withTiming} from "react-na
 import {TapGestureHandler} from "react-native-gesture-handler";
 import AddBankForm from "../components/AddBankForm";
 import {SafeAreaView} from "react-native-safe-area-context";
+import {Colors, DarkColors, DayColors} from "../constants/Colors";
 
 
 const AccountList = ({bankName, bankAccount, theme}) => (
@@ -61,14 +60,14 @@ const AddBank = (props) => {
     const user = useSelector(state => state.user)
     const data = useSelector(state => state.data)
 
-    const {navigation,addBank,clearErrors,
+    const {navigation,clearErrors,
         clearMessage } = props
 
     const sheetHeight = useSharedValue(height)
     const opacity = useSharedValue(0)
     const zIndex = useSharedValue(0)
     const offset = useSharedValue(600);
-    const {loading,
+    const {
         error, message, userData: {
              bankDetails,
         }

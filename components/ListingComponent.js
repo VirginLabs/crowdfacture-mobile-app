@@ -1,6 +1,7 @@
 import React, { useReducer, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import {
+  ActivityIndicator,
   Platform,
   ScrollView,
   StyleSheet,
@@ -27,6 +28,10 @@ import Industry from "../constants/Categories";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Picker as MyPicker } from "react-native-woodpicker";
+import {useDispatch, useSelector} from "react-redux";
+import {addListing} from "../redux/actions/data-action";
+import ToastMessage from "./Toast";
+import {clearErrors, clearMessage} from "../redux/actions/user-action";
 
 function Wrap({ children }) {
   return (
@@ -89,6 +94,12 @@ const Listing = ({ theme, action }) => {
   const [cacDoc, setCACDoc] = useState(null);
   const [userIDDoc, setUserIdDoc] = useState(null);
 
+  const dispatch = useDispatch()
+  const data = useSelector(state => state.data)
+  const user = useSelector(state => state.user)
+  const {loading} = data
+  const {message, error} = user
+
   //const [date, setDate] = useState(new Date())
   const [country, setCountry] = useState("");
 
@@ -122,6 +133,7 @@ const Listing = ({ theme, action }) => {
     handleBlur,
     values,
     errors,
+      isValid,
     setFieldValue,
     touched,
   } = useFormik({
@@ -131,7 +143,7 @@ const Listing = ({ theme, action }) => {
       Phone: "",
       Company: "",
       email: "",
-      Pitch: null,
+      Pitch: pitchDoc,
       Link: "",
       Country: "",
       Date: date,
@@ -142,13 +154,41 @@ const Listing = ({ theme, action }) => {
       TargetHard: "",
       TargetSoft: "",
       Website: "",
-      SocialMedia: "",
+      SocialMediaIG: "",
+      SocialMediaFB: "",
+      SocialMediaTwitter: "",
       NIN: "",
-      Identification: null,
+      Identification: userIDDoc,
+      cacDoc: cacDoc
     },
     onSubmit: (values) => {
-      const { BVN } = values;
-      const Data = new FormData();
+      const { fullName,Phone,Company,email,Pitch,Link, Country, Date, RCNumbers,OfficeAddress,Industry,
+        Description, TargetHard, TargetSoft,Website,SocialMediaIG,cacDoc, SocialMediaFB,SocialMediaTwitter, NIN, Identification } = values;
+      const ListingData = new FormData();
+
+      ListingData.append("fullName", fullName);
+      ListingData.append("company", Company);
+      ListingData.append("country", Country);
+      ListingData.append("email", email);
+      ListingData.append("date", Date);
+      ListingData.append("RCNumbers", RCNumbers);
+      ListingData.append("pitch", Pitch);
+      ListingData.append("officeAddress", OfficeAddress);
+      ListingData.append("industry", Industry);
+      ListingData.append("NIN", NIN);
+      ListingData.append("website", Website);
+      ListingData.append("ProjectVideo", Link);
+      ListingData.append("targetSoft", TargetSoft);
+      ListingData.append("targetHard", TargetHard);
+      ListingData.append("description", Description);
+      ListingData.append("socialMediaIG", SocialMediaIG);
+      ListingData.append("socialMediaFB", SocialMediaFB);
+      ListingData.append("socialMediaTwitter", SocialMediaTwitter);
+      ListingData.append("phone", Phone);
+      ListingData.append("documentation", fileInput.files[0], cacDoc);
+      ListingData.append("identification", fileInput.files[0], Identification)
+
+      dispatch(addListing(ListingData))
     },
   });
 
@@ -197,7 +237,7 @@ const Listing = ({ theme, action }) => {
     if (doc.type === "success") {
       await setUserIdDoc(doc.uri);
 
-      console.log(userIDDoc);
+      //console.log(userIDDoc);
 
       //react does not support file url so we write the code below
     }
@@ -875,13 +915,13 @@ const Listing = ({ theme, action }) => {
                       returnKeyLabel="next"
                       onChangeText={handleChange("SocialMedia")}
                       onBlur={handleBlur("SocialMedia")}
-                      error={errors.SocialMedia}
-                      touched={touched.SocialMedia}
+                      error={errors.SocialMediaIG}
+                      touched={touched.SocialMediaIG}
                     />
                   </View>
 
                   <Text style={styles.errorText} numberOfLines={1}>
-                    {errors.SocialMedia}
+                    {errors.SocialMediaIG}
                   </Text>
 
                   <View style={{ paddingHorizontal: 32, width: "100%" }}>
@@ -1026,27 +1066,59 @@ const Listing = ({ theme, action }) => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={handleSubmit}
-            style={{
-              width: 120,
-              height: 45,
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 10,
-              backgroundColor: Colors.Primary,
-            }}
-          >
-            <Text
-              style={{
-                fontFamily: "Gordita-bold",
-              }}
-            >
-              Submit
-            </Text>
-          </TouchableOpacity>
+
+          {
+            isValid ?
+                <TouchableOpacity
+                    onPress={handleSubmit}
+                    style={{
+                      width: 120,
+                      height: 45,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 10,
+                      backgroundColor: Colors.Primary,
+                    }}
+                >
+                  <Text
+                      style={{
+                        fontFamily: "Gordita-bold",
+                      }}
+                  >
+                    Submit
+                  </Text>
+                </TouchableOpacity>
+                :
+                <TouchableOpacity
+                    style={{
+                      width: 120,
+                      height: 45,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 10,
+                      backgroundColor: "#ddd",
+                    }}
+                >
+                  <Text
+                      style={{
+                        fontFamily: "Gordita-bold",
+                      }}
+                  >
+                    Submit
+                  </Text>
+                </TouchableOpacity>
+          }
         </View>
+        {loading && <ActivityIndicator size="large" color={Colors.Primary} />}
+
+        {message &&
+        <ToastMessage message={message} onHide={() => dispatch(clearMessage())} type='message'/>
+        }
+
+        {error && <ToastMessage message={error} onHide={() => dispatch(clearErrors())} type='error'/>}
+
       </ScrollView>
+
     </SafeAreaView>
   );
 };
