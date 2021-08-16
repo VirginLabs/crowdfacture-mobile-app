@@ -138,6 +138,8 @@ const data = useSelector(state => state.data)
 
     return (
         <AnimatedScrollView refreshing={refreshing} onRefresh={onRefresh} routeMessage='Your profile' navigation={navigation} routeName='Profile'>
+
+
             <Animated.View style={styles.container}>
 
 

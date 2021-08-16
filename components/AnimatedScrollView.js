@@ -5,15 +5,17 @@ import {
     ScrollView,
     RefreshControl,
     TouchableOpacity,
-     AppState
+    AppState, PanResponder
 } from 'react-native';
 import {MaterialIcons, FontAwesome} from '@expo/vector-icons';
 import MyText from "./helpers/MyText";
 import {Colors, DarkColors} from "../constants/Colors";
 import {heightPercentageToDP as hp, widthPercentageToDP as wp} from "react-native-responsive-screen";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 
 import {SafeAreaView} from "react-native-safe-area-context";
+import {logoutUser} from "../redux/actions/user-action";
+
 
 
 
@@ -23,34 +25,63 @@ const AnimatedScrollView = ({children,refreshing, onRefresh, routeName, routeMes
     const data = useSelector(state => state.data)
     const {theme} = data;
     const appState = useRef(AppState.currentState)
+const dispatch = useDispatch()
 
     const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
-    useEffect(() =>{
+  /*  useEffect(() =>{
         AppState.addEventListener("change", _handleAppStateChange)
         return () =>{
             AppState.removeEventListener("change", _handleAppStateChange)
         }
 
-    },[])
+    },[])*/
 
+/*
 
     const _handleAppStateChange = (nextAppState) =>{
 if(appState.current.match(/inactive|background/) &&
     nextAppState === "active"){
-    console.log("APP IS NOW ON THE FOREGROUND")
+    //console.log("APP IS NOW ON THE FOREGROUND")
 }
 
 appState.current = nextAppState
         setAppStateVisible(appState.current)
-        console.log("Appstate:", appState.current)
+        //console.log("Appstate:", appState.current)
+    }
+*/
+    const timerId = useRef(false)
+    const [timeForInactivityInSecond, setTimeForInactivityInSecond] = useState(
+        300000
+    )
+
+    useEffect(() => {
+        resetInactivityTimeout()
+    }, [])
+
+    const panResponder = React.useRef(
+        PanResponder.create({
+            onStartShouldSetPanResponderCapture: () => {
+                console.log('user starts touch');
+                resetInactivityTimeout()
+            },
+        })
+    ).current
+
+    const resetInactivityTimeout = () => {
+        clearTimeout(timerId.current)
+        timerId.current = setTimeout(() => {
+            // action after user has been detected idle
+            dispatch(logoutUser())
+            //console.log("LOGOUT USER")
+        }, timeForInactivityInSecond )
+
+
     }
 
 
-
-
     return (
-        <SafeAreaView style={[styles.container,  {backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
+        <SafeAreaView {...panResponder.panHandlers} style={[styles.container,  {backgroundColor: theme === 'Dark' ? DarkColors.primaryDarkThree :
                 "#f5f5f5"},
         ]
         }>
