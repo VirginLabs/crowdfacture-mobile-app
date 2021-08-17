@@ -3,7 +3,7 @@
     "name": "crowdfacture",
     "slug": "crowdfacture",
     "version": "1.0.0",
-
+    "owner": "sumobank",
     "orientation": "portrait",
     "icon": "./assets/logo/CrowdfactureIcon.png",
     "privacy": "public",

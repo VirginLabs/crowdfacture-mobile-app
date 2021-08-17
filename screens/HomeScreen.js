@@ -301,7 +301,7 @@ const HomeScreen = (props) => {
 
                             <Text
                                 style={{
-                                    fontSize: 9,
+                                    fontSize: 8,
                                     fontFamily: "Gordita-medium",
                                     color: DarkColors.primaryDarkThree,
                                 }}
@@ -332,7 +332,7 @@ const HomeScreen = (props) => {
 
                             <Text
                                 style={{
-                                    fontSize: 9,
+                                    fontSize: 8,
                                     fontFamily: "Gordita-medium",
                                     color:
                                         theme === "Dark"
@@ -341,7 +341,7 @@ const HomeScreen = (props) => {
                                 }}
                                 numberOfLines={1}
                             >
-                                Buy units now
+                               See investment opportunities
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -633,7 +633,7 @@ const styles = StyleSheet.create({
         height: 55,
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "space-evenly",
         borderRadius: 15,
     },
     investBtn: {
@@ -642,8 +642,8 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
         borderWidth: 1,
+        justifyContent: "space-evenly",
         borderStyle: "dashed",
         borderColor: Colors.Primary,
     },

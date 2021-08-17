@@ -52,7 +52,7 @@ appState.current = nextAppState
 */
     const timerId = useRef(false)
     const [timeForInactivityInSecond, setTimeForInactivityInSecond] = useState(
-        300000
+        302000
     )
 
     useEffect(() => {

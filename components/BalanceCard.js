@@ -1,9 +1,16 @@
 import React from 'react';
 import {ImageBackground, StyleSheet, Text, View} from 'react-native';
 import {DarkColors, DayColors} from "../constants/Colors";
-import { widthPercentageToDP as wp} from "react-native-responsive-screen";
+import {widthPercentageToDP as wp} from "react-native-responsive-screen";
+import NumberFormat from "react-number-format";
+
 
 const BalanceCard = ({theme, balance, investment}) => {
+
+   const getFormattedNumber = (number) => {
+        const formattedNumber = Number.parseInt(number).toLocaleString('en-US');
+        return formattedNumber;
+    }
     return (
         <View style={[theme === 'Dark' ?
             styles.balanceCardDark : styles.balanceCardWhite, styles.balanceCard]}>
@@ -22,18 +29,45 @@ const BalanceCard = ({theme, balance, investment}) => {
 
                 <View style={styles.middleLayer}>
                     <Text style={styles.balanceText}>
-                        ₦ {balance === null ? '0' : balance}
+                        {balance === null && '₦0'}
+
+
                     </Text>
+
+                    {
+                        balance !== null
+                        &&
+                        <Text style={styles.balanceText}>
+                            ₦{
+                            getFormattedNumber(balance)
+                        }
+
+                        </Text>
+                    }
                 </View>
 
                 <View style={styles.bottomLayer}>
                     <View style={styles.bottomTitle}>
-                        <Text style={styles.header}>
-                            ROE
-                        </Text>
-                        <Text style={styles.header}>
-                            INVESTED
-                        </Text>
+                        <View style={styles.header}>
+                            <Text style={{
+                                fontSize: 10,
+                                fontFamily: 'Gordita-bold',
+                                color: theme === 'Dark' ? '#eee' : '#111'
+                            }}>
+                                ROE
+                            </Text>
+                        </View>
+
+                        <View style={styles.headerInvest}>
+                            <Text style={{
+                                fontSize: 10,
+                                fontFamily: 'Gordita-bold',
+                                color: theme === 'Dark' ? '#eee' : '#111'
+                            }}>
+                                INVESTED
+                            </Text>
+                        </View>
+
 
                     </View>
                     <View style={styles.bottomNumbers}>
@@ -55,7 +89,7 @@ const BalanceCard = ({theme, balance, investment}) => {
 
 const styles = StyleSheet.create({
     balanceCard: {
-    width:wp('90%'),
+        width: wp('90%'),
         borderRadius: 25,
         height: 200,
 
@@ -66,9 +100,9 @@ const styles = StyleSheet.create({
     },
     balanceCardDark: {
         backgroundColor: DarkColors.primaryDarkThree,
-        borderWidth:1,
+        borderWidth: 1,
         borderColor: DayColors.cream,
-        borderStyle:'dashed'
+        borderStyle: 'dashed'
     },
     topLayer: {
         width: '90%',
@@ -90,7 +124,8 @@ const styles = StyleSheet.create({
     balanceText: {
         color: '#fff',
         fontFamily: 'Gordita-Black',
-        fontSize: 22
+        fontSize: 22,
+
     },
     bottomLayer: {
         width: '90%',
@@ -109,10 +144,18 @@ const styles = StyleSheet.create({
     },
     header: {
         width: '35%',
+        backgroundColor: DayColors.green,
+        height: 25,
+        fontSize: 12,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center'
+    },
+    headerInvest: {
+        width: '35%',
         backgroundColor: DayColors.dimGreen,
-        color: "#eee",
-        fontFamily: 'Gordita-bold',
-        padding: 2,
+        height: 25,
         fontSize: 12,
         borderRadius: 10,
         alignItems: 'center',
