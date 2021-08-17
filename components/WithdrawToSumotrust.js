@@ -47,6 +47,7 @@ const WithdrawToSumotrust = () => {
             const details = new FormData()
             details.append('amount',Amount)
             details.append('userId',ID)
+            details.append('type','referral')
             details.append('sumoTrustId',SumoTrustID)
             dispatch(withdrawToSumotrust(details))
         }

@@ -47,6 +47,7 @@ const dispatch = useDispatch()
             const {Amount} = values;
             const details = new FormData()
             details.append('amount',Amount)
+            details.append('type','referral')
             details.append('userId',ID)
 dispatch(withdrawToBank(details))
         }
