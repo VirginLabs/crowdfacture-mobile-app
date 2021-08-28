@@ -9,6 +9,8 @@ import TextInput from "../TextInput";
 
 
 import {PayWithFlutterwave} from 'flutterwave-react-native';
+import {useDispatch} from "react-redux";
+import {flutterWavePay} from "../../redux/actions/user-action";
 
 
 
@@ -24,6 +26,11 @@ const schema = Yup.object().shape({
 
 const FlutterWave = ({theme, userEmail,phoneNumber}) => {
 
+
+    const date_stamp = new Date();
+    const txref=  "R"+date_stamp.getTime()+"X"+Math.floor(Math.random() * 1000000)+"";
+
+const dispatch = useDispatch()
     const {
         handleChange, handleSubmit, handleBlur,
         values,
@@ -36,10 +43,28 @@ const FlutterWave = ({theme, userEmail,phoneNumber}) => {
         onSubmit: (values) => {
             const {Amount} = values;
 
+
+
         }
     });
 
-    const handleOnRedirect = () =>{
+    const handleOnRedirect = (params) =>{
+        const {status, tx_ref, transaction_id} = params
+if(status === "successful"){
+    const formData = new FormData()
+    formData.append("reference", txref)
+
+    dispatch(flutterWavePay(formData))
+}
+if(status === "cancelled"){
+    const formData = new FormData()
+    formData.append("reference", txref)
+console.log(txref)
+    console.log(status)
+}
+console.log("payment canceled")
+
+console.log(params)
 
     }
 
@@ -98,11 +123,10 @@ const FlutterWave = ({theme, userEmail,phoneNumber}) => {
 
 
             <PayWithFlutterwave
-
-            onRedirect={handleOnRedirect}
+            onRedirect={(params)=>handleOnRedirect(params)}
             options={{
                 authorization:'FLWPUBK-9abc4f038a6908015c127b8b99cb4096-X',
-                tx_ref: 'txrefytru',
+                tx_ref:txref,
                 customer: {
                    email: userEmail,
                     phonenumber:phoneNumber,

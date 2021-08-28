@@ -783,6 +783,40 @@ export const forgotPassword = (userData) => (dispatch) => {
         .catch((error) => console.log("error", error));
 };
 
+export const flutterWavePay = (reference) => (dispatch) => {
+    dispatch({
+        type: LOADING_DATA,
+    });
+
+    const options = {
+        body: reference,
+        method: "POST",
+    };
+
+    const payPromise = Promise.race([
+        fetch(
+            `https://crowdfacture.net/api/v0/php/settle-payment.php'?apiKey=${API_KEY}`,
+            options
+        ).then((response) => response.json()),
+    ]);
+
+   payPromise
+        .then((result) => {
+            if (result.status === "200") {
+                dispatch({
+                    type: SET_MESSAGE,
+                    payload: "Payment Successful",
+                });
+            } else {
+                dispatch({
+                    type: SET_ERROR,
+                    payload: result.message,
+                });
+            }
+        })
+        .catch((error) => console.log("error", error));
+};
+
 //user logs out
 export const logoutUser = (navigation) => async (dispatch) => {
     dispatch({type: SET_UNAUTHENTICATED});

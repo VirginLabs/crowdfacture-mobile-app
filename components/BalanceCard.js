@@ -28,12 +28,12 @@ const BalanceCard = ({theme, balance, investment}) => {
                 </View>
 
                 <View style={styles.middleLayer}>
-                    <Text style={styles.balanceText}>
-                        {balance === null && '₦0'}
+                    {balance === null &&<Text style={styles.balanceText}>
+                         ₦0
 
 
                     </Text>
-
+                    }
                     {
                         balance !== null
                         &&
@@ -51,7 +51,7 @@ const BalanceCard = ({theme, balance, investment}) => {
                         <View style={styles.header}>
                             <Text style={{
                                 fontSize: 10,
-                                fontFamily: 'Gordita-bold',
+                                fontFamily: 'Gordita-Black',
                                 color: theme === 'Dark' ? '#eee' : '#111'
                             }}>
                                 ROE
@@ -61,7 +61,7 @@ const BalanceCard = ({theme, balance, investment}) => {
                         <View style={styles.headerInvest}>
                             <Text style={{
                                 fontSize: 10,
-                                fontFamily: 'Gordita-bold',
+                                fontFamily: 'Gordita-Black',
                                 color: theme === 'Dark' ? '#eee' : '#111'
                             }}>
                                 INVESTED
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
         height: '40%',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'center'
     },
     bottomTitle: {
         width: '100%',

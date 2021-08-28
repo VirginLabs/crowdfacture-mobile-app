@@ -27,7 +27,7 @@ import {TapGestureHandler} from "react-native-gesture-handler";
 import ToastMessage from "../components/Toast";
 import SuccessModal from "../components/SuccessModal";
 
-import {SafeAreaView} from "react-native-safe-area-context";
+import * as Progress from 'react-native-progress';
 
 
 
@@ -322,6 +322,18 @@ const toggleSuccessModal = () =>{
                                 }}>
                                     Target: ₦{project.Target}
                                 </Text>
+                            </View>
+                            <View style={styles.projectTitle}>
+                                <Text style={{
+                                    marginBottom:3,
+                                    fontSize:10,
+                                    fontFamily:"Gordita-bold",
+                                color: theme === 'Dark' ? '#ccc' : "#333"
+                                }
+                                }>
+                                    5% Complete
+                                </Text>
+                                <Progress.Bar color={Colors.Primary} progress={0.1} width={wp(90)} />
                             </View>
 
                             <View style={{

@@ -2,7 +2,7 @@
   "expo": {
     "name": "crowdfacture",
     "slug": "crowdfacture",
-    "version": "1.0.0",
+    "version": "1.2.3",
     "owner": "sumobank",
     "orientation": "portrait",
     "icon": "./assets/logo/CrowdfactureIcon.png",
@@ -24,7 +24,7 @@
     ],
     "ios": {
       "bundleIdentifier": "com.crowdfacture.crowdfacture-mobile",
-      "buildNumber": "1.0.0",
+      "buildNumber": "1.2.3",
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to let user put a photo in his profile page.",
@@ -32,7 +32,7 @@
       }
     },
     "android": {
-      "versionCode": 1,
+      "versionCode": 5,
       "package": "com.crowdfacture.crowdfacture_mobile",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
